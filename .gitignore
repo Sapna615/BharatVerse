@@ -21,7 +21,8 @@ local_settings.py
 db.sqlite3
 db.sqlite3-journal
 staticfiles/
-media/
+media/*
+!media/games/
 
 # Environment variables (keep secret!)
 .env
@@ -42,3 +43,4 @@ media/
 
 # Byte-compiled
 *.pyc
+

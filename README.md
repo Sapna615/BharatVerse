@@ -38,6 +38,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env # Update as needed
 python manage.py migrate
+python manage.py loaddata fixtures/initial_data.json  # Populates states, cultural entries, games & quizzes
 python manage.py runserver
 ```
 
@@ -48,9 +49,10 @@ docker compose up --build
 ```
 Access at `http://localhost:8000`.
 
-To run migrations in Docker:
+To run migrations and load initial data in Docker:
 ```bash
 docker compose exec web python manage.py migrate
+docker compose exec web python manage.py loaddata fixtures/initial_data.json
 ```
 To create a superuser for Curator access:
 ```bash
