@@ -51,11 +51,13 @@
                 <a href="{% url 'games_hub' %}" class="bg-transparent border-2 border-gray-300 text-gray-600 hover:border-gray-500 hover:text-gray-800 px-6 py-3 rounded-xl font-bold transition">Back</a>
                 
                 {% if game.game_type == 'picture_puzzle' %}
-                    <a href="{% url 'play_puzzle' game.slug %}" class="flex-grow text-center bg-bharat-saffron text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-orange-600 transition">Start Challenge</a>
+                    <a href="{% url 'play_puzzle' game.slug %}" class="flex-grow text-center bg-gradient-to-r from-orange-500 to-amber-500 text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:opacity-95 transition">Start Challenge</a>
                 {% elif game.game_type == 'word_search' %}
-                    <a href="{% url 'play_word_search' game.slug %}" class="flex-grow text-center bg-bharat-saffron text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-orange-600 transition">Start Challenge</a>
+                    <a href="{% url 'play_word_search' game.slug %}" class="flex-grow text-center bg-gradient-to-r from-orange-500 to-amber-500 text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:opacity-95 transition">Start Challenge</a>
+                {% elif game.game_type == 'crossword' %}
+                    <a href="{% url 'play_crossword' game.slug %}" class="flex-grow text-center bg-gradient-to-r from-orange-500 to-amber-500 text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:opacity-95 transition">Start Crossword</a>
                 {% elif game.quiz %}
-                    <a href="{% url 'take_quiz' game.quiz.slug %}" class="flex-grow text-center bg-bharat-saffron text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-orange-600 transition">Start Quiz</a>
+                    <a href="{% url 'take_quiz' game.quiz.slug %}" class="flex-grow text-center bg-gradient-to-r from-orange-500 to-amber-500 text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:opacity-95 transition">Start Quiz</a>
                 {% else %}
                     <button disabled class="flex-grow text-center bg-gray-300 text-white px-6 py-3 rounded-xl font-bold shadow-none cursor-not-allowed">Game Under Construction</button>
                 {% endif %}
