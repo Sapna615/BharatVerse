@@ -4969,6 +4969,61 @@
   }
 },
 {
+  "model": "culture.culturalconnection",
+  "pk": 208,
+  "fields": {
+    "source_entry": 239,
+    "target_entry": 240,
+    "relationship_type": "Acoustic & Choral Rhythm",
+    "description": "Traditional Angami & Chakhesang warrior songs and rhythmic Tati single-string resonance accompany the stepping cadence of Naga war dances.",
+    "created_at": "2026-11-12T17:29:30.754Z"
+  }
+},
+{
+  "model": "culture.culturalconnection",
+  "pk": 209,
+  "fields": {
+    "source_entry": 239,
+    "target_entry": 241,
+    "relationship_type": "Warrior Ceremonial Attire",
+    "description": "Dancers adorn the symbolic Tsungkotepsu warrior shawl and hornbill headgear, signifying battlefield valor, honor, and tribal identity.",
+    "created_at": "2026-11-12T17:29:30.759Z"
+  }
+},
+{
+  "model": "culture.culturalconnection",
+  "pk": 210,
+  "fields": {
+    "source_entry": 239,
+    "target_entry": 214,
+    "relationship_type": "Northeast Martial Synergy",
+    "description": "Shares civilisational combat-dance roots with Manipur’s Meitei Thang-Ta sword-and-spear drills and defensive acrobatics.",
+    "created_at": "2026-11-12T17:29:30.760Z"
+  }
+},
+{
+  "model": "culture.culturalconnection",
+  "pk": 211,
+  "fields": {
+    "source_entry": 239,
+    "target_entry": 199,
+    "relationship_type": "Pan-Indian Warrior Dance Counterpart",
+    "description": "Corresponds in spirit to Uttarakhand’s ancient Kumaoni Choliya sword dance used to celebrate martial victory and marital processions.",
+    "created_at": "2026-11-12T17:29:30.761Z"
+  }
+},
+{
+  "model": "culture.culturalconnection",
+  "pk": 212,
+  "fields": {
+    "source_entry": 178,
+    "target_entry": 239,
+    "relationship_type": "Indigenous Tribal Combat Lore",
+    "description": "Both martial traditions channel tribal collective defense, shield synchrony, and ceremonial valor across forest civilizations.",
+    "created_at": "2026-11-12T17:29:30.762Z"
+  }
+},
+{
   "model": "culture.culturalcalendarevent",
   "pk": 1,
   "fields": {
@@ -7608,7 +7663,7 @@
   "model": "accounts.userprofile",
   "fields": {
     "password": "pbkdf2_sha256$1000000$R71tMfRc7us8ePDnPJkpzC$5eW7Ps8NPo5Vw0vAp7yU97yqwPiI44X+aS7H9pOqBgY=",
-    "last_login": "2026-11-12T14:41:29.910Z",
+    "last_login": "2026-11-12T17:23:42.931Z",
     "is_superuser": false,
     "username": "sapnarai",
     "first_name": "",
