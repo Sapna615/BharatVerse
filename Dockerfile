@@ -21,9 +21,11 @@ RUN pip install gunicorn psycopg2-binary python-dotenv
 # Copy project
 COPY . /app/
 
+RUN chmod +x /app/entrypoint.sh
+
 # Collect static files
 RUN python manage.py collectstatic --noinput
 
 EXPOSE 8000
 
-CMD ["gunicorn", "bharatverse.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD ["/app/entrypoint.sh"]
