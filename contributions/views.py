@@ -51,7 +51,7 @@ def submission_success(request, sub_id):
     sub = get_object_or_404(Submission, id=sub_id, contributor=request.user)
     return render(request, 'contributions/success.html', {'sub': sub})
 
-@user_passes_test(is_contributor_or_curator, login_url='/accounts/login/')
+@login_required(login_url='/accounts/login/')
 def my_submissions(request):
     subs = Submission.objects.filter(contributor=request.user).order_by('-created_at')
     counts = {
@@ -62,7 +62,7 @@ def my_submissions(request):
     }
     return render(request, 'contributions/dashboard.html', {'subs': subs, 'counts': counts})
 
-@user_passes_test(is_contributor_or_curator, login_url='/accounts/login/')
+@login_required(login_url='/accounts/login/')
 def submission_detail(request, sub_id):
     sub = get_object_or_404(Submission, id=sub_id, contributor=request.user)
     
