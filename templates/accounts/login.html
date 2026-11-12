@@ -24,8 +24,9 @@
                     Sign in
                 </button>
             </div>
-            <div class="text-sm text-center">
-                <a href="{% url 'register' %}" class="font-medium text-bharat-amber hover:text-yellow-600">Don't have an account? Register</a>
+            <div class="flex items-center justify-between text-xs pt-1">
+                <a href="{% url 'password_reset' %}" class="font-medium text-orange-600 hover:text-orange-700">Forgot password?</a>
+                <a href="{% url 'register' %}" class="font-medium text-slate-600 hover:text-orange-600">Don't have an account? Register</a>
             </div>
         </form>
     </div>
