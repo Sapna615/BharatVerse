@@ -1,88 +1,143 @@
 {% extends 'base.html' %}
-{% block title %}Explore India - BharatVerse{% endblock %}
+{% block title %}Explore 36 States &amp; UTs - BharatVerse{% endblock %}
+
 {% block content %}
-<div class="bg-bharat-navy py-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h1 class="text-4xl md:text-5xl font-serif font-bold text-white mb-4">Explore India</h1>
-        <p class="text-xl text-gray-300 font-light max-w-2xl mx-auto">Every region tells a different story. Explore the traditions that connect us.</p>
+<!-- Royal Header -->
+<div class="relative py-20 text-center overflow-hidden bg-gradient-to-b from-royal-950 via-royal-900 to-royal-950 border-b border-gold-500/20">
+    <div class="absolute inset-0 bg-gold-radial pointer-events-none opacity-50"></div>
+    <div class="relative z-10 max-w-4xl mx-auto px-4">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-royal-900/80 border border-gold-500/30 mb-6 backdrop-blur-md gold-glow">
+            <i class="fa-solid fa-map text-gold-400 text-xs"></i>
+            <span class="text-xs uppercase tracking-[0.25em] font-semibold text-gold-300">All 36 States &amp; Union Territories</span>
+        </div>
+        <h1 class="text-4xl sm:text-6xl font-royal font-bold text-white mb-6">
+            Explore <span class="gold-gradient-text">India's Living Heritage</span>
+        </h1>
+        <p class="text-base sm:text-lg text-slate-300 font-light max-w-2xl mx-auto leading-relaxed">
+            Every soil, rhythm, and valley tells an ancient story. Delve into the living traditions, festivals, and sacred lore of each region.
+        </p>
     </div>
 </div>
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <!-- Filters -->
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-8 flex flex-col md:flex-row gap-4 items-center justify-between">
-        <form class="flex-grow flex gap-4 w-full md:w-auto" method="GET" action="{% url 'explore_india' %}">
-            <input type="text" name="q" placeholder="Search states..." value="{{ search_query|default:'' }}" class="flex-grow border border-gray-300 rounded-md px-4 py-2 focus:ring-bharat-saffron focus:border-bharat-saffron">
-            <select name="region" class="border border-gray-300 rounded-md px-4 py-2 focus:ring-bharat-saffron focus:border-bharat-saffron">
-                <option value="">All Regions</option>
+    
+    <!-- Filter & View Controls -->
+    <div class="glass-panel rounded-2xl p-5 border border-gold-500/25 mb-10 shadow-xl">
+        <form class="flex flex-col md:flex-row gap-4 items-center justify-between" method="GET" action="{% url 'explore_india' %}">
+            <div class="relative flex-grow w-full md:w-auto">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-xs text-slate-400"></i>
+                <input type="text" name="q" placeholder="Search state by name or keywords..." value="{{ search_query|default:'' }}" 
+                    class="w-full bg-royal-950 border border-gold-500/30 rounded-xl pl-9 pr-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-gold-400 transition-colors">
+            </div>
+            
+            <select name="region" 
+                class="w-full md:w-56 bg-royal-950 border border-gold-500/30 rounded-xl px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-gold-400 transition-colors">
+                <option value="">All Cultural Regions</option>
                 {% for r in regions %}
                 <option value="{{ r }}" {% if selected_region == r %}selected{% endif %}>{{ r }}</option>
                 {% endfor %}
             </select>
-            <button type="submit" class="bg-bharat-saffron text-white px-6 py-2 rounded-md hover:bg-orange-600 font-medium transition">Filter</button>
-            <div class="flex gap-2 ml-auto flex-wrap">
-                <a href="{% url 'cultural_map' %}" class="bg-bharat-amber text-bharat-navy px-4 py-2 rounded-md hover:bg-yellow-500 font-medium transition flex items-center gap-1.5"><i class="fas fa-map-marked-alt text-sm"></i> Map View</a>
-                <a href="{% url 'knowledge_graph' %}" class="bg-bharat-navy text-white border border-gray-700 px-4 py-2 rounded-md hover:bg-slate-800 font-medium transition flex items-center gap-1.5 shadow-sm"><i class="fas fa-project-diagram text-bharat-saffron text-sm"></i> Cultural Knowledge Graph</a>
+            
+            <button type="submit" 
+                class="w-full md:w-auto bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-400 hover:to-amber-500 text-royal-950 font-royal font-bold px-6 py-2.5 rounded-xl transition-all shadow-md text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 h-[42px]">
+                <i class="fa-solid fa-filter text-xs"></i>
+                <span>Filter</span>
+            </button>
+            
+            <div class="flex gap-2 w-full md:w-auto justify-end flex-wrap pt-2 md:pt-0 border-t md:border-t-0 border-gold-500/10">
+                <a href="{% url 'cultural_map' %}" 
+                   class="bg-royal-900 border border-gold-500/30 hover:border-gold-400 text-gold-300 px-4 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 hover:bg-gold-500/10">
+                    <i class="fa-solid fa-map-marked-alt text-gold-400"></i>
+                    <span>Map View</span>
+                </a>
+                <a href="{% url 'knowledge_graph' %}" 
+                   class="bg-gradient-to-r from-royal-900 to-royal-850 border border-gold-500/40 text-gold-300 px-4 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 hover:border-gold-300 gold-glow">
+                    <i class="fa-solid fa-project-diagram text-gold-400"></i>
+                    <span>Knowledge Graph</span>
+                </a>
             </div>
         </form>
     </div>
 
-    <!-- Cultural Knowledge Graph Showcase Banner -->
-    <div class="mb-10 bg-gradient-to-r from-bharat-navy via-indigo-950 to-slate-900 rounded-2xl p-6 md:p-8 text-white shadow-xl border border-indigo-900/60 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
-        <div class="absolute -right-12 -top-12 w-48 h-48 bg-bharat-saffron/10 rounded-full blur-3xl pointer-events-none"></div>
+    <!-- Knowledge Graph Highlight Card -->
+    <div class="mb-12 glass-panel rounded-3xl p-6 sm:p-8 border border-gold-500/30 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden bg-gradient-to-r from-royal-950 via-royal-900 to-royal-950 shadow-2xl">
+        <div class="absolute -right-12 -top-12 w-48 h-48 bg-gold-500/10 rounded-full blur-3xl pointer-events-none"></div>
         <div class="relative z-10 flex items-start sm:items-center gap-5">
-            <div class="w-16 h-16 rounded-2xl bg-bharat-saffron/20 border border-bharat-saffron/40 flex items-center justify-center text-bharat-saffron text-2xl flex-shrink-0 shadow-inner">
-                <i class="fas fa-project-diagram"></i>
+            <div class="w-16 h-16 rounded-2xl bg-gold-500/10 border border-gold-500/40 flex items-center justify-center text-gold-400 text-2xl flex-shrink-0">
+                <i class="fa-solid fa-circle-nodes"></i>
             </div>
             <div>
-                <div class="flex items-center gap-2 mb-1">
-                    <span class="text-[11px] font-bold uppercase tracking-widest text-bharat-amber bg-white/10 px-2.5 py-0.5 rounded-full">Relational Cultural Network</span>
-                    <span class="text-[11px] text-gray-400">All 36 States & UTs</span>
+                <div class="flex items-center gap-2 mb-1.5">
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-gold-400 bg-gold-500/15 border border-gold-500/30 px-2.5 py-0.5 rounded-full">Relational Cultural Network</span>
+                    <span class="text-[11px] text-slate-400">Interactive Physics</span>
                 </div>
-                <h3 class="text-xl md:text-2xl font-serif font-bold text-white mb-2">BharatVerse Cultural Knowledge Graph</h3>
-                <p class="text-sm text-gray-300 max-w-2xl leading-relaxed">
-                    Step beyond isolated state lists into an interactive, physics-based network connecting India's literary works, performing arts, ancient manuscripts, textile crafts, and cross-state cultural influences.
+                <h3 class="text-xl sm:text-2xl font-royal font-bold text-white mb-2">BharatVerse Cultural Knowledge Graph</h3>
+                <p class="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed font-light">
+                    Explore physics-based interactive nodes connecting ancient manuscripts, dance lineages, temple architectures, and cross-state cultural influences.
                 </p>
             </div>
         </div>
-        <div class="relative z-10 flex-shrink-0">
-            <a href="{% url 'knowledge_graph' %}" class="bg-bharat-saffron hover:bg-orange-600 text-white font-bold px-7 py-3.5 rounded-xl shadow-lg transition flex items-center gap-2 text-sm transform hover:-translate-y-0.5">
+        <div class="relative z-10 flex-shrink-0 w-full sm:w-auto">
+            <a href="{% url 'knowledge_graph' %}" 
+               class="w-full sm:w-auto bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-400 hover:to-amber-500 text-royal-950 font-royal font-bold px-7 py-3 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
                 <span>Launch Graph Network</span>
-                <i class="fas fa-arrow-right text-xs"></i>
+                <i class="fa-solid fa-arrow-right text-xs"></i>
             </a>
         </div>
     </div>
 
     <!-- State Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {% for state in states %}
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition group">
+        <div class="glass-panel glass-panel-hover rounded-2xl overflow-hidden border border-gold-500/20 flex flex-col justify-between group">
             <div class="p-6">
-                <span class="text-xs font-bold text-bharat-saffron uppercase tracking-wider mb-2 block">{{ state.region }}</span>
-                <h2 class="text-2xl font-serif font-bold text-bharat-navy mb-2">{{ state.name }}</h2>
-                <p class="text-gray-600 text-sm mb-6 line-clamp-2">{{ state.description }}</p>
-                
-                <div class="flex gap-4 mb-6 border-t border-gray-100 pt-4">
-                    <div class="text-center flex-1">
-                        <div class="text-xl font-bold text-bharat-navy">{{ state.entries_count }}</div>
-                        <div class="text-xs text-gray-500">Entries</div>
-                    </div>
-                    <div class="text-center flex-1 border-l border-r border-gray-100">
-                        <div class="text-xl font-bold text-bharat-navy">{{ state.festivals_count }}</div>
-                        <div class="text-xs text-gray-500">Festivals</div>
-                    </div>
-                    <div class="text-center flex-1">
-                        <div class="text-xl font-bold text-bharat-navy">{{ state.traditions_count }}</div>
-                        <div class="text-xs text-gray-500">Traditions</div>
-                    </div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-gold-400 bg-gold-500/10 border border-gold-500/25 px-2.5 py-0.5 rounded-full">
+                        {{ state.region }}
+                    </span>
+                    <span class="text-xs text-slate-400">
+                        <i class="fa-solid fa-landmark text-gold-400/60 mr-1"></i> Heritage
+                    </span>
                 </div>
                 
-                <a href="{% url 'state_detail' state.slug %}" class="block w-full text-center bg-gray-50 text-bharat-navy font-semibold py-3 rounded-lg group-hover:bg-bharat-saffron group-hover:text-white transition">Explore {{ state.name }}</a>
+                <h2 class="text-2xl font-royal font-bold text-white mb-2 group-hover:text-gold-300 transition-colors">
+                    {{ state.name }}
+                </h2>
+                <p class="text-slate-400 text-xs mb-6 line-clamp-2 leading-relaxed font-light">
+                    {{ state.description }}
+                </p>
+                
+                <!-- Metrics -->
+                <div class="grid grid-cols-3 gap-2 py-3 border-t border-b border-gold-500/10 bg-royal-950/40 rounded-xl px-2 mb-6">
+                    <div class="text-center">
+                        <div class="text-lg font-royal font-bold text-gold-300">{{ state.entries_count }}</div>
+                        <div class="text-[10px] text-slate-500 uppercase tracking-wider">Entries</div>
+                    </div>
+                    <div class="text-center border-l border-r border-gold-500/10">
+                        <div class="text-lg font-royal font-bold text-gold-300">{{ state.festivals_count }}</div>
+                        <div class="text-[10px] text-slate-500 uppercase tracking-wider">Festivals</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-lg font-royal font-bold text-gold-300">{{ state.traditions_count }}</div>
+                        <div class="text-[10px] text-slate-500 uppercase tracking-wider">Traditions</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Bottom Button -->
+            <div class="px-6 pb-6">
+                <a href="{% url 'state_detail' state.slug %}" 
+                   class="block w-full text-center bg-royal-900 border border-gold-500/30 text-gold-300 group-hover:bg-gradient-to-r group-hover:from-gold-500 group-hover:to-amber-600 group-hover:text-royal-950 group-hover:border-gold-400 font-royal font-bold text-xs uppercase tracking-wider py-3 rounded-xl transition-all shadow-md">
+                    <span>Explore {{ state.name }}</span>
+                    <i class="fa-solid fa-arrow-right ml-1 text-[9px]"></i>
+                </a>
             </div>
         </div>
         {% empty %}
-        <div class="col-span-3 text-center py-12">
-            <p class="text-gray-500 text-lg">No states found matching your criteria.</p>
+        <div class="col-span-full text-center py-20 glass-panel rounded-2xl border border-gold-500/20">
+            <i class="fa-solid fa-map-location-dot text-gold-400/50 text-4xl mb-3"></i>
+            <h3 class="text-xl font-royal text-white mb-2">No States Found</h3>
+            <p class="text-slate-400 text-xs">Try adjusting your region filter or search term.</p>
         </div>
         {% endfor %}
     </div>
