@@ -5,28 +5,27 @@
 
 {% block content %}
 <!-- Hero Header -->
-<div class="relative bg-gradient-to-br from-bharat-navy via-slate-900 to-indigo-950 text-white py-16 px-4 sm:px-6 lg:px-8 border-b border-amber-900/40">
-    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#d97706_1px,transparent_1px)] [background-size:24px_24px]"></div>
+<div class="relative bg-gradient-to-r from-orange-600 via-rose-600 to-amber-600 text-white py-16 px-4 sm:px-6 lg:px-8 shadow-lg">
     <div class="relative max-w-7xl mx-auto text-center">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-bharat-amber text-xs font-semibold uppercase tracking-wider mb-4">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white text-xs font-bold uppercase tracking-wider mb-4">
             <i class="fas fa-book-reader"></i> Literary Traditions • Manuscripts • Oral Heritage
         </div>
-        <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white tracking-tight mb-4">
-            BharatVerse <span class="text-bharat-amber">Digital Library</span>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-display font-black text-white tracking-tight mb-4 drop-shadow">
+            BharatVerse <span class="text-amber-200">Digital Library</span>
         </h1>
-        <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-300 font-light leading-relaxed">
+        <p class="max-w-3xl mx-auto text-lg md:text-xl text-orange-100 font-normal leading-relaxed">
             Preserving and connecting India's classical literature, sacred scriptures, philosophical treatises, ancient manuscripts, and living oral folklore in an interactive cultural learning sanctuary.
         </p>
 
         <!-- Search Bar -->
         <div class="mt-8 max-w-2xl mx-auto">
-            <form method="GET" action="{% url 'digital_library' %}" class="flex items-center bg-white/10 backdrop-blur-md p-1.5 rounded-2xl border border-white/20 shadow-2xl focus-within:border-bharat-amber transition">
-                <i class="fas fa-search text-gray-400 ml-4 mr-2"></i>
-                <input type="text" name="q" value="{{ selected_q }}" placeholder="Search by title, author, language (e.g. Tamil, Gurmukhi, Awadhi), or tradition..." class="w-full bg-transparent border-0 text-white placeholder-gray-400 focus:outline-none focus:ring-0 px-2 py-2 text-sm md:text-base">
+            <form method="GET" action="{% url 'digital_library' %}" class="flex items-center bg-white p-2 rounded-2xl shadow-xl focus-within:ring-4 focus-within:ring-amber-300 transition">
+                <i class="fas fa-search text-orange-500 ml-4 mr-2"></i>
+                <input type="text" name="q" value="{{ selected_q }}" placeholder="Search by title, author, language (e.g. Tamil, Gurmukhi, Awadhi)..." class="w-full bg-transparent border-0 text-slate-800 placeholder-slate-400 focus:outline-none px-2 py-2 text-sm md:text-base font-medium">
                 {% if selected_type %}<input type="hidden" name="type" value="{{ selected_type }}">{% endif %}
                 {% if selected_language %}<input type="hidden" name="language" value="{{ selected_language }}">{% endif %}
                 {% if selected_state %}<input type="hidden" name="state" value="{{ selected_state }}">{% endif %}
-                <button type="submit" class="bg-gradient-to-r from-bharat-saffron to-bharat-amber text-slate-900 font-bold px-6 py-2.5 rounded-xl hover:shadow-lg hover:scale-105 active:scale-95 transition-all text-sm shrink-0">
+                <button type="submit" class="bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold px-6 py-2.5 rounded-xl hover:opacity-95 transition-all text-sm shrink-0 shadow-md font-display uppercase tracking-wider">
                     Explore
                 </button>
             </form>
