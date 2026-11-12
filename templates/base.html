@@ -245,7 +245,8 @@
             .then(data => {
                 const el = document.getElementById('ai-loading');
                 if(el) el.remove();
-                appendMsg(data.reply);
+                const botReply = data.reply || data.message || "I am glad to share India's living cultural traditions with you!";
+                appendMsg(botReply);
             })
             .catch(err => {
                 const el = document.getElementById('ai-loading');
