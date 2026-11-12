@@ -49,3 +49,38 @@ def logout_view(request):
     logout(request)
     messages.info(request, 'You have successfully logged out.')
     return redirect('home')
+
+def direct_reset_password(request):
+    if request.method == 'POST':
+        identifier = request.POST.get('identifier', '').strip()
+        new_password = request.POST.get('new_password', '')
+        confirm_password = request.POST.get('confirm_password', '')
+
+        if not identifier or not new_password:
+            messages.error(request, 'All fields are required.')
+            return render(request, 'accounts/reset_password_direct.html')
+
+        if new_password != confirm_password:
+            messages.error(request, 'Passwords do not match.')
+            return render(request, 'accounts/reset_password_direct.html')
+
+        if len(new_password) < 6:
+            messages.error(request, 'Password must be at least 6 characters long.')
+            return render(request, 'accounts/reset_password_direct.html')
+
+        # Find user by username or email
+        user = UserProfile.objects.filter(username__iexact=identifier).first() or \
+               UserProfile.objects.filter(email__iexact=identifier).first()
+
+        if user:
+            user.set_password(new_password)
+            user.save()
+            login(request, user)
+            messages.success(request, f'Password successfully updated! Welcome back, {user.username}.')
+            return redirect('home')
+        else:
+            messages.error(request, 'No account found with that username or email.')
+            return render(request, 'accounts/reset_password_direct.html')
+
+    return render(request, 'accounts/reset_password_direct.html')
+    return redirect('home')
