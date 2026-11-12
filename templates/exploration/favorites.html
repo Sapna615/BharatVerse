@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}My Favorites - BharatVerse{% endblock %}
+{% block content %}
+<div class="bg-bharat-navy py-12 text-center">
+    <h1 class="text-4xl font-serif font-bold text-white mb-2">My Favorites</h1>
+    <p class="text-gray-300 font-light">The cultural stories you want to return to.</p>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 py-16">
+    {% if favorites %}
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {% for fav in favorites %}
+            <div class="bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-100 p-6 flex flex-col h-full">
+                <span class="text-xs text-gray-500 uppercase font-bold">{{ fav.cultural_entry.category.name }}</span>
+                <h3 class="text-xl font-bold text-bharat-navy mt-1 mb-2">{{ fav.cultural_entry.title }}</h3>
+                <p class="text-sm text-gray-600 line-clamp-3 mb-4 flex-grow">{{ fav.cultural_entry.short_description }}</p>
+                <div class="flex gap-4 mt-auto">
+                    <a href="{% url 'cultural_entry_detail' fav.cultural_entry.slug %}" class="bg-gray-100 text-bharat-navy text-sm font-bold px-4 py-2 rounded-lg hover:bg-gray-200 text-center flex-grow">Open</a>
+                    <form action="{% url 'toggle_favorite' fav.cultural_entry.slug %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="bg-red-50 text-red-600 text-sm font-bold px-4 py-2 rounded-lg hover:bg-red-100">Remove</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-20 bg-gray-50 rounded-2xl border border-gray-100 max-w-3xl mx-auto">
+            <h2 class="text-3xl font-serif text-bharat-navy mb-4">Your cultural shelf is empty.</h2>
+            <p class="text-gray-600 mb-8">Save traditions, stories and cultural discoveries here so you can return to them anytime.</p>
+            <a href="/explore/" class="bg-bharat-saffron text-white px-8 py-3 rounded-full font-bold hover:bg-orange-600 shadow">Explore India</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

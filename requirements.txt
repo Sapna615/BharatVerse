@@ -1,0 +1,7 @@
+asgiref
+Django>=5.0
+djangorestframework
+gunicorn
+pillow
+python-dotenv
+sqlparse

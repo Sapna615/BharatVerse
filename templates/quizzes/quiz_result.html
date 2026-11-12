@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Quiz Complete!{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 py-16 text-center">
+    <h1 class="text-5xl font-serif font-bold text-green-600 mb-4">Quiz Complete! 🎉</h1>
+    <p class="text-xl text-gray-600 mb-8">{{ attempt.quiz.title }}</p>
+    
+    <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-12 mb-8">
+        <div class="text-6xl font-black text-bharat-navy mb-4">{{ attempt.score }} <span class="text-2xl text-gray-400">/ {{ attempt.total_questions }}</span></div>
+        <div class="text-2xl font-bold text-bharat-saffron">{{ attempt.percentage|floatformat:0 }}%</div>
+    </div>
+    
+    <div class="flex flex-col sm:flex-row justify-center gap-4">
+        <a href="{% url 'take_quiz' attempt.quiz.slug %}" class="bg-gray-200 text-bharat-navy font-bold py-3 px-8 rounded-full shadow hover:bg-gray-300">Try Again</a>
+        <a href="{% url 'quiz_list' %}" class="bg-bharat-saffron text-white font-bold py-3 px-8 rounded-full shadow hover:bg-orange-600">Back to Quizzes</a>
+    </div>
+</div>
+{% endblock %}

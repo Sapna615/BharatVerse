@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+{% block title %}Play {{ game.title }}{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8 bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold text-gray-900 mb-2">{{ game.title }}</h1>
+        <p class="text-gray-500">Moves: <span id="move-count" class="font-bold text-bharat-navy">0</span> | Difficulty: <span class="capitalize text-bharat-saffron font-bold">{{ difficulty }}</span></p>
+    </div>
+
+    <div class="flex flex-col lg:flex-row gap-8 items-start">
+        <!-- Left Side: Game Area -->
+        <div class="w-full lg:w-2/3 relative">
+            <!-- Start Overlay -->
+            <div id="start-overlay" class="absolute inset-0 bg-white/80 z-20 flex flex-col items-center justify-center text-center p-8 backdrop-blur-sm border-2 border-gray-200">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Ready to Play?</h2>
+                <p class="text-gray-600 mb-6 max-w-md">Click a piece, then click another to swap them. Arrange them to form the complete image shown in the preview.</p>
+                <button id="btn-start-large" class="bg-yellow-400 text-gray-900 px-8 py-3 rounded-full font-bold text-lg hover:bg-yellow-500 transition shadow-md">Start Puzzle</button>
+            </div>
+
+            <!-- Success Overlay -->
+            <div id="success-overlay" class="absolute inset-0 bg-green-900/90 z-20 flex flex-col items-center justify-center text-white p-8 text-center hidden backdrop-blur-md transition-opacity duration-500">
+                <div class="text-6xl mb-4">🏆</div>
+                <h2 class="text-4xl font-bold mb-2 text-yellow-400">Puzzle Solved!</h2>
+                <p class="text-xl mb-6">Time: <span id="final-time" class="font-bold"></span> | Moves: <span id="final-moves" class="font-bold"></span></p>
+                <div class="flex gap-4">
+                    <button id="btn-play-again" class="bg-white text-green-900 px-6 py-2 rounded-full font-bold hover:bg-gray-100 transition">Play Again</button>
+                </div>
+            </div>
+
+            <!-- The Grid -->
+            <!-- We use an aspect ratio that fits typical landscape images nicely -->
+            <div id="puzzle-container" class="w-full aspect-[4/3] bg-white border border-gray-200 shadow-sm relative">
+                <!-- Tiles generated via JS -->
+            </div>
+        </div>
+
+        <!-- Right Side: Controls & Preview -->
+        <div class="w-full lg:w-1/3 flex flex-col gap-6">
+            
+            <!-- Control Buttons -->
+            <div class="flex justify-between items-center gap-2">
+                <button id="btn-reset" class="flex-1 bg-yellow-400 text-gray-900 font-bold py-3 px-4 rounded-lg hover:bg-yellow-500 transition shadow-sm text-center">Reset</button>
+                <button id="btn-start" class="flex-1 bg-yellow-400 text-gray-900 font-bold py-3 px-4 rounded-lg hover:bg-yellow-500 transition shadow-sm text-center">Start</button>
+                <div id="timer-box" class="flex-1 bg-[#6A1B41] text-white font-bold py-3 px-4 rounded-lg text-center shadow-sm flex items-center justify-center">
+                    <span id="timer">0s</span>
+                </div>
+            </div>
+
+            <!-- Preview Panel -->
+            <div class="bg-white border border-gray-300 rounded-lg p-4 shadow-sm text-center">
+                <h3 class="font-bold text-gray-900 mb-3 text-lg">Preview</h3>
+                <img src="{{ game.thumbnail.url }}" alt="Preview" class="w-full rounded mb-4 object-contain max-h-64 shadow-inner border border-gray-100">
+                
+                <a href="{% url 'game_detail' game.slug %}" class="inline-block bg-yellow-400 text-gray-900 font-bold py-2 px-8 rounded-full hover:bg-yellow-500 transition shadow-sm">
+                    Read more
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('puzzle-container');
+    const startOverlay = document.getElementById('start-overlay');
+    const successOverlay = document.getElementById('success-overlay');
+    const btnStart = document.getElementById('btn-start');
+    const btnStartLarge = document.getElementById('btn-start-large');
+    const btnReset = document.getElementById('btn-reset');
+    const btnPlayAgain = document.getElementById('btn-play-again');
+    
+    const moveCountEl = document.getElementById('move-count');
+    const timerEl = document.getElementById('timer');
+    const finalTimeEl = document.getElementById('final-time');
+    const finalMovesEl = document.getElementById('final-moves');
+
+    const imageUrl = "{{ game.thumbnail.url }}";
+    
+    // For a rectangular layout matching typical photos, we might use slightly different row/col counts
+    // but sticking to square logic (e.g. 3x3, 4x4) is safer for logic simplicity. 
+    // The CSS Grid aspect-ratio takes care of stretching the tiles to form the rectangle!
+    const gridSize = {{ grid_size }}; 
+    let tiles = [];
+    let isPlaying = false;
+    let moves = 0;
+    let seconds = 0;
+    let timerInterval = null;
+    let selectedTile = null;
+
+    // Initialize Grid CSS
+    container.style.display = 'grid';
+    container.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
+    container.style.gridTemplateRows = `repeat(${gridSize}, 1fr)`;
+    // Add a slight gap to mimic the puzzle border in the screenshot
+    container.style.gap = '2px';
+    container.style.backgroundColor = '#ddd'; // shows through the gap
+    container.style.padding = '2px';
+
+    // Create Tiles
+    for (let i = 0; i < gridSize * gridSize; i++) {
+        const tile = document.createElement('div');
+        tile.classList.add('cursor-pointer', 'bg-white', 'transition-transform', 'duration-150');
+        tile.style.backgroundImage = `url('${imageUrl}')`;
+        tile.style.backgroundSize = `${gridSize * 100}% ${gridSize * 100}%`;
+        
+        // Calculate background position
+        const row = Math.floor(i / gridSize);
+        const col = i % gridSize;
+        const xPos = (col / (gridSize - 1)) * 100 || 0;
+        const yPos = (row / (gridSize - 1)) * 100 || 0;
+        
+        tile.style.backgroundPosition = `${xPos}% ${yPos}%`;
+        
+        // Data attributes for tracking
+        tile.dataset.correctIndex = i;
+        tile.dataset.currentIndex = i;
+
+        tile.addEventListener('click', () => handleTileClick(tile));
+        tiles.push(tile);
+        container.appendChild(tile);
+    }
+
+    function updateTimer() {
+        seconds++;
+        timerEl.textContent = `${seconds}s`;
+    }
+
+    function shuffle() {
+        const indices = [...Array(gridSize * gridSize).keys()];
+        for (let i = indices.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [indices[i], indices[j]] = [indices[j], indices[i]];
+        }
+        
+        container.innerHTML = '';
+        indices.forEach((index, i) => {
+            tiles[index].dataset.currentIndex = i;
+            container.appendChild(tiles[index]);
+        });
+    }
+
+    function checkWin() {
+        const currentTiles = Array.from(container.children);
+        const isWin = currentTiles.every((t, i) => parseInt(t.dataset.correctIndex) === i);
+        
+        if (isWin && isPlaying) {
+            isPlaying = false;
+            clearInterval(timerInterval);
+            finalTimeEl.textContent = `${seconds}s`;
+            finalMovesEl.textContent = moves;
+            successOverlay.classList.remove('hidden');
+            // Remove gap to show perfect picture
+            container.style.gap = '0px';
+        }
+    }
+
+    function handleTileClick(tile) {
+        if (!isPlaying) return;
+
+        if (!selectedTile) {
+            // Select first tile
+            selectedTile = tile;
+            tile.style.outline = '3px solid #ffde00'; // Yellow selection border
+            tile.style.outlineOffset = '-3px';
+            tile.style.zIndex = '10';
+            tile.classList.add('scale-95');
+        } else {
+            // Deselect if clicked same
+            if (selectedTile === tile) {
+                selectedTile.style.outline = 'none';
+                selectedTile.style.zIndex = '1';
+                selectedTile.classList.remove('scale-95');
+                selectedTile = null;
+                return;
+            }
+
+            // Swap tiles
+            const nextSibling = tile.nextSibling;
+            const parent = tile.parentNode;
+            
+            if (selectedTile.nextSibling === tile) {
+                parent.insertBefore(tile, selectedTile);
+            } else {
+                parent.insertBefore(tile, selectedTile);
+                if (nextSibling) {
+                    parent.insertBefore(selectedTile, nextSibling);
+                } else {
+                    parent.appendChild(selectedTile);
+                }
+            }
+
+            // Update current index data
+            const currentTiles = Array.from(parent.children);
+            currentTiles.forEach((t, i) => t.dataset.currentIndex = i);
+
+            // Cleanup
+            selectedTile.style.outline = 'none';
+            selectedTile.style.zIndex = '1';
+            selectedTile.classList.remove('scale-95');
+            selectedTile = null;
+            
+            // Update moves
+            moves++;
+            moveCountEl.textContent = moves;
+            
+            checkWin();
+        }
+    }
+
+    function startGame() {
+        startOverlay.classList.add('hidden');
+        successOverlay.classList.add('hidden');
+        shuffle();
+        isPlaying = true;
+        moves = 0;
+        seconds = 0;
+        moveCountEl.textContent = '0';
+        timerEl.textContent = '0s';
+        clearInterval(timerInterval);
+        timerInterval = setInterval(updateTimer, 1000);
+        container.style.gap = '2px';
+        if (selectedTile) {
+            selectedTile.style.outline = 'none';
+            selectedTile.classList.remove('scale-95');
+            selectedTile = null;
+        }
+    }
+
+    btnStart.addEventListener('click', startGame);
+    btnStartLarge.addEventListener('click', startGame);
+    btnPlayAgain.addEventListener('click', startGame);
+
+    btnReset.addEventListener('click', () => {
+        if (!isPlaying) return;
+        shuffle();
+        moves = 0;
+        seconds = 0;
+        moveCountEl.textContent = '0';
+        timerEl.textContent = '0s';
+        if (selectedTile) {
+            selectedTile.style.outline = 'none';
+            selectedTile.classList.remove('scale-95');
+            selectedTile = null;
+        }
+    });
+});
+</script>
+{% endblock %}

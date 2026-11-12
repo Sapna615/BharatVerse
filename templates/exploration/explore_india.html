@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block title %}Explore India - BharatVerse{% endblock %}
+{% block content %}
+<div class="bg-bharat-navy py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl md:text-5xl font-serif font-bold text-white mb-4">Explore India</h1>
+        <p class="text-xl text-gray-300 font-light max-w-2xl mx-auto">Every region tells a different story. Explore the traditions that connect us.</p>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Filters -->
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-8 flex flex-col md:flex-row gap-4 items-center justify-between">
+        <form class="flex-grow flex gap-4 w-full md:w-auto" method="GET" action="{% url 'explore_india' %}">
+            <input type="text" name="q" placeholder="Search states..." value="{{ search_query|default:'' }}" class="flex-grow border border-gray-300 rounded-md px-4 py-2 focus:ring-bharat-saffron focus:border-bharat-saffron">
+            <select name="region" class="border border-gray-300 rounded-md px-4 py-2 focus:ring-bharat-saffron focus:border-bharat-saffron">
+                <option value="">All Regions</option>
+                {% for r in regions %}
+                <option value="{{ r }}" {% if selected_region == r %}selected{% endif %}>{{ r }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="bg-bharat-saffron text-white px-6 py-2 rounded-md hover:bg-orange-600 font-medium transition">Filter</button>
+            <div class="flex gap-2 ml-auto flex-wrap">
+                <a href="{% url 'cultural_map' %}" class="bg-bharat-amber text-bharat-navy px-4 py-2 rounded-md hover:bg-yellow-500 font-medium transition flex items-center gap-1.5"><i class="fas fa-map-marked-alt text-sm"></i> Map View</a>
+                <a href="{% url 'knowledge_graph' %}" class="bg-bharat-navy text-white border border-gray-700 px-4 py-2 rounded-md hover:bg-slate-800 font-medium transition flex items-center gap-1.5 shadow-sm"><i class="fas fa-project-diagram text-bharat-saffron text-sm"></i> Cultural Knowledge Graph</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Cultural Knowledge Graph Showcase Banner -->
+    <div class="mb-10 bg-gradient-to-r from-bharat-navy via-indigo-950 to-slate-900 rounded-2xl p-6 md:p-8 text-white shadow-xl border border-indigo-900/60 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+        <div class="absolute -right-12 -top-12 w-48 h-48 bg-bharat-saffron/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="relative z-10 flex items-start sm:items-center gap-5">
+            <div class="w-16 h-16 rounded-2xl bg-bharat-saffron/20 border border-bharat-saffron/40 flex items-center justify-center text-bharat-saffron text-2xl flex-shrink-0 shadow-inner">
+                <i class="fas fa-project-diagram"></i>
+            </div>
+            <div>
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="text-[11px] font-bold uppercase tracking-widest text-bharat-amber bg-white/10 px-2.5 py-0.5 rounded-full">Relational Cultural Network</span>
+                    <span class="text-[11px] text-gray-400">All 36 States & UTs</span>
+                </div>
+                <h3 class="text-xl md:text-2xl font-serif font-bold text-white mb-2">BharatVerse Cultural Knowledge Graph</h3>
+                <p class="text-sm text-gray-300 max-w-2xl leading-relaxed">
+                    Step beyond isolated state lists into an interactive, physics-based network connecting India's literary works, performing arts, ancient manuscripts, textile crafts, and cross-state cultural influences.
+                </p>
+            </div>
+        </div>
+        <div class="relative z-10 flex-shrink-0">
+            <a href="{% url 'knowledge_graph' %}" class="bg-bharat-saffron hover:bg-orange-600 text-white font-bold px-7 py-3.5 rounded-xl shadow-lg transition flex items-center gap-2 text-sm transform hover:-translate-y-0.5">
+                <span>Launch Graph Network</span>
+                <i class="fas fa-arrow-right text-xs"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- State Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {% for state in states %}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition group">
+            <div class="p-6">
+                <span class="text-xs font-bold text-bharat-saffron uppercase tracking-wider mb-2 block">{{ state.region }}</span>
+                <h2 class="text-2xl font-serif font-bold text-bharat-navy mb-2">{{ state.name }}</h2>
+                <p class="text-gray-600 text-sm mb-6 line-clamp-2">{{ state.description }}</p>
+                
+                <div class="flex gap-4 mb-6 border-t border-gray-100 pt-4">
+                    <div class="text-center flex-1">
+                        <div class="text-xl font-bold text-bharat-navy">{{ state.entries_count }}</div>
+                        <div class="text-xs text-gray-500">Entries</div>
+                    </div>
+                    <div class="text-center flex-1 border-l border-r border-gray-100">
+                        <div class="text-xl font-bold text-bharat-navy">{{ state.festivals_count }}</div>
+                        <div class="text-xs text-gray-500">Festivals</div>
+                    </div>
+                    <div class="text-center flex-1">
+                        <div class="text-xl font-bold text-bharat-navy">{{ state.traditions_count }}</div>
+                        <div class="text-xs text-gray-500">Traditions</div>
+                    </div>
+                </div>
+                
+                <a href="{% url 'state_detail' state.slug %}" class="block w-full text-center bg-gray-50 text-bharat-navy font-semibold py-3 rounded-lg group-hover:bg-bharat-saffron group-hover:text-white transition">Explore {{ state.name }}</a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-3 text-center py-12">
+            <p class="text-gray-500 text-lg">No states found matching your criteria.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

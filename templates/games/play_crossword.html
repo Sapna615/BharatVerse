@@ -1,0 +1,272 @@
+{% extends 'base.html' %}
+{% block title %}Play {{ game.title }}{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-12">
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold text-bharat-navy mb-2">{{ game.title }}</h1>
+        <p class="text-gray-500 text-lg">{{ game.description }}</p>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-8 flex justify-between items-center max-w-5xl mx-auto">
+        <div class="text-lg font-bold text-gray-700">Difficulty: <span class="text-bharat-saffron capitalize">{{ difficulty }}</span></div>
+        <div class="text-lg font-bold text-gray-700">Progress: <span id="progress-text" class="text-bharat-navy">0</span> / {{ total_words }} Words</div>
+        <button id="btn-check" class="bg-bharat-saffron text-white font-bold py-2 px-6 rounded-xl hover:bg-orange-600 transition shadow-sm">Check Answers</button>
+    </div>
+
+    <div class="flex flex-col lg:flex-row gap-8 items-start max-w-6xl mx-auto relative">
+        
+        <!-- Success Overlay -->
+        <div id="success-overlay" class="absolute inset-0 bg-green-900/90 z-20 rounded-2xl flex flex-col items-center justify-center text-white p-8 text-center hidden backdrop-blur-md transition-opacity duration-500">
+            <div class="text-6xl mb-4">🏆</div>
+            <h2 class="text-4xl font-bold mb-2 text-yellow-400">Crossword Completed!</h2>
+            <p class="text-xl mb-6">You've solved the cultural puzzle!</p>
+            <div class="flex gap-4">
+                <a href="{% url 'games_hub' %}" class="bg-white text-green-900 px-6 py-3 rounded-xl font-bold hover:bg-gray-100 transition shadow-lg">Back to Hub</a>
+                <a href="{% if game.state %}{% url 'state_detail' game.state.slug %}{% else %}{% url 'explore_india' %}{% endif %}" class="bg-bharat-saffron text-white px-6 py-3 rounded-xl font-bold hover:bg-orange-600 transition shadow-lg">Discover the Culture</a>
+            </div>
+        </div>
+
+        <!-- The Grid Area -->
+        <div class="w-full lg:w-2/3">
+            <div class="bg-white p-4 rounded-2xl shadow-md border border-gray-200 overflow-x-auto">
+                <div id="crossword-grid" class="relative mx-auto select-none" style="display: grid;">
+                    <!-- Cells injected by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Clues Area -->
+        <div class="w-full lg:w-1/3 flex flex-col gap-6">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 max-h-[600px] overflow-y-auto">
+                
+                <h3 class="text-xl font-bold text-bharat-navy mb-4 border-b border-gray-100 pb-2">Across</h3>
+                <ul id="clues-across" class="space-y-3 mb-6 text-gray-700">
+                    <!-- Across clues injected here -->
+                </ul>
+
+                <h3 class="text-xl font-bold text-bharat-navy mb-4 border-b border-gray-100 pb-2">Down</h3>
+                <ul id="clues-down" class="space-y-3 text-gray-700">
+                    <!-- Down clues injected here -->
+                </ul>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    try {
+        const gridEl = document.getElementById('crossword-grid');
+        const cluesAcrossEl = document.getElementById('clues-across');
+        const cluesDownEl = document.getElementById('clues-down');
+        const btnCheck = document.getElementById('btn-check');
+        const progressText = document.getElementById('progress-text');
+        const successOverlay = document.getElementById('success-overlay');
+
+        const gridWidth = {{ grid_width }};
+        const gridHeight = {{ grid_height }};
+        const wordsData = {{ words_json|safe }};
+        
+        let gridMap = {}; // "r-c": { cellEl, inputEl, letters: [{wordIndex, charIndex, char}] }
+
+        function initGrid() {
+            gridEl.style.gridTemplateColumns = `repeat(${gridWidth}, minmax(30px, 40px))`;
+            gridEl.style.gridTemplateRows = `repeat(${gridHeight}, minmax(30px, 40px))`;
+            gridEl.style.gap = '2px';
+            gridEl.style.width = 'fit-content';
+            gridEl.style.backgroundColor = '#1f2937'; // grid lines color
+            gridEl.style.padding = '2px';
+
+            // Create empty black cells
+            for (let r = 0; r < gridHeight; r++) {
+                for (let c = 0; c < gridWidth; c++) {
+                    let cell = document.createElement('div');
+                    cell.className = 'w-full h-full bg-gray-900';
+                    gridEl.appendChild(cell);
+                }
+            }
+
+            // Populate cells based on wordsData
+            wordsData.forEach((w, wordIndex) => {
+                let r = w.start_row;
+                let c = w.start_col;
+
+                // Add clue text
+                const li = document.createElement('li');
+                li.innerHTML = `<strong class="text-bharat-saffron mr-2">${w.number}.</strong> <span class="cursor-pointer hover:text-bharat-navy transition" data-word="${wordIndex}">${w.clue}</span>`;
+                li.id = `clue-${wordIndex}`;
+                if (w.direction === 'across') cluesAcrossEl.appendChild(li);
+                else cluesDownEl.appendChild(li);
+
+                // Highlight interactions
+                li.addEventListener('mouseenter', () => highlightWord(wordIndex, true));
+                li.addEventListener('mouseleave', () => highlightWord(wordIndex, false));
+
+                for (let i = 0; i < w.word.length; i++) {
+                    let key = `${r}-${c}`;
+                    if (!gridMap[key]) {
+                        // Create a white cell input
+                        let cellIndex = r * gridWidth + c;
+                        let cellWrap = gridEl.children[cellIndex];
+                        cellWrap.className = 'w-full h-full bg-white relative flex items-center justify-center group';
+                        
+                        let input = document.createElement('input');
+                        input.type = 'text';
+                        input.maxLength = 1;
+                        input.className = 'w-full h-full text-center font-bold text-xl uppercase bg-transparent outline-none focus:bg-yellow-50 focus:ring-2 focus:ring-bharat-saffron z-10 transition-colors';
+                        input.dataset.r = r;
+                        input.dataset.c = c;
+                        
+                        // Add number label if this is a starting cell for any word
+                        let isStart = wordsData.find(ws => ws.start_row === r && ws.start_col === c);
+                        if (isStart && (isStart.start_row === r && isStart.start_col === c)) {
+                             let numLabel = document.createElement('span');
+                             numLabel.textContent = isStart.number;
+                             numLabel.className = 'absolute top-0 left-0.5 text-[9px] font-bold text-gray-500 z-0 pointer-events-none';
+                             cellWrap.appendChild(numLabel);
+                        }
+                        
+                        cellWrap.appendChild(input);
+                        
+                        gridMap[key] = {
+                            input: input,
+                            wrapper: cellWrap,
+                            charData: []
+                        };
+                        
+                        // Auto-advance logic
+                        input.addEventListener('input', (e) => {
+                            e.target.value = e.target.value.toUpperCase();
+                            if (e.target.value) advanceFocus(r, c);
+                        });
+                        
+                        input.addEventListener('keydown', (e) => {
+                            if (e.key === 'Backspace' && !e.target.value) {
+                                e.preventDefault();
+                                retreatFocus(r, c);
+                            } else if (e.key === 'ArrowRight') {
+                                focusCell(r, c + 1);
+                            } else if (e.key === 'ArrowLeft') {
+                                focusCell(r, c - 1);
+                            } else if (e.key === 'ArrowDown') {
+                                focusCell(r + 1, c);
+                            } else if (e.key === 'ArrowUp') {
+                                focusCell(r - 1, c);
+                            }
+                        });
+                    }
+                    
+                    gridMap[key].charData.push({
+                        wordIndex: wordIndex,
+                        char: w.word[i]
+                    });
+                    
+                    if (w.direction === 'across') c++;
+                    else r++;
+                }
+            });
+        }
+        
+        let lastDirection = 'across'; // Helps guess which way to advance
+
+        function advanceFocus(r, c) {
+            // Very basic auto-advance
+            if (gridMap[`${r}-${c+1}`] && gridMap[`${r}-${c}`].charData.some(d => wordsData[d.wordIndex].direction === 'across')) {
+                gridMap[`${r}-${c+1}`].input.focus();
+            } else if (gridMap[`${r+1}-${c}`] && gridMap[`${r}-${c}`].charData.some(d => wordsData[d.wordIndex].direction === 'down')) {
+                gridMap[`${r+1}-${c}`].input.focus();
+            }
+        }
+        
+        function retreatFocus(r, c) {
+            if (gridMap[`${r}-${c-1}`]) {
+                gridMap[`${r}-${c-1}`].input.focus();
+                gridMap[`${r}-${c-1}`].input.value = '';
+            } else if (gridMap[`${r-1}-${c}`]) {
+                gridMap[`${r-1}-${c}`].input.focus();
+                gridMap[`${r-1}-${c}`].input.value = '';
+            }
+        }
+        
+        function focusCell(r, c) {
+            if (gridMap[`${r}-${c}`]) {
+                gridMap[`${r}-${c}`].input.focus();
+            }
+        }
+
+        function highlightWord(wordIndex, isHighlight) {
+            let w = wordsData[wordIndex];
+            let r = w.start_row;
+            let c = w.start_col;
+            for (let i = 0; i < w.word.length; i++) {
+                let key = `${r}-${c}`;
+                if (gridMap[key]) {
+                    if (isHighlight) {
+                        gridMap[key].wrapper.classList.add('bg-yellow-100');
+                    } else {
+                        gridMap[key].wrapper.classList.remove('bg-yellow-100');
+                    }
+                }
+                if (w.direction === 'across') c++;
+                else r++;
+            }
+        }
+
+        function checkAnswers() {
+            let correctWords = 0;
+            
+            // Clear previous styles
+            Object.values(gridMap).forEach(cell => {
+                cell.input.classList.remove('text-green-600', 'text-red-500');
+            });
+
+            wordsData.forEach((w, wordIndex) => {
+                let r = w.start_row;
+                let c = w.start_col;
+                let isWordCorrect = true;
+                
+                for (let i = 0; i < w.word.length; i++) {
+                    let key = `${r}-${c}`;
+                    let inputChar = gridMap[key].input.value.toUpperCase();
+                    let targetChar = w.word[i].toUpperCase();
+                    
+                    if (inputChar !== targetChar) {
+                        isWordCorrect = false;
+                        if (inputChar) gridMap[key].input.classList.add('text-red-500');
+                    } else {
+                        gridMap[key].input.classList.add('text-green-600');
+                    }
+                    
+                    if (w.direction === 'across') c++;
+                    else r++;
+                }
+                
+                let clueEl = document.getElementById(`clue-${wordIndex}`);
+                if (isWordCorrect) {
+                    correctWords++;
+                    clueEl.classList.add('text-green-600', 'line-through');
+                } else {
+                    clueEl.classList.remove('text-green-600', 'line-through');
+                }
+            });
+            
+            progressText.textContent = correctWords;
+            
+            if (correctWords === wordsData.length) {
+                successOverlay.classList.remove('hidden');
+            }
+        }
+
+        btnCheck.addEventListener('click', checkAnswers);
+
+        initGrid();
+
+    } catch(e) {
+        document.getElementById('crossword-grid').innerHTML = `<div class="p-4 text-red-500 bg-white font-bold">JS Error: ${e.message}</div>`;
+    }
+})();
+</script>
+{% endblock %}

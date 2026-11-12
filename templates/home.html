@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}BharatVerse - Home{% endblock %}
+
+{% block content %}
+<div class="relative bg-bharat-navy overflow-hidden flex items-center justify-center" id="hero-section"
+    style="min-height: 80vh;">
+    <!-- Background visual with Videos -->
+    <div class="absolute inset-0 z-0 bg-black">
+        <video id="bg-video-1"
+            class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-100" autoplay
+            loop muted playsinline>
+            <source src="{% static 'videos/video1.mp4' %}" type="video/mp4">
+        </video>
+        <video id="bg-video-2"
+            class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-0" autoplay loop
+            muted playsinline>
+            <source src="{% static 'videos/video2.mp4' %}" type="video/mp4">
+        </video>
+        <video id="bg-video-3"
+            class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-0" autoplay loop
+            muted playsinline>
+            <source src="{% static 'videos/video3.mp4' %}" type="video/mp4">
+        </video>
+        <!-- Overlay gradient to ensure text readability -->
+        <div class="absolute inset-0 bg-bharat-navy/60"></div>
+    </div>
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center w-full">
+        <h1 class="text-5xl md:text-7xl font-serif font-bold text-white mb-6 drop-shadow-md">
+            One India. <span class="text-bharat-amber">Thousands of Stories.</span>
+        </h1>
+        <p class="mt-4 text-xl text-gray-200 max-w-3xl mx-auto mb-10 font-light">
+            Discover the traditions, art, stories, food, festivals and living heritage that make India extraordinary.
+        </p>
+        <div class="flex justify-center gap-4">
+            <a href="{% url 'explore_india' %}"
+                class="bg-bharat-saffron hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition transform hover:-translate-y-1">
+                Explore India
+            </a>
+            <a href="{% url 'my_journey' %}"
+                class="bg-transparent border-2 border-bharat-amber text-bharat-amber hover:bg-bharat-amber hover:text-bharat-navy font-bold py-3 px-8 rounded-full shadow-lg transition">
+                Start My Cultural Journey
+            </a>
+            <!-- <a href="{% url 'games_hub' %}"
+                class="bg-bharat-navy border-2 border-white text-white hover:bg-white hover:text-bharat-navy font-bold py-3 px-8 rounded-full shadow-lg transition">
+                Play Games
+            </a> -->
+        </div>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <h2 class="text-3xl font-serif text-center mb-12 text-bharat-navy">Explore by Region</h2>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        {% for region in regions %}
+        <div
+            class="bg-white rounded-xl shadow-sm hover:shadow-md transition p-6 text-center cursor-pointer border border-gray-100 hover:border-bharat-saffron">
+            <h3 class="font-bold text-bharat-navy">{{ region }}</h3>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="bg-white py-16 border-t border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-serif text-center mb-12 text-bharat-navy">Featured Heritage</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {% for entry in featured_entries %}
+            <div class="rounded-2xl overflow-hidden shadow-lg border border-gray-100 bg-bharat-cream group">
+                <div class="h-48 bg-gray-200 w-full relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                    <span class="absolute bottom-4 left-4 text-white font-bold">{{ entry.category.name }}</span>
+                </div>
+                <div class="p-6">
+                    <div class="text-xs text-bharat-saffron font-bold uppercase tracking-wider mb-2">{{ entry.state.name
+                        }}</div>
+                    <h3 class="text-xl font-serif font-bold text-bharat-navy mb-2">{{ entry.title }}</h3>
+                    <p class="text-gray-600 text-sm mb-4 line-clamp-3">{{ entry.short_description }}</p>
+                    <a href="#" class="text-bharat-amber font-semibold hover:text-yellow-600">Read Cultural Story
+                        &rarr;</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const videos = [
+            document.getElementById('bg-video-1'),
+            document.getElementById('bg-video-2'),
+            document.getElementById('bg-video-3')
+        ];
+        let currentIndex = 0;
+
+        setInterval(() => {
+            if (videos[currentIndex] && videos[(currentIndex + 1) % videos.length]) {
+                // Fade out current
+                videos[currentIndex].classList.remove('opacity-100');
+                videos[currentIndex].classList.add('opacity-0');
+
+                // Move to next
+                currentIndex = (currentIndex + 1) % videos.length;
+
+                // Fade in next
+                videos[currentIndex].classList.remove('opacity-0');
+                videos[currentIndex].classList.add('opacity-100');
+            }
+        }, 5000); // Change video every 5 seconds
+    });
+</script>
+{% endblock %}

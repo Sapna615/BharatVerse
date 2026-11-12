@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}Preserve a Tradition - BharatVerse{% endblock %}
+{% block content %}
+<div class="bg-bharat-navy py-16 text-center">
+    <h1 class="text-4xl md:text-5xl font-serif font-bold text-white mb-4">Preserve a Tradition</h1>
+    <p class="text-xl text-gray-300 font-light max-w-3xl mx-auto">Every family has a story. Every community has a tradition. Help preserve yours.</p>
+</div>
+<div class="max-w-4xl mx-auto px-4 py-16">
+    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-8">
+        <p class="text-sm text-blue-800">
+            <strong>Privacy Notice:</strong> Do not submit private family information, sensitive personal data, or information belonging to another person without permission. Your submission will be reviewed by a curator before being published.
+        </p>
+    </div>
+    
+    <form method="POST" action="{% url 'contribute' %}" enctype="multipart/form-data" class="bg-white rounded-xl shadow-lg border border-gray-100 p-8 space-y-6">
+        {% csrf_token %}
+        <div>
+            <label class="block text-sm font-bold text-gray-700 mb-1">Title</label>
+            <input type="text" name="title" required class="w-full border-gray-300 rounded-md focus:ring-bharat-saffron focus:border-bharat-saffron" placeholder="A Traditional Harvest Celebration in My Village">
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">Category</label>
+                <select name="submission_type" required class="w-full border-gray-300 rounded-md focus:ring-bharat-saffron focus:border-bharat-saffron">
+                    <option value="tradition">Tradition & Living Heritage</option>
+                    <option value="story">Cultural Story & Folklore</option>
+                    <option value="oral_history">Oral History & Community Memory</option>
+                    <option value="literature">Book & Regional Literary Work</option>
+                    <option value="manuscript">Manuscript & Historical Document</option>
+                    <option value="traditional_practice">Traditional Knowledge System</option>
+                    <option value="festival">Festival & Sacred Celebration</option>
+                    <option value="cuisine">Indigenous Culinary Heritage</option>
+                    <option value="folk_art">Folk Art & Visual Painting</option>
+                    <option value="craft">Craft & Textile Weave</option>
+                    <option value="other">Other Cultural Memory</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">State</label>
+                <select name="state" required class="w-full border-gray-300 rounded-md focus:ring-bharat-saffron focus:border-bharat-saffron">
+                    <option value="">Select State</option>
+                    {% for s in states %}
+                    <option value="{{ s.name }}">{{ s.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        
+        <div>
+            <label class="block text-sm font-bold text-gray-700 mb-1">The Story / Description</label>
+            <textarea name="content" required rows="6" class="w-full border-gray-300 rounded-md focus:ring-bharat-saffron focus:border-bharat-saffron" placeholder="What is this cultural practice? Tell the story behind it..."></textarea>
+        </div>
+        
+        <div>
+            <label class="block text-sm font-bold text-gray-700 mb-1">Source / Reference Note (Optional)</label>
+            <input type="text" name="source_note" class="w-full border-gray-300 rounded-md focus:ring-bharat-saffron focus:border-bharat-saffron" placeholder="e.g. Learned from my grandmother">
+        </div>
+        
+        <div>
+            <label class="block text-sm font-bold text-gray-700 mb-1">Upload Image (Optional)</label>
+            <input type="file" name="image" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-bold file:bg-gray-100 file:text-bharat-navy hover:file:bg-gray-200">
+        </div>
+        
+        <div class="flex items-start">
+            <div class="flex items-center h-5">
+                <input id="consent" name="consent_given" type="checkbox" required class="focus:ring-bharat-saffron h-4 w-4 text-bharat-saffron border-gray-300 rounded">
+            </div>
+            <div class="ml-3 text-sm">
+                <label for="consent" class="font-medium text-gray-700">Contributor Consent</label>
+                <p class="text-gray-500">I confirm that I have permission to submit this content and that it does not intentionally contain private or sensitive personal information.</p>
+            </div>
+        </div>
+        
+        <div class="pt-6 border-t border-gray-100">
+            <button type="submit" class="w-full bg-bharat-saffron text-white font-bold py-4 rounded-xl shadow hover:bg-orange-600 transition text-lg">Submit for Review</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

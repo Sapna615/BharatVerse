@@ -1,0 +1,484 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Cultural Knowledge Graph - BharatVerse{% endblock %}
+
+{% block content %}
+<!-- Header Bar -->
+<div class="bg-gradient-to-r from-bharat-navy via-slate-900 to-indigo-950 text-white py-10 px-4 sm:px-6 lg:px-8 border-b border-gray-800">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+        <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-bharat-amber text-xs font-semibold uppercase tracking-wider mb-2">
+                <i class="fas fa-project-diagram"></i> Multi-Dimensional Living Heritage Graph
+            </div>
+            <h1 class="text-3xl md:text-4xl font-serif font-bold text-white tracking-tight">
+                BharatVerse <span class="text-bharat-amber">Cultural Knowledge Graph</span>
+            </h1>
+            <p class="text-sm md:text-base text-gray-300 font-light mt-1 max-w-2xl">
+                Explore verified interconnections between India's performing arts, textiles, music, oral epics, manuscripts, and regional traditions.
+            </p>
+        </div>
+
+        <!-- Quick State Filter & Search -->
+        <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+            <form method="GET" action="{% url 'knowledge_graph' %}" class="flex items-center gap-2 w-full sm:w-auto">
+                <select name="state" onchange="this.form.submit()" class="bg-gray-800 text-white text-xs border border-gray-700 rounded-xl px-3 py-2.5 focus:ring-amber-500 focus:border-amber-500">
+                    <option value="">All Regions & Pan-Indian Hub</option>
+                    {% for st in all_states %}
+                    <option value="{{ st.slug }}" {% if selected_state and selected_state.slug == st.slug %}selected{% endif %}>{{ st.name }}</option>
+                    {% endfor %}
+                </select>
+
+                <select name="category" onchange="this.form.submit()" class="bg-gray-800 text-white text-xs border border-gray-700 rounded-xl px-3 py-2.5 focus:ring-amber-500 focus:border-amber-500">
+                    <option value="">All Categories</option>
+                    {% for c in categories %}
+                    <option value="{{ c.slug }}" {% if category_filter == c.slug %}selected{% endif %}>{{ c.name }}</option>
+                    {% endfor %}
+                </select>
+
+                {% if selected_state or category_filter or search_q %}
+                <a href="{% url 'knowledge_graph' %}" class="text-xs text-red-400 hover:text-red-300 px-2 py-1 rounded bg-red-900/30 border border-red-800">
+                    <i class="fas fa-undo"></i> Reset
+                </a>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Graph Container with Interactive Canvas & Details Inspector -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <!-- Top Metrics and Filter Chips -->
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-4 text-xs text-gray-600 bg-white p-3 rounded-2xl border border-gray-200">
+        <div class="flex items-center gap-4">
+            <span class="font-bold text-gray-800 flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <strong>{{ nodes_count }}</strong> Cultural Nodes Active
+            </span>
+            <span>•</span>
+            <span class="font-bold text-indigo-700">
+                <strong>{{ edges_count }}</strong> Documented Edges
+            </span>
+            {% if selected_state %}
+            <span>•</span>
+            <span class="bg-amber-100 text-amber-900 font-bold px-2 py-0.5 rounded-md">
+                Focused: {{ selected_state.name }}
+            </span>
+            {% endif %}
+        </div>
+
+        <!-- Node Color Legend -->
+        <div class="hidden lg:flex items-center gap-3 text-[11px]">
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#f43f5e]"></span> Dance</span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#6366f1]"></span> Music</span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#10b981]"></span> Craft</span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#0284c7]"></span> Literature</span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#d97706]"></span> Sacred Texts</span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#ff9933]"></span> State Hub</span>
+        </div>
+    </div>
+
+    <!-- Main Workspace (Interactive Canvas Left + Inspector Right) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Interactive Graph Canvas Card (8 Cols) -->
+        <div class="lg:col-span-8 bg-slate-950 rounded-3xl p-3 border border-slate-800 shadow-2xl relative overflow-hidden flex flex-col" style="height: 620px; min-height: 620px;">
+            
+            <!-- Canvas Controls Overlay -->
+            <div class="absolute top-4 left-4 z-10 flex items-center gap-2">
+                <button onclick="resetGraphZoom()" class="bg-slate-900/80 hover:bg-slate-800 text-gray-200 text-xs px-3 py-1.5 rounded-lg border border-slate-700 backdrop-blur-sm transition flex items-center gap-1">
+                    <i class="fas fa-compress-arrows-alt"></i> Re-center
+                </button>
+                <button onclick="pauseResumeGraph()" id="physics-btn" class="bg-slate-900/80 hover:bg-slate-800 text-gray-200 text-xs px-3 py-1.5 rounded-lg border border-slate-700 backdrop-blur-sm transition flex items-center gap-1">
+                    <i class="fas fa-pause"></i> Freeze Force
+                </button>
+            </div>
+
+            <div class="absolute top-4 right-4 z-10 text-[11px] text-gray-400 bg-slate-900/80 px-2.5 py-1 rounded-md border border-slate-700/80 hidden sm:block">
+                <i class="fas fa-mouse-pointer text-amber-400 mr-1"></i> Drag nodes • Click to inspect • Scroll to zoom
+            </div>
+
+            <!-- Canvas Element -->
+            <canvas id="kgCanvas" class="w-full flex-grow cursor-grab active:cursor-grabbing rounded-2xl block" style="width: 100%; height: 100%;"></canvas>
+        </div>
+
+        <!-- Node & Relationship Inspector Panel (4 Cols) -->
+        <div class="lg:col-span-4 bg-white rounded-3xl p-6 border border-gray-200 shadow-sm flex flex-col justify-between" id="inspector-panel">
+            <div id="inspector-content">
+                <div class="pb-4 border-b border-gray-100 mb-4">
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-amber-600 block mb-1">Interactive Node Inspector</span>
+                    <h3 class="text-xl font-serif font-bold text-gray-900" id="node-title">
+                        {% if selected_state %}{{ selected_state.name }} (State Hub){% else %}Select a Node{% endif %}
+                    </h3>
+                    <p class="text-xs text-gray-500 mt-0.5" id="node-type">
+                        {% if selected_state %}Regional Heritage Hub{% else %}Click any circle on the graph to inspect its relationships{% endif %}
+                    </p>
+                </div>
+
+                <div class="space-y-4 text-xs" id="node-body">
+                    <div>
+                        <span class="text-gray-400 font-medium uppercase tracking-wider block mb-1">Cultural Summary</span>
+                        <p class="text-gray-700 leading-relaxed text-sm" id="node-summary">
+                            {% if selected_state %}
+                            {{ selected_state.cultural_summary|default:selected_state.description }}
+                            {% else %}
+                            BharatVerse Cultural Knowledge Graph networks live connections between Indian performing arts, handloom weaving techniques, classical poetry, musical ragas, and shared civilisational motifs.
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <div class="pt-3 border-t border-gray-100" id="connected-edges-box">
+                        <span class="text-gray-400 font-medium uppercase tracking-wider block mb-2">Connected Relationships:</span>
+                        <div class="space-y-2 max-h-56 overflow-y-auto pr-1" id="edges-list">
+                            <p class="text-gray-400 italic">Click a node to view its active relational links.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Direct Navigation Action -->
+            <div class="pt-4 border-t border-gray-100 mt-6" id="inspector-action">
+                <a href="{% if selected_state %}{% url 'state_detail' selected_state.slug %}{% else %}#{% endif %}" id="node-action-btn" class="w-full py-2.5 px-4 rounded-xl bg-bharat-navy hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition shadow">
+                    <span>Explore Complete Record</span> &rarr;
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Accessible List View Fallback & Breadth Table -->
+    <div class="mt-12 bg-white rounded-3xl p-6 md:p-8 border border-gray-200 shadow-sm">
+        <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-6">
+            <div>
+                <h3 class="text-xl font-serif font-bold text-bharat-navy">Documented Cultural Node Directory</h3>
+                <p class="text-xs text-gray-500 mt-0.5">High-contrast accessible view for screen readers and keyboard navigation</p>
+            </div>
+            <span class="text-xs text-gray-400">Total Nodes: {{ nodes_count }}</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for n in nodes_list %}
+            <div class="p-3.5 rounded-2xl bg-gray-50 hover:bg-amber-50/60 border border-gray-200/80 transition flex items-start gap-3">
+                <span class="w-3.5 h-3.5 rounded-full mt-1 shrink-0" style="background-color: {{ n.color }};"></span>
+                <div class="min-w-0 flex-1">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">{{ n.type }} {% if n.state %}• {{ n.state }}{% endif %}</span>
+                    <h4 class="text-xs font-bold text-gray-900 truncate">
+                        <a href="{{ n.url }}" class="hover:text-bharat-saffron transition">{{ n.label }}</a>
+                    </h4>
+                    <p class="text-[11px] text-gray-500 line-clamp-1 mt-0.5">{{ n.summary }}</p>
+                </div>
+                <a href="{{ n.url }}" class="text-gray-400 hover:text-bharat-navy text-xs mt-1 shrink-0">
+                    <i class="fas fa-external-link-alt"></i>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+
+<!-- Force-Directed Physics Graph Engine (Lightweight Vanilla Canvas) -->
+<script>
+const rawNodes = {{ nodes_json|safe }};
+const rawEdges = {{ edges_json|safe }};
+
+const canvas = document.getElementById('kgCanvas');
+const ctx = canvas.getContext('2d');
+
+let width = 800;
+let height = 600;
+
+function updateDimensions() {
+    const rect = canvas.getBoundingClientRect();
+    width = rect.width || canvas.parentElement.clientWidth || 800;
+    height = rect.height || canvas.parentElement.clientHeight || 600;
+    canvas.width = width;
+    canvas.height = height;
+}
+
+updateDimensions();
+window.addEventListener('resize', updateDimensions);
+
+// Initialize simulation nodes with safe bounded coordinates
+const nodeMap = {};
+const nodes = rawNodes.map((n, i) => {
+    const angle = (i / Math.max(rawNodes.length, 1)) * 2 * Math.PI;
+    const dist = 110 + (i % 3) * 35;
+    const nodeObj = {
+        ...n,
+        x: (width / 2) + Math.cos(angle) * dist,
+        y: (height / 2) + Math.sin(angle) * dist,
+        vx: 0,
+        vy: 0,
+        radius: n.radius || 18
+    };
+    nodeMap[n.id] = nodeObj;
+    return nodeObj;
+});
+
+const edges = rawEdges.map(e => ({
+    ...e,
+    sourceNode: nodeMap[e.source],
+    targetNode: nodeMap[e.target]
+})).filter(e => e.sourceNode && e.targetNode);
+
+let isPhysicsRunning = true;
+let draggedNode = null;
+let selectedNode = nodes.length > 0 ? nodes[0] : null;
+
+// Camera pan & zoom
+let transform = { x: 0, y: 0, scale: 1 };
+let isPanning = false;
+let startPan = { x: 0, y: 0 };
+
+function simulatePhysics() {
+    if (!isPhysicsRunning || nodes.length === 0) return;
+
+    const cx = width / 2;
+    const cy = height / 2;
+
+    // 1. Gentle Centering Gravity
+    nodes.forEach(n => {
+        n.vx += (cx - n.x) * 0.004;
+        n.vy += (cy - n.y) * 0.004;
+    });
+
+    // 2. Smooth Clamped Coulomb Repulsion
+    for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+            const a = nodes[i];
+            const b = nodes[j];
+            let dx = b.x - a.x;
+            let dy = b.y - a.y;
+            let dist = Math.hypot(dx, dy);
+            if (dist < 1) { dx = 1; dy = 0; dist = 1; }
+
+            const k = 1600;
+            const force = Math.min(k / (dist * dist), 8);
+            const fx = (dx / dist) * force;
+            const fy = (dy / dist) * force;
+
+            a.vx -= fx;
+            a.vy -= fy;
+            b.vx += fx;
+            b.vy += fy;
+        }
+    }
+
+    // 3. Elastic Spring Tension along Edges
+    edges.forEach(e => {
+        const dx = e.targetNode.x - e.sourceNode.x;
+        const dy = e.targetNode.y - e.sourceNode.y;
+        const dist = Math.hypot(dx, dy) || 1;
+        const targetDist = 135;
+        const delta = dist - targetDist;
+        const force = delta * 0.025;
+        const fx = (dx / dist) * force;
+        const fy = (dy / dist) * force;
+
+        e.sourceNode.vx += fx;
+        e.sourceNode.vy += fy;
+        e.targetNode.vx -= fx;
+        e.targetNode.vy -= fy;
+    });
+
+    // 4. Velocity Clamping, Friction Damping, & Safety Sanity Check
+    const maxSpeed = 8;
+    nodes.forEach(n => {
+        if (n !== draggedNode) {
+            const speed = Math.hypot(n.vx, n.vy);
+            if (speed > maxSpeed) {
+                n.vx = (n.vx / speed) * maxSpeed;
+                n.vy = (n.vy / speed) * maxSpeed;
+            }
+            n.vx *= 0.84;
+            n.vy *= 0.84;
+            
+            // Check for NaN safety
+            if (!isNaN(n.vx) && !isNaN(n.vy)) {
+                n.x += n.vx;
+                n.y += n.vy;
+            } else {
+                n.vx = 0;
+                n.vy = 0;
+            }
+        }
+    });
+}
+
+function renderGraph() {
+    simulatePhysics();
+
+    ctx.save();
+    ctx.clearRect(0, 0, width, height);
+
+    ctx.translate(transform.x, transform.y);
+    ctx.scale(transform.scale, transform.scale);
+
+    // Draw Edges
+    edges.forEach(e => {
+        const isHighlight = selectedNode && (e.sourceNode === selectedNode || e.targetNode === selectedNode);
+        ctx.beginPath();
+        ctx.moveTo(e.sourceNode.x, e.sourceNode.y);
+        ctx.lineTo(e.targetNode.x, e.targetNode.y);
+        ctx.strokeStyle = isHighlight ? '#f59e0b' : 'rgba(148, 163, 184, 0.28)';
+        ctx.lineWidth = isHighlight ? 2.5 : 1;
+        ctx.stroke();
+
+        // Edge label if highlighted
+        if (isHighlight) {
+            const mx = (e.sourceNode.x + e.targetNode.x) / 2;
+            const my = (e.sourceNode.y + e.targetNode.y) / 2;
+            ctx.fillStyle = '#fef3c7';
+            ctx.font = '10px Inter, sans-serif';
+            ctx.fillText(e.label, mx + 4, my - 4);
+        }
+    });
+
+    // Draw Nodes
+    nodes.forEach(n => {
+        const isSelected = selectedNode === n;
+
+        // Outer glow on selection
+        if (isSelected) {
+            ctx.beginPath();
+            ctx.arc(n.x, n.y, n.radius + 6, 0, 2 * Math.PI);
+            ctx.fillStyle = 'rgba(245, 158, 11, 0.35)';
+            ctx.fill();
+        }
+
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.radius, 0, 2 * Math.PI);
+        ctx.fillStyle = n.color || '#3b82f6';
+        ctx.fill();
+        ctx.lineWidth = isSelected ? 3 : 1.5;
+        ctx.strokeStyle = isSelected ? '#ffffff' : 'rgba(255, 255, 255, 0.4)';
+        ctx.stroke();
+
+        // Label
+        ctx.fillStyle = isSelected ? '#fbbf24' : '#e2e8f0';
+        ctx.font = (isSelected ? 'bold 12px' : '10px') + ' Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(n.label, n.x, n.y + n.radius + 14);
+    });
+
+    ctx.restore();
+    requestAnimationFrame(renderGraph);
+}
+
+// Interaction Handlers
+function getCanvasMousePos(e) {
+    const rect = canvas.getBoundingClientRect();
+    const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+    const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+    const mouseX = clientX - rect.left;
+    const mouseY = clientY - rect.top;
+    return {
+        x: (mouseX - transform.x) / transform.scale,
+        y: (mouseY - transform.y) / transform.scale,
+        rawX: mouseX,
+        rawY: mouseY
+    };
+}
+
+canvas.addEventListener('mousedown', (e) => {
+    const pos = getCanvasMousePos(e);
+    let clicked = null;
+    for (let i = nodes.length - 1; i >= 0; i--) {
+        const n = nodes[i];
+        const dist = Math.hypot(n.x - pos.x, n.y - pos.y);
+        if (dist <= n.radius + 4) {
+            clicked = n;
+            break;
+        }
+    }
+
+    if (clicked) {
+        draggedNode = clicked;
+        selectNode(clicked);
+    } else {
+        isPanning = true;
+        startPan = { x: pos.rawX - transform.x, y: pos.rawY - transform.y };
+    }
+});
+
+canvas.addEventListener('mousemove', (e) => {
+    const pos = getCanvasMousePos(e);
+    if (draggedNode) {
+        draggedNode.x = pos.x;
+        draggedNode.y = pos.y;
+    } else if (isPanning) {
+        transform.x = pos.rawX - startPan.x;
+        transform.y = pos.rawY - startPan.y;
+    }
+});
+
+window.addEventListener('mouseup', () => {
+    draggedNode = null;
+    isPanning = false;
+});
+
+canvas.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
+    transform.scale = Math.min(Math.max(transform.scale * zoomFactor, 0.4), 3.0);
+}, { passive: false });
+
+function selectNode(node) {
+    selectedNode = node;
+    document.getElementById('node-title').innerText = node.label;
+    document.getElementById('node-type').innerText = `${node.type}${node.state ? ' • ' + node.state : ''}`;
+    document.getElementById('node-summary').innerText = node.summary || 'Verified cultural knowledge node.';
+
+    const actionBtn = document.getElementById('node-action-btn');
+    if (node.url) {
+        actionBtn.href = node.url;
+        actionBtn.classList.remove('hidden');
+    } else {
+        actionBtn.classList.add('hidden');
+    }
+
+    // Render connected edges
+    const edgesList = document.getElementById('edges-list');
+    const connectedEdges = edges.filter(e => e.sourceNode === node || e.targetNode === node);
+
+    if (connectedEdges.length === 0) {
+        edgesList.innerHTML = '<p class="text-gray-400 italic">No direct connections within current filter view.</p>';
+    } else {
+        edgesList.innerHTML = connectedEdges.map(e => {
+            const peer = e.sourceNode === node ? e.targetNode : e.sourceNode;
+            return `
+                <div class="p-2 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-between">
+                    <div>
+                        <span class="text-[10px] uppercase font-bold text-amber-700 block">${e.label}</span>
+                        <strong class="text-xs text-gray-800">${peer.label}</strong>
+                    </div>
+                    <a href="${peer.url || '#'}" class="text-xs font-bold text-bharat-navy hover:text-amber-600 transition">
+                        View &rarr;
+                    </a>
+                </div>
+            `;
+        }).join('');
+    }
+}
+
+function resetGraphZoom() {
+    transform = { x: 0, y: 0, scale: 1 };
+    isPhysicsRunning = true;
+    document.getElementById('physics-btn').innerHTML = '<i class="fas fa-pause"></i> Freeze Force';
+}
+
+function pauseResumeGraph() {
+    isPhysicsRunning = !isPhysicsRunning;
+    document.getElementById('physics-btn').innerHTML = isPhysicsRunning ? 
+        '<i class="fas fa-pause"></i> Freeze Force' : '<i class="fas fa-play"></i> Run Physics';
+}
+
+// Start simulation
+if (nodes.length > 0) {
+    selectNode(nodes[0]);
+}
+requestAnimationFrame(renderGraph);
+</script>
+{% endblock %}

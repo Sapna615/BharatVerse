@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}Curator Dashboard{% endblock %}
+{% block content %}
+<div class="bg-gray-900 py-12 text-center">
+    <h1 class="text-4xl font-serif font-bold text-white mb-2">BharatVerse Curator Console</h1>
+    <p class="text-gray-400 font-light">Review, preserve and responsibly publish India's cultural memories.</p>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 py-12 flex flex-col md:flex-row gap-8">
+    <!-- Sidebar -->
+    <div class="w-full md:w-1/4 space-y-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h3 class="font-bold text-gray-800 border-b border-gray-100 pb-3 mb-3">Moderation Queue</h3>
+            <ul class="space-y-2">
+                <li><a href="?status=pending" class="flex justify-between items-center text-sm font-bold {% if status_filter == 'pending' %}text-blue-600{% else %}text-gray-600 hover:text-gray-900{% endif %}">Pending <span class="bg-blue-100 text-blue-700 py-0.5 px-2 rounded">{{ counts.pending }}</span></a></li>
+                <li><a href="?status=approved" class="flex justify-between items-center text-sm font-bold {% if status_filter == 'approved' %}text-green-600{% else %}text-gray-600 hover:text-gray-900{% endif %}">Approved <span class="bg-green-100 text-green-700 py-0.5 px-2 rounded">{{ counts.approved }}</span></a></li>
+                <li><a href="?status=rejected" class="flex justify-between items-center text-sm font-bold {% if status_filter == 'rejected' %}text-red-600{% else %}text-gray-600 hover:text-gray-900{% endif %}">Rejected <span class="bg-red-100 text-red-700 py-0.5 px-2 rounded">{{ counts.rejected }}</span></a></li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Main -->
+    <div class="w-full md:w-3/4">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="p-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+                <h3 class="font-bold text-gray-800 capitalize">{{ status_filter }} Submissions</h3>
+                <form method="GET" class="flex">
+                    <input type="hidden" name="status" value="{{ status_filter }}">
+                    <input type="text" name="q" value="{{ q }}" placeholder="Search ID or Title..." class="border border-gray-300 rounded-l text-sm p-2 w-64">
+                    <button type="submit" class="bg-gray-800 text-white px-3 py-2 rounded-r text-sm font-bold">Search</button>
+                </form>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-gray-600">
+                    <thead class="bg-gray-50 text-gray-700 text-xs uppercase border-b border-gray-200">
+                        <tr>
+                            <th class="p-4">ID</th>
+                            <th class="p-4">Title / Contributor</th>
+                            <th class="p-4">Type / State</th>
+                            <th class="p-4">Date</th>
+                            <th class="p-4">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        {% for sub in subs %}
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="p-4 font-mono font-bold text-gray-500">BV-SUB-{{ sub.id|stringformat:"06d" }}</td>
+                            <td class="p-4">
+                                <div class="font-bold text-gray-900">{{ sub.title }}</div>
+                                <div class="text-xs text-gray-500">by {{ sub.contributor.username }}</div>
+                            </td>
+                            <td class="p-4">
+                                <div class="font-bold">{{ sub.get_submission_type_display }}</div>
+                                <div class="text-xs">{{ sub.state }}</div>
+                            </td>
+                            <td class="p-4 text-xs">{{ sub.created_at|date:"M d, Y" }}</td>
+                            <td class="p-4">
+                                {% if sub.moderation_status == 'pending' %}
+                                <a href="{% url 'curator_review' sub.id %}" class="bg-indigo-600 text-white font-bold py-1.5 px-3 rounded text-xs shadow-sm hover:bg-indigo-700 transition">Review</a>
+                                {% else %}
+                                <a href="{% url 'curator_review' sub.id %}" class="bg-gray-600 text-white font-bold py-1.5 px-3 rounded text-xs shadow-sm hover:bg-gray-700 transition">View Details</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="p-8 text-center text-gray-500">No submissions found in this queue.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

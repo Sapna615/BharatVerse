@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Quests{% endblock %}
+{% block content %}
+<div class="bg-bharat-navy py-12 text-center">
+    <h1 class="text-4xl font-serif font-bold text-white mb-2">Cultural Quests</h1>
+    <p class="text-gray-300 font-light">Turn exploration into an adventure.</p>
+</div>
+<div class="max-w-4xl mx-auto px-4 py-16 space-y-6">
+    {% for data in quest_data %}
+    <div class="bg-white rounded-xl shadow p-6 border border-gray-100 flex flex-col md:flex-row items-center gap-6">
+        <div class="flex-grow">
+            <h3 class="text-xl font-bold text-bharat-navy mb-1">{{ data.quest.title }}</h3>
+            <p class="text-sm text-gray-600 mb-4">{{ data.quest.requirement }}</p>
+            <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
+                <div class="bg-bharat-saffron h-2 rounded-full" style="width: {{ data.progress.percentage }}%"></div>
+            </div>
+            <div class="text-xs text-gray-500 font-bold">{{ data.progress.current }} / {{ data.progress.target }} Completed</div>
+        </div>
+        <div class="shrink-0 text-center">
+            <div class="text-lg font-black text-bharat-amber mb-2">+{{ data.quest.xp }} XP</div>
+            {% if data.progress.completed %}
+            <span class="bg-green-100 text-green-700 font-bold px-4 py-2 rounded shadow-sm block">Completed</span>
+            {% else %}
+            <button class="bg-bharat-navy text-white font-bold px-4 py-2 rounded shadow hover:bg-gray-800 transition">Continue</button>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

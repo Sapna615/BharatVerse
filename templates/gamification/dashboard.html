@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Gamification Dashboard{% endblock %}
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 py-16">
+    <div class="bg-bharat-navy rounded-2xl shadow p-8 text-center text-white mb-12">
+        <h1 class="text-4xl font-serif font-bold mb-2">Your Cultural Progress</h1>
+        <p class="text-bharat-saffron font-bold uppercase tracking-widest text-sm mb-6">{{ level_name }}</p>
+        <div class="text-5xl font-black mb-4">{{ user.xp }} <span class="text-xl text-gray-400 font-normal">XP</span></div>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <h3 class="text-xl font-bold text-bharat-navy mb-4">Recent XP Activity</h3>
+            <div class="space-y-4">
+                {% for tx in transactions %}
+                <div class="flex justify-between items-center pb-2 border-b border-gray-50">
+                    <span class="text-sm text-gray-600">{{ tx.reason }}</span>
+                    <span class="text-sm font-bold text-green-600">+{{ tx.amount }} XP</span>
+                </div>
+                {% empty %}
+                <p class="text-sm text-gray-500 italic">No XP activity yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <h3 class="text-xl font-bold text-bharat-navy mb-4">Recent Achievements</h3>
+            <div class="space-y-4">
+                {% for a in achievements %}
+                <div class="flex items-center gap-4 bg-gray-50 p-3 rounded">
+                    <div class="w-10 h-10 rounded-full bg-bharat-amber flex items-center justify-center text-white text-lg font-bold shadow">🏆</div>
+                    <div>
+                        <div class="font-bold text-bharat-navy text-sm">{{ a.achievement.name }}</div>
+                        <div class="text-xs text-gray-500">{{ a.achievement.description }}</div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-sm text-gray-500 italic">No achievements unlocked yet.</p>
+                {% endfor %}
+            </div>
+            <a href="{% url 'achievements_list' %}" class="block mt-4 text-sm font-bold text-bharat-saffron hover:underline">View All Achievements &rarr;</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

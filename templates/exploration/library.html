@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Digital Library & Cultural Archives - BharatVerse{% endblock %}
+
+{% block content %}
+<!-- Hero Header -->
+<div class="relative bg-gradient-to-br from-bharat-navy via-slate-900 to-indigo-950 text-white py-16 px-4 sm:px-6 lg:px-8 border-b border-amber-900/40">
+    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#d97706_1px,transparent_1px)] [background-size:24px_24px]"></div>
+    <div class="relative max-w-7xl mx-auto text-center">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-bharat-amber text-xs font-semibold uppercase tracking-wider mb-4">
+            <i class="fas fa-book-reader"></i> Literary Traditions • Manuscripts • Oral Heritage
+        </div>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white tracking-tight mb-4">
+            BharatVerse <span class="text-bharat-amber">Digital Library</span>
+        </h1>
+        <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-300 font-light leading-relaxed">
+            Preserving and connecting India's classical literature, sacred scriptures, philosophical treatises, ancient manuscripts, and living oral folklore in an interactive cultural learning sanctuary.
+        </p>
+
+        <!-- Search Bar -->
+        <div class="mt-8 max-w-2xl mx-auto">
+            <form method="GET" action="{% url 'digital_library' %}" class="flex items-center bg-white/10 backdrop-blur-md p-1.5 rounded-2xl border border-white/20 shadow-2xl focus-within:border-bharat-amber transition">
+                <i class="fas fa-search text-gray-400 ml-4 mr-2"></i>
+                <input type="text" name="q" value="{{ selected_q }}" placeholder="Search by title, author, language (e.g. Tamil, Gurmukhi, Awadhi), or tradition..." class="w-full bg-transparent border-0 text-white placeholder-gray-400 focus:outline-none focus:ring-0 px-2 py-2 text-sm md:text-base">
+                {% if selected_type %}<input type="hidden" name="type" value="{{ selected_type }}">{% endif %}
+                {% if selected_language %}<input type="hidden" name="language" value="{{ selected_language }}">{% endif %}
+                {% if selected_state %}<input type="hidden" name="state" value="{{ selected_state }}">{% endif %}
+                <button type="submit" class="bg-gradient-to-r from-bharat-saffron to-bharat-amber text-slate-900 font-bold px-6 py-2.5 rounded-xl hover:shadow-lg hover:scale-105 active:scale-95 transition-all text-sm shrink-0">
+                    Explore
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Category Tabs & Dynamic Filters -->
+<div class="bg-white border-b border-gray-200 sticky top-16 z-30 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between py-3 overflow-x-auto gap-4 scrollbar-none">
+            <!-- Work Type Pills -->
+            <div class="flex items-center space-x-2 shrink-0">
+                <a href="{% url 'digital_library' %}" class="px-3.5 py-1.5 rounded-full text-xs font-semibold transition {% if not selected_type %}bg-bharat-navy text-white shadow-sm{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                    All Collections ({{ total_count }})
+                </a>
+                {% for code, label in work_types %}
+                <a href="?type={{ code }}{% if selected_q %}&q={{ selected_q }}{% endif %}{% if selected_language %}&language={{ selected_language }}{% endif %}{% if selected_state %}&state={{ selected_state }}{% endif %}" 
+                   class="px-3.5 py-1.5 rounded-full text-xs font-semibold transition whitespace-nowrap {% if selected_type == code %}bg-bharat-amber text-slate-900 font-bold shadow-sm{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                    {% if code == 'book' %}<i class="fas fa-book mr-1 text-xs"></i>{% elif code == 'sacred_text' %}<i class="fas fa-om mr-1 text-xs"></i>{% elif code == 'manuscript' %}<i class="fas fa-scroll mr-1 text-xs"></i>{% elif code == 'oral_tradition' %}<i class="fas fa-microphone-alt mr-1 text-xs"></i>{% elif code == 'treatise' %}<i class="fas fa-seedling mr-1 text-xs"></i>{% endif %}
+                    {{ label }}
+                </a>
+                {% endfor %}
+            </div>
+
+            <!-- Secondary Dropdowns (Language & State) -->
+            <form method="GET" action="{% url 'digital_library' %}" class="flex items-center gap-2 shrink-0">
+                {% if selected_q %}<input type="hidden" name="q" value="{{ selected_q }}">{% endif %}
+                {% if selected_type %}<input type="hidden" name="type" value="{{ selected_type }}">{% endif %}
+                
+                <select name="language" onchange="this.form.submit()" class="text-xs bg-gray-50 border border-gray-300 rounded-lg px-2.5 py-1.5 text-gray-700 focus:ring-amber-500 focus:border-amber-500">
+                    <option value="">All Languages</option>
+                    {% for lang in languages %}
+                    <option value="{{ lang }}" {% if selected_language == lang %}selected{% endif %}>{{ lang }}</option>
+                    {% endfor %}
+                </select>
+
+                <select name="state" onchange="this.form.submit()" class="text-xs bg-gray-50 border border-gray-300 rounded-lg px-2.5 py-1.5 text-gray-700 focus:ring-amber-500 focus:border-amber-500">
+                    <option value="">All Regions / States</option>
+                    {% for st in states %}
+                    <option value="{{ st.slug }}" {% if selected_state == st.slug %}selected{% endif %}>{{ st.name }}</option>
+                    {% endfor %}
+                </select>
+
+                {% if selected_type or selected_language or selected_state or selected_q %}
+                <a href="{% url 'digital_library' %}" class="text-xs text-red-600 hover:text-red-800 font-medium px-2 py-1 rounded hover:bg-red-50">
+                    <i class="fas fa-times-circle"></i> Reset
+                </a>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content Grid -->
+<div class="bg-amber-50/30 min-h-screen py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Filter Summary Bar -->
+        <div class="flex items-center justify-between mb-8 pb-4 border-b border-gray-200">
+            <div>
+                <h2 class="text-2xl font-serif font-bold text-bharat-navy">
+                    Archived Literary Works & Treatises
+                </h2>
+                <p class="text-sm text-gray-600 mt-1">
+                    Showing {{ works|length }} verified cultural work{{ works|length|pluralize }} preserved with attribution and contextual relationships.
+                </p>
+            </div>
+            <div class="hidden sm:flex items-center gap-2 text-xs text-gray-500">
+                <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Public Domain / Educational Reading</span>
+                <span class="inline-flex items-center gap-1 ml-3"><span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span> Living Heritage</span>
+            </div>
+        </div>
+
+        <!-- Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for item in works %}
+            <div class="group bg-white rounded-2xl overflow-hidden border border-gray-200/90 shadow-sm hover:shadow-xl hover:border-amber-400 transition-all duration-300 flex flex-col">
+                
+                <!-- Card Header Accent -->
+                <div class="p-6 pb-4 bg-gradient-to-r {% if item.work_type == 'sacred_text' %}from-amber-500/10 to-orange-500/10 border-b border-amber-100{% elif item.work_type == 'manuscript' %}from-indigo-500/10 to-purple-500/10 border-b border-indigo-100{% elif item.work_type == 'oral_tradition' %}from-rose-500/10 to-pink-500/10 border-b border-rose-100{% else %}from-slate-50 to-amber-50/50 border-b border-gray-100{% endif %}">
+                    <div class="flex items-start justify-between gap-2 mb-2">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold 
+                            {% if item.work_type == 'sacred_text' %}bg-amber-100 text-amber-900
+                            {% elif item.work_type == 'manuscript' %}bg-purple-100 text-purple-900
+                            {% elif item.work_type == 'oral_tradition' %}bg-rose-100 text-rose-900
+                            {% elif item.work_type == 'treatise' %}bg-emerald-100 text-emerald-900
+                            {% else %}bg-blue-100 text-blue-900{% endif %}">
+                            {{ item.get_work_type_display }}
+                        </span>
+                        
+                        <span class="text-xs font-medium text-gray-500 bg-white/80 px-2 py-0.5 rounded-md border border-gray-200">
+                            {{ item.get_classification_type_display }}
+                        </span>
+                    </div>
+
+                    <h3 class="text-xl font-serif font-bold text-gray-900 group-hover:text-bharat-navy transition line-clamp-2">
+                        <a href="{% url 'library_detail' item.slug %}">
+                            {{ item.title }}
+                        </a>
+                    </h3>
+
+                    <p class="text-xs text-amber-900/80 font-medium mt-1 flex items-center gap-1.5">
+                        <i class="fas fa-feather-alt text-amber-600"></i>
+                        <span>{{ item.author_creator|default:"Traditional / Living Folk Authorship" }}</span>
+                    </p>
+                </div>
+
+                <!-- Card Body -->
+                <div class="p-6 pt-4 flex-1 flex flex-col justify-between">
+                    <div>
+                        <!-- Metadata Badges -->
+                        <div class="flex flex-wrap gap-1.5 text-xs text-gray-600 mb-3">
+                            <span class="bg-gray-100 px-2 py-0.5 rounded font-medium text-gray-700">
+                                <i class="fas fa-language text-gray-400 mr-1"></i>{{ item.language }}
+                            </span>
+                            {% if item.historical_period %}
+                            <span class="bg-gray-100 px-2 py-0.5 rounded text-gray-600">
+                                <i class="fas fa-hourglass-half text-gray-400 mr-1"></i>{{ item.historical_period }}
+                            </span>
+                            {% endif %}
+                            {% if item.state %}
+                            <span class="bg-amber-50 text-amber-800 px-2 py-0.5 rounded border border-amber-200/50">
+                                <i class="fas fa-map-marker-alt text-amber-600 mr-1"></i>{{ item.state.name }}
+                            </span>
+                            {% else %}
+                            <span class="bg-indigo-50 text-indigo-800 px-2 py-0.5 rounded border border-indigo-200/50">
+                                <i class="fas fa-globe-asia text-indigo-500 mr-1"></i>Pan-Indian / Civilisational
+                            </span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Synopsis -->
+                        <p class="text-sm text-gray-600 line-clamp-3 leading-relaxed mb-4">
+                            {{ item.brief_intro }}
+                        </p>
+                    </div>
+
+                    <!-- Cultural Relationship Links & Action Button -->
+                    <div class="pt-4 border-t border-gray-100 mt-auto">
+                        {% if item.related_entries.all %}
+                        <div class="mb-3">
+                            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block mb-1">Connected Traditions:</span>
+                            <div class="flex flex-wrap gap-1">
+                                {% for rel in item.related_entries.all|slice:":2" %}
+                                <a href="{% url 'cultural_entry_detail' rel.slug %}" class="text-[11px] bg-slate-100 hover:bg-amber-100 text-slate-700 hover:text-amber-900 px-2 py-0.5 rounded transition">
+                                    {{ rel.title }}
+                                </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div class="flex items-center justify-between pt-1">
+                            <a href="{% url 'library_detail' item.slug %}" class="inline-flex items-center text-sm font-bold text-bharat-navy hover:text-bharat-saffron group-hover:translate-x-1 transition-transform">
+                                Read in Digital Room &rarr;
+                            </a>
+                            {% if item.external_reading_url %}
+                            <span class="text-xs text-gray-400" title="Public domain archive edition available">
+                                <i class="fas fa-external-link-alt text-emerald-600"></i> Open Access
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            {% empty %}
+            <div class="col-span-full py-16 text-center bg-white rounded-2xl border border-dashed border-gray-300 p-8">
+                <div class="w-16 h-16 bg-amber-100 text-amber-700 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <h3 class="text-xl font-serif font-bold text-gray-800 mb-2">No library items found</h3>
+                <p class="text-gray-500 max-w-md mx-auto text-sm mb-6">
+                    Try adjusting your search terms or filter selections to uncover books, manuscripts, and scriptures.
+                </p>
+                <a href="{% url 'digital_library' %}" class="inline-flex items-center px-4 py-2 rounded-xl bg-bharat-navy text-white text-sm font-semibold hover:bg-slate-800 transition">
+                    View Complete Library
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,330 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ work.title }} - BharatVerse Digital Reading Room{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb Header -->
+<div class="bg-slate-900 border-b border-gray-800 text-gray-300 py-4 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto flex items-center justify-between text-xs sm:text-sm">
+        <div class="flex items-center space-x-2 truncate">
+            <a href="/" class="hover:text-white transition">Home</a>
+            <span>&rsaquo;</span>
+            <a href="{% url 'digital_library' %}" class="hover:text-white transition">Cultural Library</a>
+            <span>&rsaquo;</span>
+            <span class="text-bharat-amber truncate">{{ work.title }}</span>
+        </div>
+        <div class="flex items-center space-x-3 shrink-0">
+            <span class="px-2.5 py-1 rounded bg-amber-500/10 text-bharat-amber border border-amber-500/20 font-medium">
+                {{ work.get_work_type_display }}
+            </span>
+            <span class="text-gray-400 hidden sm:inline">•</span>
+            <span class="text-gray-400 hidden sm:inline">{{ work.get_classification_type_display }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- Main Detail Section -->
+<div class="bg-amber-50/20 min-h-screen py-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Left Column: Primary Work Presentation & Reading Room (8 cols) -->
+            <div class="lg:col-span-8 space-y-8">
+                
+                <!-- Title & Meta Header Card -->
+                <div class="bg-white rounded-3xl p-8 border border-gray-200 shadow-sm relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-amber-100/50 to-transparent rounded-bl-full pointer-events-none"></div>
+                    
+                    <div class="flex flex-wrap items-center gap-2 mb-3">
+                        <span class="bg-bharat-navy text-white text-xs font-bold px-3 py-1 rounded-full">
+                            {{ work.tradition }}
+                        </span>
+                        {% if work.state %}
+                        <a href="{% url 'state_detail' work.state.slug %}" class="bg-amber-100 hover:bg-amber-200 text-amber-900 text-xs font-semibold px-3 py-1 rounded-full transition flex items-center gap-1">
+                            <i class="fas fa-map-marker-alt"></i> {{ work.state.name }}
+                        </a>
+                        {% else %}
+                        <span class="bg-indigo-100 text-indigo-900 text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
+                            <i class="fas fa-globe-asia"></i> Pan-Indian / National Epics & Philosophy
+                        </span>
+                        {% endif %}
+                        <span class="text-xs text-gray-500 bg-gray-100 px-2.5 py-1 rounded-full">
+                            <i class="fas fa-clock mr-1"></i>{{ work.historical_period }}
+                        </span>
+                    </div>
+
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-gray-900 tracking-tight leading-tight mb-3">
+                        {{ work.title }}
+                    </h1>
+
+                    <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600 pb-4 border-b border-gray-100">
+                        <div class="flex items-center gap-1.5 font-medium text-amber-900">
+                            <i class="fas fa-feather-alt text-amber-600"></i>
+                            <span>{{ work.author_creator|default:"Traditional Attribution / Folk Bardic Memory" }}</span>
+                        </div>
+                        <div>•</div>
+                        <div class="flex items-center gap-1.5">
+                            <i class="fas fa-language text-indigo-600"></i>
+                            <span>Language: <strong>{{ work.language }}</strong></span>
+                            {% if work.script %}<span class="text-gray-400 text-xs">({{ work.script }})</span>{% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Intro Callout -->
+                    <p class="text-base sm:text-lg text-gray-700 font-normal leading-relaxed mt-5 italic bg-amber-50/70 p-4 rounded-2xl border-l-4 border-bharat-amber">
+                        "{{ work.brief_intro }}"
+                    </p>
+                </div>
+
+                <!-- Digital Reading Room & Interactive Viewer -->
+                <div class="bg-white rounded-3xl p-8 border border-gray-200 shadow-sm" id="reading-room">
+                    <div class="flex items-center justify-between pb-4 border-b border-gray-200 mb-6 flex-wrap gap-4">
+                        <div class="flex items-center gap-2">
+                            <span class="w-8 h-8 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-sm">
+                                <i class="fas fa-book-open"></i>
+                            </span>
+                            <h2 class="text-xl font-serif font-bold text-gray-900">Digital Reading Room</h2>
+                        </div>
+
+                        <!-- Reader Utility Controls (Font resize, Mode toggle) -->
+                        <div class="flex items-center space-x-2 text-xs">
+                            <span class="text-gray-400 mr-1 hidden sm:inline">Text Size:</span>
+                            <button onclick="changeFontSize(-1)" class="w-7 h-7 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold transition" title="Decrease font size">A-</button>
+                            <button onclick="changeFontSize(1)" class="w-7 h-7 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold transition" title="Increase font size">A+</button>
+                            <button onclick="toggleReaderTheme()" class="px-2.5 py-1 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium transition flex items-center gap-1 ml-2" id="reader-mode-btn">
+                                <i class="fas fa-moon text-indigo-500"></i> Sepia / Dark
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Excerpt / Read-along Text Container -->
+                    {% if work.excerpt_content %}
+                    <div id="reader-canvas" class="p-6 rounded-2xl bg-[#faf7f2] border border-[#e8dfd3] font-serif transition-colors duration-200 text-gray-800 leading-relaxed text-base whitespace-pre-line shadow-inner">
+{{ work.excerpt_content }}
+                    </div>
+                    {% else %}
+                    <div class="p-6 rounded-2xl bg-gray-50 border border-gray-200 text-center text-gray-500 italic text-sm">
+                        Original full-text excerpts are being digitized in accordance with archival copyright permissions. Detailed synopsis and critical synthesis are provided below.
+                    </div>
+                    {% endif %}
+
+                    {% if work.external_reading_url %}
+                    <div class="mt-6 flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl bg-indigo-50/60 border border-indigo-100">
+                        <div class="text-xs text-indigo-900">
+                            <i class="fas fa-shield-alt text-indigo-600 mr-1"></i>
+                            <strong>Authorized Reading Resource:</strong> Freely view or read public domain critical edition at external archive.
+                        </div>
+                        <a href="{{ work.external_reading_url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-bharat-navy text-white text-xs font-bold hover:bg-slate-800 transition shadow">
+                            <span>Open Digital Archive</span>
+                            <i class="fas fa-external-link-alt text-xs"></i>
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Comprehensive Synopsis & Deep Context -->
+                <div class="bg-white rounded-3xl p-8 border border-gray-200 shadow-sm space-y-6">
+                    <div>
+                        <h3 class="text-xl font-serif font-bold text-gray-900 mb-3 flex items-center gap-2">
+                            <i class="fas fa-align-left text-amber-600"></i> Complete Narrative Synopsis & Philosophical Analysis
+                        </h3>
+                        <p class="text-gray-700 leading-relaxed text-base text-justify whitespace-pre-line">
+                            {{ work.synopsis }}
+                        </p>
+                    </div>
+
+                    <div class="pt-6 border-t border-gray-100">
+                        <h3 class="text-xl font-serif font-bold text-gray-900 mb-3 flex items-center gap-2">
+                            <i class="fas fa-monument text-amber-600"></i> Cultural & Civilisational Significance
+                        </h3>
+                        <p class="text-gray-700 leading-relaxed text-base text-justify whitespace-pre-line">
+                            {{ work.cultural_significance }}
+                        </p>
+                    </div>
+
+                    {% if work.historical_context %}
+                    <div class="pt-6 border-t border-gray-100">
+                        <h3 class="text-xl font-serif font-bold text-gray-900 mb-3 flex items-center gap-2">
+                            <i class="fas fa-landmark text-amber-600"></i> Historical Context & Paleography
+                        </h3>
+                        <p class="text-gray-700 leading-relaxed text-base text-justify">
+                            {{ work.historical_context }}
+                        </p>
+                    </div>
+                    {% endif %}
+
+                    {% if work.themes %}
+                    <div class="pt-6 border-t border-gray-100">
+                        <h4 class="text-sm font-bold uppercase tracking-wider text-gray-500 mb-2">Central Themes & Virtues</h4>
+                        <p class="text-sm text-gray-700 bg-gray-50 p-4 rounded-xl border border-gray-200">
+                            {{ work.themes }}
+                        </p>
+                    </div>
+                    {% endif %}
+
+                    {% if work.available_translations %}
+                    <div class="pt-6 border-t border-gray-100">
+                        <h4 class="text-sm font-bold uppercase tracking-wider text-gray-500 mb-2">Translations & Regional Retellings</h4>
+                        <p class="text-sm text-gray-700 bg-gray-50 p-4 rounded-xl border border-gray-200">
+                            {{ work.available_translations }}
+                        </p>
+                    </div>
+                    {% endif %}
+                </div>
+
+            </div>
+
+            <!-- Right Column: Metadata, Custodianship & Connections (4 cols) -->
+            <div class="lg:col-span-4 space-y-6">
+                
+                <!-- Archival Provenance & Custodianship Card -->
+                <div class="bg-white rounded-3xl p-6 border border-gray-200 shadow-sm space-y-4">
+                    <h3 class="text-base font-serif font-bold text-gray-900 border-b border-gray-100 pb-3 flex items-center gap-2">
+                        <i class="fas fa-archive text-amber-600"></i> Archival Record & Metadata
+                    </h3>
+
+                    <div class="space-y-3 text-xs">
+                        <div>
+                            <span class="text-gray-400 block uppercase font-medium tracking-wider">Classification</span>
+                            <span class="font-semibold text-gray-800 text-sm">{{ work.get_classification_type_display }}</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-400 block uppercase font-medium tracking-wider">Literary Tradition</span>
+                            <span class="font-semibold text-gray-800">{{ work.tradition }}</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-400 block uppercase font-medium tracking-wider">Language & Script</span>
+                            <span class="font-semibold text-gray-800">{{ work.language }} {% if work.script %}({{ work.script }}){% endif %}</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-400 block uppercase font-medium tracking-wider">Historical Era</span>
+                            <span class="font-semibold text-gray-800">{{ work.historical_period }}</span>
+                        </div>
+                        {% if work.custodian_collection %}
+                        <div>
+                            <span class="text-gray-400 block uppercase font-medium tracking-wider">Custodian / Library Holding</span>
+                            <span class="font-semibold text-gray-800">{{ work.custodian_collection }}</span>
+                        </div>
+                        {% endif %}
+                        <div>
+                            <span class="text-gray-400 block uppercase font-medium tracking-wider">Rights & Attribution</span>
+                            <span class="text-gray-600">{{ work.rights_attribution }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Ask AI about this work button -->
+                    <div class="pt-4 border-t border-gray-100">
+                        <button onclick="askAIAboutWork('{{ work.title|escapejs }}');" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-bharat-navy to-indigo-900 text-white font-bold text-xs flex items-center justify-center gap-2 hover:shadow-md transition">
+                            <i class="fas fa-robot text-bharat-amber"></i> Ask BharatVerse AI About This Work
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Connected Living Traditions (Dance, Music, Crafts, Festivals) -->
+                {% if related_entries %}
+                <div class="bg-white rounded-3xl p-6 border border-gray-200 shadow-sm space-y-4">
+                    <h3 class="text-base font-serif font-bold text-gray-900 border-b border-gray-100 pb-3 flex items-center gap-2">
+                        <i class="fas fa-network-wired text-indigo-600"></i> Connected Living Traditions
+                    </h3>
+                    <p class="text-xs text-gray-500">
+                        This literary work actively informs, depicts, or shares motifs with these living cultural expressions:
+                    </p>
+
+                    <div class="space-y-3">
+                        {% for ent in related_entries %}
+                        <div class="flex items-start gap-3 p-3 rounded-2xl bg-amber-50/50 hover:bg-amber-100/60 border border-amber-200/40 transition">
+                            <div class="w-10 h-10 rounded-xl bg-amber-200 text-amber-900 flex items-center justify-center font-bold text-xs shrink-0">
+                                {% if ent.category.name == 'Dance' %}💃{% elif ent.category.name == 'Music' %}🎵{% elif ent.category.name == 'Craft' %}🎨{% else %}🏛️{% endif %}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <span class="text-[10px] uppercase font-bold text-amber-700 tracking-wider">{{ ent.category.name }} • {{ ent.state.name }}</span>
+                                <h4 class="text-xs font-bold text-gray-900 truncate">
+                                    <a href="{% url 'cultural_entry_detail' ent.slug %}" class="hover:text-bharat-saffron transition">
+                                        {{ ent.title }}
+                                    </a>
+                                </h4>
+                                <p class="text-[11px] text-gray-600 line-clamp-1 mt-0.5">{{ ent.short_description }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Sibling Works in Same Tradition / Language -->
+                {% if sibling_works %}
+                <div class="bg-white rounded-3xl p-6 border border-gray-200 shadow-sm space-y-4">
+                    <h3 class="text-base font-serif font-bold text-gray-900 border-b border-gray-100 pb-3 flex items-center gap-2">
+                        <i class="fas fa-book-reader text-amber-600"></i> Related Literary Works
+                    </h3>
+
+                    <div class="space-y-3">
+                        {% for sib in sibling_works %}
+                        <a href="{% url 'library_detail' sib.slug %}" class="block p-3 rounded-2xl bg-gray-50 hover:bg-amber-50 border border-gray-200 transition group">
+                            <span class="text-[10px] font-bold text-gray-400 group-hover:text-amber-700">{{ sib.language }} • {{ sib.get_work_type_display }}</span>
+                            <h4 class="text-xs font-bold text-gray-900 group-hover:text-bharat-navy transition line-clamp-1">{{ sib.title }}</h4>
+                            <p class="text-[11px] text-gray-500 line-clamp-1 mt-0.5">{{ sib.brief_intro }}</p>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+let currentFontSize = 16;
+let isDarkTheme = false;
+
+function changeFontSize(delta) {
+    const canvas = document.getElementById('reader-canvas');
+    if (!canvas) return;
+    currentFontSize = Math.min(Math.max(currentFontSize + delta, 12), 26);
+    canvas.style.fontSize = currentFontSize + 'px';
+}
+
+function toggleReaderTheme() {
+    const canvas = document.getElementById('reader-canvas');
+    const btn = document.getElementById('reader-mode-btn');
+    if (!canvas || !btn) return;
+
+    if (!isDarkTheme) {
+        // Switch to Dark
+        canvas.classList.remove('bg-[#faf7f2]', 'border-[#e8dfd3]', 'text-gray-800');
+        canvas.classList.add('bg-slate-900', 'border-slate-800', 'text-amber-100');
+        btn.innerHTML = '<i class="fas fa-sun text-amber-400"></i> Parchment / Day';
+        isDarkTheme = true;
+    } else {
+        // Switch to Parchment
+        canvas.classList.remove('bg-slate-900', 'border-slate-800', 'text-amber-100');
+        canvas.classList.add('bg-[#faf7f2]', 'border-[#e8dfd3]', 'text-gray-800');
+        btn.innerHTML = '<i class="fas fa-moon text-indigo-500"></i> Sepia / Dark';
+        isDarkTheme = false;
+    }
+}
+
+function askAIAboutWork(title) {
+    if (typeof toggleChat === 'function') {
+        toggleChat();
+        setTimeout(() => {
+            const input = document.getElementById('chat-input');
+            if (input) {
+                input.value = `Explain the cultural and literary significance of ${title}`;
+                if (typeof sendMessage === 'function') {
+                    sendMessage();
+                }
+            }
+        }, 300);
+    } else {
+        alert(`BharatVerse AI: You can ask about "${title}" in the AI assistant.`);
+    }
+}
+</script>
+{% endblock %}

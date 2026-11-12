@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Achievements{% endblock %}
+{% block content %}
+<div class="bg-bharat-navy py-12 text-center">
+    <h1 class="text-4xl font-serif font-bold text-white mb-2">Your Cultural Achievements</h1>
+    <p class="text-gray-300 font-light">Every discovery brings you closer to India's stories.</p>
+</div>
+<div class="max-w-5xl mx-auto px-4 py-16 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+    {% for ach in achievements %}
+    <div class="bg-white p-6 rounded-xl border {% if ach.id in user_achievements %}border-bharat-amber shadow-md{% else %}border-gray-200 opacity-60 grayscale{% endif %} text-center">
+        <div class="w-16 h-16 mx-auto rounded-full bg-gradient-to-br {% if ach.id in user_achievements %}from-bharat-saffron to-bharat-amber shadow-lg{% else %}from-gray-300 to-gray-400{% endif %} flex items-center justify-center text-3xl mb-4">🏆</div>
+        <h3 class="font-bold text-bharat-navy mb-1">{{ ach.name }}</h3>
+        <p class="text-xs text-gray-500 mb-3">{{ ach.description }}</p>
+        <span class="text-xs font-bold text-bharat-saffron bg-orange-50 px-2 py-1 rounded">{{ ach.xp_reward }} XP</span>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

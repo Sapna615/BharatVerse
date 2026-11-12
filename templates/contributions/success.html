@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Submission Received{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 py-20 text-center">
+    <div class="w-20 h-20 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-6">
+        <svg class="w-10 h-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+    </div>
+    <h1 class="text-4xl font-serif font-bold text-bharat-navy mb-4">Your story is now in review.</h1>
+    <p class="text-gray-600 mb-8">Thank you for helping preserve India's cultural memory. A BharatVerse curator will review your contribution before it becomes publicly visible.</p>
+    
+    <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 text-left mb-8 space-y-3">
+        <div class="flex justify-between border-b border-gray-200 pb-2">
+            <span class="text-gray-500 text-sm font-bold">Submission ID</span>
+            <span class="text-bharat-navy font-mono font-bold">BV-SUB-{{ sub.id|stringformat:"06d" }}</span>
+        </div>
+        <div class="flex justify-between border-b border-gray-200 pb-2">
+            <span class="text-gray-500 text-sm font-bold">Title</span>
+            <span class="text-bharat-navy font-bold">{{ sub.title }}</span>
+        </div>
+        <div class="flex justify-between border-b border-gray-200 pb-2">
+            <span class="text-gray-500 text-sm font-bold">Status</span>
+            <span class="text-blue-600 font-bold bg-blue-100 px-2 py-0.5 rounded text-xs uppercase">{{ sub.get_moderation_status_display }}</span>
+        </div>
+    </div>
+    
+    <a href="{% url 'my_submissions' %}" class="bg-bharat-navy text-white font-bold py-3 px-8 rounded-full shadow hover:bg-gray-800 transition inline-block">View My Contributions</a>
+</div>
+{% endblock %}

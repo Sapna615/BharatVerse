@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}My Contributions{% endblock %}
+{% block content %}
+<div class="bg-bharat-navy py-12 text-center">
+    <h1 class="text-4xl font-serif font-bold text-white mb-2">My Contributions</h1>
+    <p class="text-gray-300 font-light">Your submitted cultural stories and traditions.</p>
+</div>
+<div class="max-w-6xl mx-auto px-4 py-16">
+    <!-- Summary -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 text-center">
+            <div class="text-3xl font-black text-bharat-navy">{{ counts.total }}</div>
+            <div class="text-xs text-gray-500 uppercase font-bold mt-1">Total</div>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-blue-200 text-center">
+            <div class="text-3xl font-black text-blue-600">{{ counts.pending }}</div>
+            <div class="text-xs text-blue-500 uppercase font-bold mt-1">Pending</div>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-green-200 text-center">
+            <div class="text-3xl font-black text-green-600">{{ counts.approved }}</div>
+            <div class="text-xs text-green-500 uppercase font-bold mt-1">Approved</div>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-red-200 text-center">
+            <div class="text-3xl font-black text-red-600">{{ counts.rejected }}</div>
+            <div class="text-xs text-red-500 uppercase font-bold mt-1">Rejected</div>
+        </div>
+    </div>
+
+    <!-- List -->
+    <div class="space-y-4">
+        {% for sub in subs %}
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4 hover:border-bharat-saffron transition">
+            <div>
+                <span class="text-xs font-mono font-bold text-gray-400 block mb-1">BV-SUB-{{ sub.id|stringformat:"06d" }}</span>
+                <h3 class="text-lg font-bold text-bharat-navy">{{ sub.title }}</h3>
+                <div class="text-sm text-gray-500 flex gap-4 mt-2">
+                    <span>{{ sub.get_submission_type_display }}</span>
+                    <span>&middot;</span>
+                    <span>{{ sub.state }}</span>
+                    <span>&middot;</span>
+                    <span>{{ sub.created_at|date:"M d, Y" }}</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                {% if sub.moderation_status == 'pending' %}
+                <span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded uppercase">Pending</span>
+                {% elif sub.moderation_status == 'approved' %}
+                <span class="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded uppercase">Approved</span>
+                {% elif sub.moderation_status == 'rejected' %}
+                <span class="bg-red-100 text-red-700 text-xs font-bold px-3 py-1 rounded uppercase">Rejected</span>
+                {% else %}
+                <span class="bg-gray-100 text-gray-700 text-xs font-bold px-3 py-1 rounded uppercase">{{ sub.get_moderation_status_display }}</span>
+                {% endif %}
+                
+                <a href="{% url 'submission_detail' sub.id %}" class="bg-gray-50 text-bharat-navy font-bold px-4 py-2 rounded border border-gray-200 hover:bg-gray-100">View</a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-16 bg-gray-50 rounded-xl border border-gray-200">
+            <h3 class="text-2xl font-serif text-gray-500 mb-4">You haven't submitted anything yet.</h3>
+            <a href="{% url 'contribute' %}" class="bg-bharat-saffron text-white font-bold py-2 px-6 rounded shadow hover:bg-orange-600">Preserve a Tradition</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

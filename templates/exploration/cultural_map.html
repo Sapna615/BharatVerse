@@ -1,0 +1,502 @@
+{% extends 'base.html' %}
+{% block title %}Cultural Map of India - BharatVerse{% endblock %}
+{% block content %}
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<!-- Hero Banner -->
+<div class="relative bg-gradient-to-r from-bharat-navy via-indigo-950 to-slate-900 py-12 md:py-16 text-center overflow-hidden">
+    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
+    <div class="relative z-10 max-w-4xl mx-auto px-4">
+        <span class="inline-block px-4 py-1.5 rounded-full bg-bharat-saffron/20 border border-bharat-saffron/40 text-bharat-saffron font-bold tracking-widest uppercase text-xs mb-3 backdrop-blur-sm">
+            <i class="fas fa-map-marked-alt mr-1.5"></i>Interactive Living Atlas
+        </span>
+        <h1 class="text-3xl md:text-5xl font-serif font-bold text-white mb-3">Cultural Map of India</h1>
+        <p class="text-base md:text-lg text-gray-300 font-light max-w-2xl mx-auto">
+            Explore India's living heritage state by state. Click any region on the interactive map or explorer to view its verified traditions, music, dance, crafts, and cuisine.
+        </p>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- View Switcher & Search Bar -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
+        <!-- View Toggle Buttons -->
+        <div class="flex items-center bg-gray-100 p-1.5 rounded-xl w-full md:w-auto">
+            <button id="tab-map-btn" onclick="switchView('map')" class="flex-1 md:flex-none px-5 py-2.5 rounded-lg font-bold text-sm transition flex items-center justify-center gap-2 bg-white text-bharat-navy shadow-sm">
+                <i class="fas fa-globe-asia text-bharat-saffron"></i> Interactive India Map
+            </button>
+            <button id="tab-grid-btn" onclick="switchView('grid')" class="flex-1 md:flex-none px-5 py-2.5 rounded-lg font-bold text-sm transition flex items-center justify-center gap-2 text-gray-600 hover:text-bharat-navy">
+                <i class="fas fa-th-large text-gray-500"></i> Regional Explorer
+            </button>
+        </div>
+
+        <!-- Search & Filter Controls -->
+        <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+            <!-- Search Box -->
+            <div class="relative w-full sm:w-64">
+                <input type="text" id="state-search-input" placeholder="Search state (e.g. Punjab)..." oninput="applyFilters()" class="w-full pl-9 pr-4 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-bharat-saffron focus:border-bharat-saffron transition">
+                <i class="fas fa-search absolute left-3 top-3 text-gray-400 text-xs"></i>
+            </div>
+
+            <!-- Region Filter -->
+            <select id="region-filter-select" onchange="applyFilters()" class="w-full sm:w-auto py-2 px-3 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-bharat-saffron bg-white cursor-pointer">
+                <option value="">All Regions</option>
+                {% for r in regions %}
+                <option value="{{ r }}">{{ r }}</option>
+                {% endfor %}
+            </select>
+
+            <!-- Reset Filter Button -->
+            <button onclick="resetFilters()" title="Reset Filters" class="px-3 py-2 rounded-xl border border-gray-200 text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-bharat-navy transition whitespace-nowrap">
+                <i class="fas fa-redo-alt mr-1"></i> Reset
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Side-by-Side Container -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Left Column: Map OR Grid Explorer (7 Cols) -->
+        <div class="lg:col-span-7 flex flex-col gap-4">
+            
+            <!-- Map View Container -->
+            <div id="map-view-container" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex flex-col">
+                <div class="flex items-center justify-between mb-3 px-2">
+                    <span class="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fas fa-hand-pointer text-bharat-saffron"></i> Click any state boundary to view details
+                    </span>
+                    <span id="map-status-badge" class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        Map Active
+                    </span>
+                </div>
+                <!-- Leaflet Map Mount Point -->
+                <div id="india-map" class="w-full h-[520px] rounded-xl overflow-hidden bg-slate-50 border border-gray-200 z-0"></div>
+                <div class="flex items-center justify-between text-[11px] text-gray-400 mt-2 px-2">
+                    <span>* Boundaries based on standard survey data with official alignment</span>
+                    <button onclick="switchView('grid')" class="text-bharat-saffron hover:underline font-semibold">Switch to List View &rarr;</button>
+                </div>
+            </div>
+
+            <!-- Grid Explorer View Container (Hidden by default or toggled) -->
+            <div id="grid-view-container" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hidden">
+                <div class="flex items-center justify-between mb-4 border-b border-gray-100 pb-3">
+                    <div>
+                        <h3 class="text-xl font-bold text-bharat-navy">Regional Explorer</h3>
+                        <p class="text-xs text-gray-500">Click a state button to instantly view its verified cultural snapshot.</p>
+                    </div>
+                    <span id="state-count-badge" class="text-xs font-bold bg-orange-100 text-orange-800 px-3 py-1 rounded-full">
+                        {{ states|length }} States
+                    </span>
+                </div>
+
+                <!-- States Button Grid -->
+                <div id="states-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[500px] overflow-y-auto pr-1">
+                    {% for state in states %}
+                    <button type="button" 
+                            id="state-btn-{{ state.slug }}" 
+                            data-slug="{{ state.slug }}"
+                            data-name="{{ state.name }}"
+                            data-region="{{ state.region }}"
+                            onclick="selectState('{{ state.slug }}')"
+                            class="state-btn text-left p-3.5 rounded-xl border border-gray-200 bg-white hover:border-bharat-saffron hover:bg-orange-50/60 transition shadow-sm flex flex-col justify-between group focus:outline-none focus:ring-2 focus:ring-bharat-saffron">
+                        <div class="flex items-center justify-between w-full mb-1">
+                            <span class="font-bold text-sm text-gray-900 group-hover:text-bharat-navy transition-colors state-title">{{ state.name }}</span>
+                            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-gray-100 text-gray-600 group-hover:bg-orange-100 group-hover:text-orange-800 transition">{{ state.entries_count }}</span>
+                        </div>
+                        <span class="text-[11px] text-gray-500 truncate">{{ state.region }}</span>
+                    </button>
+                    {% endfor %}
+                </div>
+
+                <!-- Empty search state -->
+                <div id="no-states-found" class="hidden text-center py-12">
+                    <i class="fas fa-search-location text-gray-300 text-4xl mb-3"></i>
+                    <h4 class="text-base font-bold text-gray-700 mb-1">No matching states found</h4>
+                    <p class="text-xs text-gray-500 mb-4">Try clearing your search query or region filter.</p>
+                    <button onclick="resetFilters()" class="text-xs font-bold text-bharat-saffron border border-bharat-saffron px-4 py-2 rounded-lg hover:bg-orange-50 transition">Reset All Filters</button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Column: Interactive State Cultural Snapshot Panel (5 Cols) -->
+        <div class="lg:col-span-5 sticky top-24">
+            
+            <!-- Default Empty State Placeholder -->
+            <div id="info-empty" class="bg-white rounded-2xl border border-dashed border-gray-300 p-8 text-center text-gray-500 shadow-sm flex flex-col items-center justify-center min-h-[540px]">
+                <div class="w-16 h-16 rounded-full bg-orange-50 text-bharat-saffron flex items-center justify-center text-2xl mb-4 shadow-inner">
+                    <i class="fas fa-map-pin animate-bounce"></i>
+                </div>
+                <h3 class="text-xl font-serif font-bold text-bharat-navy mb-2">Select a State to View Details</h3>
+                <p class="text-sm text-gray-500 max-w-xs mb-6">Click on any state on the map or in the Regional Explorer list to inspect verified traditions, categories, and music/dance entries.</p>
+                
+                <div class="flex flex-wrap justify-center gap-2 max-w-xs">
+                    <button onclick="selectState('punjab')" class="text-xs font-bold px-3 py-1.5 rounded-full bg-gray-100 hover:bg-orange-100 hover:text-orange-800 transition">Try Punjab</button>
+                    <button onclick="selectState('rajasthan')" class="text-xs font-bold px-3 py-1.5 rounded-full bg-gray-100 hover:bg-orange-100 hover:text-orange-800 transition">Try Rajasthan</button>
+                    <button onclick="selectState('kerala')" class="text-xs font-bold px-3 py-1.5 rounded-full bg-gray-100 hover:bg-orange-100 hover:text-orange-800 transition">Try Kerala</button>
+                </div>
+            </div>
+
+            <!-- Active Populated Details Panel -->
+            <div id="info-panel" class="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 md:p-7 hidden flex flex-col max-h-[85vh] overflow-y-auto">
+                
+                <!-- Panel Header -->
+                <div class="flex items-start justify-between border-b border-gray-100 pb-4 mb-5">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span id="panel-region" class="text-xs font-bold text-bharat-saffron uppercase tracking-widest bg-orange-50 px-2.5 py-0.5 rounded-full">Region</span>
+                            <span class="text-xs text-gray-400">&middot; Living Heritage</span>
+                        </div>
+                        <h2 id="panel-name" class="text-3xl font-serif font-bold text-bharat-navy">State Name</h2>
+                    </div>
+                    <button onclick="clearSelection()" title="Clear Selection" class="text-gray-400 hover:text-gray-700 p-1 rounded-lg hover:bg-gray-100 transition">
+                        <i class="fas fa-times text-sm"></i>
+                    </button>
+                </div>
+
+                <!-- Description / Cultural Snapshot -->
+                <p id="panel-description" class="text-sm text-gray-600 leading-relaxed mb-5">State description goes here.</p>
+
+                <!-- Database Metrics Counter -->
+                <div class="grid grid-cols-3 gap-2.5 mb-6 bg-slate-50 p-3 rounded-xl border border-gray-100 text-center">
+                    <div>
+                        <span id="panel-count-entries" class="text-xl font-bold text-bharat-navy block">0</span>
+                        <span class="text-[11px] font-semibold text-gray-500 uppercase tracking-tight">Cultural Entries</span>
+                    </div>
+                    <div class="border-x border-gray-200">
+                        <span id="panel-count-festivals" class="text-xl font-bold text-bharat-saffron block">0</span>
+                        <span class="text-[11px] font-semibold text-gray-500 uppercase tracking-tight">Festivals</span>
+                    </div>
+                    <div>
+                        <span id="panel-count-cuisines" class="text-xl font-bold text-emerald-700 block">0</span>
+                        <span class="text-[11px] font-semibold text-gray-500 uppercase tracking-tight">Cuisines</span>
+                    </div>
+                </div>
+
+                <!-- Available Cultural Categories Grid -->
+                <div class="mb-6">
+                    <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2.5 flex items-center justify-between">
+                        <span>Cultural Categories</span>
+                        <span class="text-[10px] text-gray-400 font-normal">Active database records</span>
+                    </h4>
+                    <div id="panel-categories" class="flex flex-wrap gap-2">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Featured Cultural Traditions Preview -->
+                <div class="mb-6">
+                    <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2.5 flex items-center justify-between">
+                        <span>Featured Highlights</span>
+                        <span class="text-[10px] text-gray-400 font-normal">Click to read story</span>
+                    </h4>
+                    <div id="panel-featured" class="space-y-2">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Action Button Links -->
+                <div class="mt-auto pt-4 border-t border-gray-100 space-y-2.5">
+                    <a id="panel-explore-btn" href="#" class="w-full py-3 px-4 rounded-xl font-bold text-sm bg-bharat-saffron hover:bg-orange-500 text-white shadow-md hover:shadow-lg transition flex items-center justify-center gap-2">
+                        <span>Explore Full Culture of State</span>
+                        <i class="fas fa-arrow-right text-xs"></i>
+                    </a>
+                    <a id="panel-connect-btn" href="#" class="w-full py-2.5 px-4 rounded-xl font-semibold text-xs border border-bharat-navy/20 text-bharat-navy hover:bg-gray-50 transition flex items-center justify-center gap-2">
+                        <i class="fas fa-project-diagram text-bharat-saffron"></i>
+                        <span>Explore Cultural Connections</span>
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<!-- Embedded States Snapshot Data -->
+<script id="states-data" type="application/json">
+{{ states_dict_json|safe }}
+</script>
+
+<script>
+    // Global state registry
+    const statesData = JSON.parse(document.getElementById('states-data').textContent);
+    let selectedStateSlug = null;
+    let leafletMap = null;
+    let geojsonLayer = null;
+    let activeGeojsonFeature = null;
+
+    // View switching (Map vs Grid)
+    function switchView(view) {
+        const mapContainer = document.getElementById('map-view-container');
+        const gridContainer = document.getElementById('grid-view-container');
+        const mapTabBtn = document.getElementById('tab-map-btn');
+        const gridTabBtn = document.getElementById('tab-grid-btn');
+
+        if (view === 'map') {
+            mapContainer.classList.remove('hidden');
+            gridContainer.classList.add('hidden');
+            mapTabBtn.className = "flex-1 md:flex-none px-5 py-2.5 rounded-lg font-bold text-sm transition flex items-center justify-center gap-2 bg-white text-bharat-navy shadow-sm";
+            gridTabBtn.className = "flex-1 md:flex-none px-5 py-2.5 rounded-lg font-bold text-sm transition flex items-center justify-center gap-2 text-gray-600 hover:text-bharat-navy";
+            if (leafletMap) {
+                setTimeout(() => { leafletMap.invalidateSize(); }, 200);
+            }
+        } else {
+            mapContainer.classList.add('hidden');
+            gridContainer.classList.remove('hidden');
+            gridTabBtn.className = "flex-1 md:flex-none px-5 py-2.5 rounded-lg font-bold text-sm transition flex items-center justify-center gap-2 bg-white text-bharat-navy shadow-sm";
+            mapTabBtn.className = "flex-1 md:flex-none px-5 py-2.5 rounded-lg font-bold text-sm transition flex items-center justify-center gap-2 text-gray-600 hover:text-bharat-navy";
+        }
+    }
+
+    // Main Selection Function
+    function selectState(slug) {
+        const state = statesData[slug];
+        if (!state) return;
+
+        selectedStateSlug = slug;
+
+        // 1. Update Grid Button Highlighting
+        document.querySelectorAll('.state-btn').forEach(btn => {
+            btn.classList.remove('border-bharat-saffron', 'bg-orange-50', 'ring-2', 'ring-bharat-saffron', 'shadow-md');
+            btn.classList.add('border-gray-200', 'bg-white');
+        });
+        const activeBtn = document.getElementById(`state-btn-${slug}`);
+        if (activeBtn) {
+            activeBtn.classList.remove('border-gray-200', 'bg-white');
+            activeBtn.classList.add('border-bharat-saffron', 'bg-orange-50', 'ring-2', 'ring-bharat-saffron', 'shadow-md');
+        }
+
+        // 2. Update Map Layer Highlighting if layer exists
+        if (geojsonLayer) {
+            geojsonLayer.eachLayer(layer => {
+                const name = layer.feature.properties.NAME_1;
+                if (name && name.toLowerCase() === state.name.toLowerCase()) {
+                    layer.setStyle({
+                        fillColor: '#FF9933',
+                        fillOpacity: 0.8,
+                        color: '#1A2942',
+                        weight: 2.5
+                    });
+                } else {
+                    geojsonLayer.resetStyle(layer);
+                }
+            });
+        }
+
+        // 3. Populate Right-Hand Cultural Snapshot Panel
+        document.getElementById('info-empty').classList.add('hidden');
+        const panel = document.getElementById('info-panel');
+        panel.classList.remove('hidden');
+
+        document.getElementById('panel-region').textContent = state.region;
+        document.getElementById('panel-name').textContent = state.name;
+        document.getElementById('panel-description').textContent = state.description;
+
+        // Counts
+        document.getElementById('panel-count-entries').textContent = state.counts.entries;
+        document.getElementById('panel-count-festivals').textContent = state.counts.festivals;
+        document.getElementById('panel-count-cuisines').textContent = state.counts.cuisines;
+
+        // Categories Badges
+        const categoriesContainer = document.getElementById('panel-categories');
+        categoriesContainer.innerHTML = '';
+        if (state.categories && state.categories.length > 0) {
+            state.categories.forEach(cat => {
+                const badge = document.createElement('a');
+                badge.href = `${state.url}#explore`;
+                badge.className = "inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-gray-50 border border-gray-200 hover:border-bharat-saffron hover:bg-orange-50 transition text-gray-800";
+                badge.innerHTML = `<i class="${cat.icon} text-bharat-saffron"></i> <span>${cat.short} (${cat.count})</span>`;
+                categoriesContainer.appendChild(badge);
+            });
+        } else {
+            categoriesContainer.innerHTML = `<span class="text-xs text-gray-400 italic">No category records.</span>`;
+        }
+
+        // Featured Traditions Preview
+        const featuredContainer = document.getElementById('panel-featured');
+        featuredContainer.innerHTML = '';
+        if (state.featured && state.featured.length > 0) {
+            state.featured.forEach(item => {
+                const card = document.createElement('a');
+                card.href = item.url;
+                card.className = "block p-2.5 rounded-xl border border-gray-100 hover:border-bharat-saffron bg-gray-50/60 hover:bg-white hover:shadow-sm transition group";
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-gray-900 group-hover:text-bharat-navy">${item.title}</span>
+                        <span class="text-[10px] font-semibold text-bharat-saffron uppercase">${item.category}</span>
+                    </div>
+                    <p class="text-[11px] text-gray-500 line-clamp-1 mt-0.5">${item.desc}</p>
+                `;
+                featuredContainer.appendChild(card);
+            });
+        } else {
+            featuredContainer.innerHTML = `<span class="text-xs text-gray-400 italic">No featured traditions recorded.</span>`;
+        }
+
+        // Action URLs
+        document.getElementById('panel-explore-btn').href = state.url;
+        document.getElementById('panel-connect-btn').href = state.connections_url;
+    }
+
+    function clearSelection() {
+        selectedStateSlug = null;
+        document.querySelectorAll('.state-btn').forEach(btn => {
+            btn.classList.remove('border-bharat-saffron', 'bg-orange-50', 'ring-2', 'ring-bharat-saffron', 'shadow-md');
+            btn.classList.add('border-gray-200', 'bg-white');
+        });
+        if (geojsonLayer) {
+            geojsonLayer.eachLayer(layer => geojsonLayer.resetStyle(layer));
+        }
+        document.getElementById('info-panel').classList.add('hidden');
+        document.getElementById('info-empty').classList.remove('hidden');
+    }
+
+    // Search and Regional Filtering
+    function applyFilters() {
+        const query = document.getElementById('state-search-input').value.toLowerCase().trim();
+        const region = document.getElementById('region-filter-select').value;
+        const buttons = document.querySelectorAll('.state-btn');
+        let visibleCount = 0;
+
+        buttons.forEach(btn => {
+            const name = btn.getAttribute('data-name').toLowerCase();
+            const reg = btn.getAttribute('data-region');
+
+            const matchesQuery = !query || name.includes(query);
+            const matchesRegion = !region || reg === region;
+
+            if (matchesQuery && matchesRegion) {
+                btn.classList.remove('hidden');
+                visibleCount++;
+            } else {
+                btn.classList.add('hidden');
+            }
+        });
+
+        const noResults = document.getElementById('no-states-found');
+        const countBadge = document.getElementById('state-count-badge');
+        countBadge.textContent = `${visibleCount} States`;
+
+        if (visibleCount === 0) {
+            noResults.classList.remove('hidden');
+        } else {
+            noResults.classList.add('hidden');
+        }
+
+        // Update Map Layers Dimming if map loaded
+        if (geojsonLayer) {
+            geojsonLayer.eachLayer(layer => {
+                const name = (layer.feature.properties.NAME_1 || '').toLowerCase();
+                const matchedSlug = Object.keys(statesData).find(s => statesData[s].name.toLowerCase() === name);
+                if (matchedSlug) {
+                    const reg = statesData[matchedSlug].region;
+                    const matchesQuery = !query || name.includes(query);
+                    const matchesRegion = !region || reg === region;
+                    if (matchesQuery && matchesRegion) {
+                        layer.setStyle({ fillOpacity: 0.5, opacity: 1 });
+                    } else {
+                        layer.setStyle({ fillOpacity: 0.1, opacity: 0.3 });
+                    }
+                }
+            });
+        }
+    }
+
+    function resetFilters() {
+        document.getElementById('state-search-input').value = '';
+        document.getElementById('region-filter-select').value = '';
+        applyFilters();
+    }
+
+    // Initialize Interactive Leaflet Map
+    function initMap() {
+        try {
+            leafletMap = L.map('india-map', {
+                center: [22.5937, 78.9629],
+                zoom: 4.4,
+                minZoom: 4,
+                maxZoom: 7,
+                zoomControl: true,
+                attributionControl: false
+            });
+
+            fetch('/static/data/india_states.geojson')
+                .then(res => {
+                    if (!res.ok) throw new Error('Local GeoJSON load failed');
+                    return res.json();
+                })
+                .then(geojsonData => {
+                    geojsonLayer = L.geoJSON(geojsonData, {
+                        style: function(feature) {
+                            const name = feature.properties.NAME_1;
+                            const isPresentInDb = Object.values(statesData).some(s => s.name.toLowerCase() === (name || '').toLowerCase());
+                            return {
+                                fillColor: isPresentInDb ? '#1A2942' : '#cbd5e1',
+                                weight: 1.2,
+                                opacity: 1,
+                                color: '#ffffff',
+                                fillOpacity: isPresentInDb ? 0.45 : 0.15
+                            };
+                        },
+                        onEachFeature: function(feature, layer) {
+                            const name = feature.properties.NAME_1;
+                            const matchedSlug = Object.keys(statesData).find(s => statesData[s].name.toLowerCase() === (name || '').toLowerCase());
+
+                            if (matchedSlug) {
+                                layer.bindTooltip(`<strong>${name}</strong><br><span style="font-size:11px;color:#FF9933;">${statesData[matchedSlug].counts.entries} Cultural Entries</span>`, {
+                                    sticky: true,
+                                    direction: 'auto'
+                                });
+
+                                layer.on({
+                                    mouseover: function(e) {
+                                        if (selectedStateSlug !== matchedSlug) {
+                                            const l = e.target;
+                                            l.setStyle({
+                                                fillColor: '#FF9933',
+                                                fillOpacity: 0.7,
+                                                weight: 2
+                                            });
+                                        }
+                                    },
+                                    mouseout: function(e) {
+                                        if (selectedStateSlug !== matchedSlug) {
+                                            geojsonLayer.resetStyle(e.target);
+                                        }
+                                    },
+                                    click: function(e) {
+                                        selectState(matchedSlug);
+                                    }
+                                });
+                            } else {
+                                layer.bindTooltip(`<span>${name}</span>`, { sticky: true });
+                            }
+                        }
+                    }).addTo(leafletMap);
+
+                    // Fit to India Bounds
+                    leafletMap.fitBounds(geojsonLayer.getBounds());
+                })
+                .catch(err => {
+                    console.warn('Map data could not be rendered, falling back to Regional Explorer:', err);
+                    document.getElementById('map-status-badge').textContent = "Explorer Active";
+                    switchView('grid');
+                });
+
+        } catch (e) {
+            console.error('Leaflet initialization error:', e);
+            switchView('grid');
+        }
+    }
+
+    // Auto-select Punjab by default or on first load as recommended in prompt
+    document.addEventListener('DOMContentLoaded', () => {
+        initMap();
+        selectState('punjab');
+    });
+</script>
+{% endblock %}

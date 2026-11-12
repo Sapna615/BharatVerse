@@ -1,0 +1,337 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Virtual Museum - BharatVerse{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="bg-gradient-to-b from-black via-slate-950 to-bharat-navy py-20 text-center relative overflow-hidden border-b border-gray-800">
+    <div class="absolute inset-0 bg-[radial-gradient(#d97706_1px,transparent_1px)] [background-size:28px_28px] opacity-15 pointer-events-none"></div>
+    <div class="relative z-10 max-w-4xl mx-auto px-4">
+        <span class="text-bharat-saffron font-bold tracking-widest uppercase text-xs sm:text-sm mb-3 block">
+            The National Digital Heritage Gallery
+        </span>
+        <h1 class="text-4xl md:text-6xl font-serif font-bold text-white mb-6 tracking-tight">
+            Walk Through India's Living Heritage.
+        </h1>
+        <p class="text-lg md:text-xl text-gray-300 font-light mb-8 max-w-2xl mx-auto">
+            Explore living traditions, rare manuscripts, artisanal crafts, epics, classical melodies, and sacred oral memory across India's cultural wings.
+        </p>
+        <a href="#heritage-wings" class="inline-flex items-center gap-2 bg-gradient-to-r from-bharat-saffron to-bharat-amber text-slate-900 font-bold py-3.5 px-8 rounded-full shadow-lg hover:shadow-amber-500/20 hover:scale-105 transition-all text-sm">
+            <i class="fas fa-landmark"></i> Explore Museum Halls
+        </a>
+    </div>
+</div>
+
+<!-- Interactive Museum Halls & Wings Grid -->
+<div class="bg-amber-50/40 py-16 border-b border-gray-200" id="heritage-wings">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-12">
+            <span class="text-xs uppercase font-bold text-bharat-saffron tracking-wider">Curated Pavilions</span>
+            <h2 class="text-3xl md:text-4xl font-serif font-bold text-bharat-navy mt-1">
+                Museum Halls & Heritage Wings
+            </h2>
+            <p class="text-sm text-gray-600 mt-2">
+                Click any wing below to enter its curated gallery of artifacts, living traditions, manuscripts, and regional expressions.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+            {% for hall in halls %}
+            <a href="?hall={{ hall.slug }}#hall-gallery" 
+               class="rounded-2xl p-5 text-center transition-all duration-300 border flex flex-col justify-between group
+                      {% if selected_hall_slug == hall.slug %}
+                      bg-bharat-navy text-white border-bharat-amber shadow-xl scale-[1.03] ring-2 ring-bharat-amber
+                      {% else %}
+                      bg-white hover:bg-slate-50 text-gray-800 border-gray-200/80 shadow-sm hover:shadow-md hover:border-amber-400
+                      {% endif %}">
+                <div>
+                    <div class="text-3xl sm:text-4xl mb-3 group-hover:scale-110 transition-transform">
+                        {% if hall.slug == 'literature' %}📚
+                        {% elif hall.slug == 'sacred-texts' %}🕉️
+                        {% elif hall.slug == 'manuscripts' %}📜
+                        {% elif hall.slug == 'oral-tradition' %}🎙️
+                        {% elif hall.slug == 'traditional-knowledge' %}🌿
+                        {% elif hall.slug == 'visual-arts' %}🎨
+                        {% elif hall.slug == 'architecture' %}🏛️
+                        {% elif hall.slug == 'clothing-textiles' %}👘
+                        {% elif hall.slug == 'dance' %}💃
+                        {% elif hall.slug == 'music' %}🎵
+                        {% elif hall.slug == 'craft' %}🏺
+                        {% elif hall.slug == 'cuisine' %}🍲
+                        {% elif hall.slug == 'festival' %}🪔
+                        {% else %}🏛️{% endif %}
+                    </div>
+                    
+                    <h3 class="font-serif font-bold text-sm sm:text-base mb-1.5 {% if selected_hall_slug == hall.slug %}text-bharat-amber{% else %}group-hover:text-bharat-navy{% endif %}">
+                        Wing of {{ hall.name }}
+                    </h3>
+
+                    <p class="text-[11px] line-clamp-2 leading-relaxed {% if selected_hall_slug == hall.slug %}text-gray-300{% else %}text-gray-500{% endif %}">
+                        {{ hall.description }}
+                    </p>
+                </div>
+
+                <div class="mt-4 pt-3 border-t {% if selected_hall_slug == hall.slug %}border-slate-700 text-bharat-amber{% else %}border-gray-100 text-gray-400 group-hover:text-bharat-saffron{% endif %} text-xs font-bold flex items-center justify-center gap-1">
+                    <span>{% if selected_hall_slug == hall.slug %}Viewing Wing &darr;{% else %}Enter Pavilion &rarr;{% endif %}</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- DYNAMIC SELECTED HALL GALLERY SECTION -->
+{% if selected_hall %}
+<div class="bg-white py-16 border-b border-gray-200" id="hall-gallery">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-wrap items-center justify-between pb-6 border-b border-gray-200 mb-10 gap-4">
+            <div>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 mb-2">
+                    <i class="fas fa-door-open mr-1.5"></i> Exhibition Wing Active
+                </span>
+                <h2 class="text-3xl font-serif font-bold text-gray-900">
+                    The Wing of {{ selected_hall.name }}
+                </h2>
+                <p class="text-sm text-gray-600 mt-1 max-w-2xl">
+                    {{ selected_hall.description }}
+                </p>
+            </div>
+            <a href="{% url 'museum' %}#heritage-wings" class="px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold transition flex items-center gap-1.5">
+                <i class="fas fa-times"></i> Close Wing & View All
+            </a>
+        </div>
+
+        <!-- Exhibition Items Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            
+            <!-- Cultural Entries in this Hall -->
+            {% for item in hall_entries %}
+            <div class="bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-xl hover:border-amber-400 transition flex flex-col justify-between">
+                <div>
+                    <div class="h-48 bg-slate-900 relative overflow-hidden group">
+                        {% if item.image %}
+                        <img src="{{ item.image.url }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        {% else %}
+                        <div class="w-full h-full flex items-center justify-center text-4xl text-gray-600 bg-slate-800">
+                            🏛️
+                        </div>
+                        {% endif %}
+                        <div class="absolute bottom-3 left-3">
+                            <span class="bg-bharat-navy/90 backdrop-blur-sm text-bharat-amber text-xs font-bold px-2.5 py-1 rounded-md border border-amber-500/30">
+                                {{ item.state.name }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6 pb-2">
+                        <h3 class="text-lg font-serif font-bold text-gray-900 mb-2 hover:text-bharat-navy transition">
+                            <a href="{% url 'cultural_entry_detail' item.slug %}">{{ item.title }}</a>
+                        </h3>
+                        <p class="text-xs text-gray-600 line-clamp-3 leading-relaxed mb-4">
+                            {{ item.short_description }}
+                        </p>
+                    </div>
+                </div>
+                <div class="p-6 pt-0 border-t border-gray-100 mt-4 flex items-center justify-between">
+                    <a href="{% url 'cultural_entry_detail' item.slug %}" class="text-xs font-bold text-bharat-navy hover:text-bharat-saffron">
+                        Examine Artifact &rarr;
+                    </a>
+                    <span class="text-[11px] text-gray-400">Published Record</span>
+                </div>
+            </div>
+            {% endfor %}
+
+            <!-- Literary Works / Manuscripts in this Hall -->
+            {% for work in hall_works %}
+            <div class="bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-xl hover:border-amber-400 transition flex flex-col justify-between">
+                <div class="p-6">
+                    <div class="flex items-center justify-between text-xs mb-3">
+                        <span class="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 font-bold text-[11px]">
+                            {{ work.get_work_type_display }}
+                        </span>
+                        <span class="text-gray-400">{{ work.language }}</span>
+                    </div>
+                    <h3 class="text-lg font-serif font-bold text-gray-900 mb-1 hover:text-bharat-navy transition">
+                        <a href="{% url 'library_detail' work.slug %}">{{ work.title }}</a>
+                    </h3>
+                    <p class="text-xs text-amber-900/80 font-medium mb-3">
+                        <i class="fas fa-feather-alt text-amber-600 mr-1"></i>{{ work.author_creator|default:"Living Tradition" }}
+                    </p>
+                    <p class="text-xs text-gray-600 line-clamp-3 leading-relaxed">
+                        {{ work.brief_intro }}
+                    </p>
+                </div>
+                <div class="p-6 pt-0 border-t border-gray-100 mt-4 flex items-center justify-between">
+                    <a href="{% url 'library_detail' work.slug %}" class="text-xs font-bold text-bharat-navy hover:text-bharat-saffron">
+                        Open in Reading Room &rarr;
+                    </a>
+                    {% if work.state %}
+                    <span class="text-[11px] text-gray-500">{{ work.state.name }}</span>
+                    {% else %}
+                    <span class="text-[11px] text-indigo-600">Pan-Indian</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+
+            <!-- Festivals in this Hall -->
+            {% for fest in hall_festivals %}
+            <div class="bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-xl hover:border-amber-400 transition p-6 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between text-xs mb-2">
+                        <span class="px-2 py-0.5 rounded bg-orange-100 text-orange-900 font-bold">Festival</span>
+                        <span class="text-gray-400">{{ fest.month }}</span>
+                    </div>
+                    <h3 class="text-lg font-serif font-bold text-gray-900 mb-2">{{ fest.name }}</h3>
+                    <p class="text-xs text-gray-600 line-clamp-3 leading-relaxed mb-4">{{ fest.description }}</p>
+                </div>
+                <div class="pt-3 border-t border-gray-100 flex items-center justify-between">
+                    <span class="text-xs font-bold text-gray-700">{{ fest.state.name }}</span>
+                    <a href="{% url 'cultural_calendar' %}" class="text-xs font-bold text-bharat-saffron hover:underline">View in Calendar &rarr;</a>
+                </div>
+            </div>
+            {% endfor %}
+
+            <!-- Cuisines in this Hall -->
+            {% for cui in hall_cuisines %}
+            <div class="bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-xl hover:border-amber-400 transition p-6 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between text-xs mb-2">
+                        <span class="px-2 py-0.5 rounded bg-amber-100 text-amber-900 font-bold">Culinary Heritage</span>
+                        <span class="text-gray-500">{{ cui.state.name }}</span>
+                    </div>
+                    <h3 class="text-lg font-serif font-bold text-gray-900 mb-2">{{ cui.name }}</h3>
+                    <p class="text-xs text-gray-600 line-clamp-3 leading-relaxed mb-3">{{ cui.description }}</p>
+                    <p class="text-[11px] text-amber-800 bg-amber-50 p-2 rounded-lg font-medium"><strong>Ingredients:</strong> {{ cui.ingredients|truncatechars:60 }}</p>
+                </div>
+                <div class="pt-3 border-t border-gray-100 mt-4">
+                    <a href="{% url 'state_detail' cui.state.slug %}" class="text-xs font-bold text-bharat-navy hover:text-bharat-saffron">Explore {{ cui.state.name }} Cuisine &rarr;</a>
+                </div>
+            </div>
+            {% endfor %}
+
+            <!-- Traditions in this Hall -->
+            {% for trad in hall_traditions %}
+            <div class="bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-xl hover:border-amber-400 transition p-6 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between text-xs mb-2">
+                        <span class="px-2 py-0.5 rounded bg-indigo-100 text-indigo-900 font-bold">Living Tradition</span>
+                        <span class="text-gray-500">{{ trad.state.name }}</span>
+                    </div>
+                    <h3 class="text-lg font-serif font-bold text-gray-900 mb-2">{{ trad.name }}</h3>
+                    <p class="text-xs text-gray-600 line-clamp-3 leading-relaxed mb-3">{{ trad.description }}</p>
+                </div>
+                <div class="pt-3 border-t border-gray-100 mt-4">
+                    <a href="{% url 'state_detail' trad.state.slug %}" class="text-xs font-bold text-bharat-navy hover:text-bharat-saffron">Discover in {{ trad.state.name }} &rarr;</a>
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+
+        {% if not hall_entries and not hall_works and not hall_festivals and not hall_cuisines and not hall_traditions %}
+        <div class="text-center py-12 bg-gray-50 rounded-2xl border border-dashed border-gray-300 p-8">
+            <p class="text-gray-500 text-sm">Exhibits for this heritage wing are currently in curatorial conservation. Please explore other active wings above.</p>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endif %}
+
+<!-- Featured Masterpieces & Artifacts Gallery -->
+<div class="bg-bharat-navy py-16 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-wrap items-center justify-between mb-12 pb-4 border-b border-gray-700">
+            <div>
+                <span class="text-xs uppercase font-bold text-bharat-amber tracking-wider">Permanent Collection</span>
+                <h2 class="text-3xl font-serif font-bold text-white mt-1">Featured Masterpieces & Living Arts</h2>
+            </div>
+            <a href="{% url 'explore_india' %}" class="text-xs font-bold text-bharat-amber hover:text-white transition mt-2 sm:mt-0">
+                Explore All State Traditions &rarr;
+            </a>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {% for art in featured %}
+            <div class="bg-gray-800/90 rounded-2xl overflow-hidden border border-gray-700 group hover:border-bharat-amber transition flex flex-col justify-between">
+                <div>
+                    <div class="h-52 bg-gray-700 relative overflow-hidden">
+                        {% if art.image %}
+                        <img src="{{ art.image.url }}" class="w-full h-full object-cover opacity-85 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500">
+                        {% else %}
+                        <div class="w-full h-full flex items-center justify-center text-4xl bg-gray-800">
+                            🏺
+                        </div>
+                        {% endif %}
+                        <div class="absolute bottom-3 left-3">
+                            <span class="bg-bharat-amber text-bharat-navy text-xs font-bold px-2.5 py-1 rounded shadow">
+                                {{ art.category.name }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="text-gray-400 text-xs font-medium mb-1">{{ art.state.name }}</div>
+                        <h3 class="text-xl font-bold text-white mb-2 group-hover:text-bharat-amber transition">{{ art.title }}</h3>
+                        <p class="text-gray-400 text-xs leading-relaxed line-clamp-3 mb-4">{{ art.short_description }}</p>
+                    </div>
+                </div>
+                <div class="p-6 pt-0">
+                    <a href="{% url 'cultural_entry_detail' art.slug %}" class="text-bharat-amber font-bold hover:text-white text-xs inline-flex items-center gap-1">
+                        <span>Examine Artifact</span> &rarr;
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-gray-500 text-center col-span-3">Featured artifacts being curated.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Rare Manuscripts & Literary Codices Gallery -->
+<div class="bg-slate-900 py-16 border-t border-gray-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-wrap items-center justify-between mb-10 pb-4 border-b border-gray-800">
+            <div>
+                <span class="text-xs uppercase font-bold text-amber-500 tracking-wider">Archival Gallery</span>
+                <h2 class="text-3xl font-serif font-bold text-white mt-1">Sacred Manuscripts & Literary Codices</h2>
+            </div>
+            <a href="{% url 'digital_library' %}" class="text-xs font-bold text-bharat-amber hover:text-yellow-400 mt-2 sm:mt-0">
+                View All in Digital Library &rarr;
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for item in featured_manuscripts %}
+            <div class="bg-gray-800/90 rounded-2xl p-6 border border-gray-700 hover:border-amber-500/60 transition group flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between text-[11px] mb-3">
+                        <span class="px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 font-semibold border border-amber-500/20">
+                            {{ item.language }}
+                        </span>
+                        <span class="text-gray-400">{{ item.historical_period }}</span>
+                    </div>
+                    <h3 class="text-lg font-serif font-bold text-white group-hover:text-bharat-amber transition mb-2">
+                        <a href="{% url 'library_detail' item.slug %}">{{ item.title }}</a>
+                    </h3>
+                    <p class="text-xs text-amber-300/80 mb-3 font-medium">
+                        <i class="fas fa-feather-alt mr-1"></i>{{ item.author_creator|default:"Living Classical Tradition" }}
+                    </p>
+                    <p class="text-xs text-gray-400 line-clamp-3 leading-relaxed mb-4">
+                        {{ item.brief_intro }}
+                    </p>
+                </div>
+                <div class="pt-4 border-t border-gray-700/80 flex items-center justify-between">
+                    <a href="{% url 'library_detail' item.slug %}" class="inline-flex items-center text-xs font-bold text-bharat-amber hover:text-white transition">
+                        Examine Codex & Reading Room &rarr;
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-gray-500 col-span-3 text-center">Manuscripts being curated.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

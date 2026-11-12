@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}{{ game.title }} - How to Play{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-16">
+    <div class="text-center mb-10">
+        <span class="text-xs font-bold text-bharat-saffron uppercase tracking-widest block mb-2">{{ game.get_game_type_display }}</span>
+        <h1 class="text-4xl font-serif font-bold text-bharat-navy mb-4">{{ game.title }}</h1>
+        <p class="text-xl text-gray-600">{{ game.description }}</p>
+    </div>
+    
+    <div class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden flex flex-col md:flex-row">
+        <!-- Preview Image -->
+        <div class="w-full md:w-2/5 bg-gray-100 relative">
+            {% if game.thumbnail %}
+                <img src="{{ game.thumbnail.url }}" alt="{{ game.title }}" class="w-full h-full object-cover">
+            {% else %}
+                <div class="w-full h-full min-h-[300px] flex items-center justify-center bg-gradient-to-br from-bharat-navy to-blue-900">
+                    <span class="text-6xl text-white opacity-20">🎯</span>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Instructions Panel -->
+        <div class="w-full md:w-3/5 p-8 md:p-12">
+            <h2 class="text-2xl font-bold text-bharat-navy mb-6 border-b border-gray-200 pb-2">How to Play</h2>
+            
+            <ul class="space-y-4 text-gray-700 mb-8">
+                <li class="flex items-start">
+                    <span class="text-bharat-saffron font-bold mr-3">1.</span>
+                    {% if game.game_type == 'picture_puzzle' %}
+                        Reconstruct the shuffled image by moving the puzzle pieces before time runs out.
+                    {% elif game.game_type == 'crossword' %}
+                        Fill the grid by solving cultural clues.
+                    {% elif game.game_type == 'word_search' %}
+                        Find the hidden cultural vocabulary words in the grid.
+                    {% else %}
+                        Answer the questions correctly to earn maximum XP.
+                    {% endif %}
+                </li>
+                <li class="flex items-start">
+                    <span class="text-bharat-saffron font-bold mr-3">2.</span>
+                    Use the <strong>Hint</strong> button if you get stuck (but use it wisely!).
+                </li>
+                <li class="flex items-start">
+                    <span class="text-bharat-saffron font-bold mr-3">3.</span>
+                    Submit or complete the challenge to see your score and learn about the culture.
+                </li>
+            </ul>
+            
+            <div class="flex flex-wrap gap-4 mt-8">
+                <a href="{% url 'games_hub' %}" class="bg-transparent border-2 border-gray-300 text-gray-600 hover:border-gray-500 hover:text-gray-800 px-6 py-3 rounded-xl font-bold transition">Back</a>
+                
+                {% if game.game_type == 'picture_puzzle' %}
+                    <a href="{% url 'play_puzzle' game.slug %}" class="flex-grow text-center bg-bharat-saffron text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-orange-600 transition">Start Challenge</a>
+                {% elif game.game_type == 'word_search' %}
+                    <a href="{% url 'play_word_search' game.slug %}" class="flex-grow text-center bg-bharat-saffron text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-orange-600 transition">Start Challenge</a>
+                {% elif game.quiz %}
+                    <a href="{% url 'take_quiz' game.quiz.slug %}" class="flex-grow text-center bg-bharat-saffron text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-orange-600 transition">Start Quiz</a>
+                {% else %}
+                    <button disabled class="flex-grow text-center bg-gray-300 text-white px-6 py-3 rounded-xl font-bold shadow-none cursor-not-allowed">Game Under Construction</button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

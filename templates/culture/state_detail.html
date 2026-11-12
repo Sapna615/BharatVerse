@@ -1,0 +1,347 @@
+{% extends 'base.html' %}
+{% block title %}Discover {{ state.name }} - BharatVerse{% endblock %}
+{% block content %}
+<!-- Hero Section -->
+<div class="relative py-20 md:py-24 text-center overflow-hidden">
+    <!-- Background Image or Gradient -->
+    {% if state.image %}
+    <div class="absolute inset-0 bg-cover bg-center z-0" style="background-image: url('{{ state.image.url }}'); filter: brightness(0.35);"></div>
+    {% else %}
+    <div class="absolute inset-0 bg-gradient-to-br from-bharat-navy via-indigo-950 to-slate-900 z-0"></div>
+    <div class="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')]"></div>
+    {% endif %}
+    
+    <div class="relative z-10 max-w-4xl mx-auto px-4 drop-shadow-lg">
+        <span class="inline-block px-4 py-1.5 rounded-full bg-bharat-saffron/20 border border-bharat-saffron/40 text-bharat-saffron font-bold tracking-widest uppercase text-xs mb-3 backdrop-blur-sm">{{ state.region }}</span>
+        <h1 class="text-4xl md:text-6xl font-serif font-bold text-white mb-4 tracking-tight">{{ state.name }}</h1>
+        <p class="text-lg md:text-xl text-gray-200 font-light mb-8 max-w-2xl mx-auto leading-relaxed">{{ state.description }}</p>
+        <div class="flex flex-wrap justify-center gap-4">
+            <a href="#explore" class="bg-bharat-saffron hover:bg-orange-500 text-white font-bold py-3.5 px-8 rounded-full shadow-lg hover:shadow-2xl transition transform hover:-translate-y-0.5">Explore Culture</a>
+            <a href="{% url 'state_knowledge_graph' state.slug %}" class="bg-white/15 hover:bg-white/25 border border-white/30 text-white font-bold py-3.5 px-8 rounded-full shadow-lg backdrop-blur-md hover:shadow-2xl transition transform hover:-translate-y-0.5 flex items-center gap-2">
+                <i class="fas fa-project-diagram text-amber-300"></i> {{ state.name }} Knowledge Graph
+            </a>
+        </div>
+    </div>
+    
+    <!-- Wave separator -->
+    <div class="absolute bottom-0 w-full overflow-hidden leading-none z-10">
+        <svg class="relative block w-[calc(100%+1.3px)] h-[40px] md:h-[55px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C59.71,118,152.47,143.62,229.4,117.9,260.67,107.5,290.3,87.7,321.39,56.44Z" class="fill-gray-50"></path>
+        </svg>
+    </div>
+</div>
+
+<!-- Fingerprint Section -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
+    <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-6 md:p-8">
+        <div class="text-center mb-6">
+            <h2 class="text-2xl md:text-3xl font-serif font-bold text-bharat-navy mb-2">Cultural Fingerprint</h2>
+            <p class="text-sm text-gray-500">A visual snapshot of what makes {{ state.name }} culturally distinctive across art, music, cuisine, and festivals.</p>
+        </div>
+        
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 max-w-5xl mx-auto mb-8">
+            {% for category, percentage in fingerprint.items %}
+            <div class="bg-gray-50/80 rounded-xl p-3 border border-gray-100 text-center flex flex-col justify-between">
+                <span class="text-xs font-bold text-gray-700 mb-1.5">{{ category }}</span>
+                <div class="w-full bg-gray-200 rounded-full h-2 mb-1.5 overflow-hidden">
+                    <div class="bg-gradient-to-r from-bharat-saffron to-amber-500 h-2 rounded-full transition-all duration-700" style="width: {{ percentage }}%"></div>
+                </div>
+                <span class="text-[11px] font-semibold text-bharat-navy/70">{{ percentage }}%</span>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- State Knowledge Graph Feature Banner -->
+        <div class="bg-gradient-to-r from-bharat-navy via-indigo-950 to-slate-900 rounded-xl p-6 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-md border border-indigo-900/50">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 rounded-2xl bg-bharat-saffron/20 border border-bharat-saffron/40 flex items-center justify-center text-bharat-saffron text-2xl flex-shrink-0">
+                    <i class="fas fa-project-diagram"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-serif font-bold text-white flex items-center gap-2">
+                        {{ state.name }} Cultural Knowledge Graph
+                        <span class="text-[10px] uppercase font-bold tracking-wider bg-bharat-saffron text-white px-2 py-0.5 rounded-full">Interactive Network</span>
+                    </h3>
+                    <p class="text-xs text-gray-300 max-w-xl">
+                        Explore the living relationships between {{ state.name }}'s literature, performing arts, crafts, and cross-regional cultural connections in an interactive node network.
+                    </p>
+                </div>
+            </div>
+            <a href="{% url 'state_knowledge_graph' state.slug %}" class="whitespace-nowrap bg-bharat-saffron hover:bg-orange-600 text-white font-bold text-sm px-6 py-3 rounded-xl shadow-lg transition flex items-center gap-2 transform hover:-translate-y-0.5">
+                <span>Explore Network</span> <i class="fas fa-arrow-right text-xs"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Content Grid -->
+<div id="explore" class="bg-gray-50 py-10 md:py-12 border-t border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Dance & Performing Arts -->
+        {% if dance_entries %}
+        <div class="mb-12">
+            <div class="flex items-center justify-between mb-6 pb-2 border-b-2 border-bharat-saffron/40">
+                <h3 class="text-2xl font-serif font-bold text-bharat-navy flex items-center">
+                    <i class="fas fa-theater-masks text-bharat-saffron mr-2.5"></i>Dance & Performing Arts
+                </h3>
+                <span class="text-xs font-bold bg-orange-100 text-orange-800 px-3 py-1 rounded-full">{{ dance_entries|length }} Traditions</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {% for entry in dance_entries %}
+                <div class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1.5 border border-gray-100 flex flex-col h-full overflow-hidden group">
+                    {% if entry.image %}
+                    <div class="h-48 overflow-hidden w-full relative">
+                        <img src="{{ entry.image.url }}" alt="{{ entry.title }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+                        <span class="absolute bottom-3 left-4 text-xs font-bold text-white uppercase tracking-wider px-2.5 py-1 bg-black/40 rounded-full backdrop-blur-sm">{{ entry.category.name }}</span>
+                    </div>
+                    {% else %}
+                    <div class="h-44 bg-gradient-to-br from-rose-700 via-orange-600 to-bharat-navy flex items-center justify-center p-4 relative overflow-hidden">
+                        <div class="absolute inset-0 opacity-15 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
+                        <div class="text-center relative z-10">
+                            <i class="fas fa-drum text-white/40 text-3xl mb-2 block"></i>
+                            <span class="text-xs font-bold text-white uppercase tracking-widest border border-white/30 px-3 py-1 rounded-full backdrop-blur-sm">Dance & Rhythm</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h4 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-bharat-navy transition-colors">{{ entry.title }}</h4>
+                        <p class="text-sm text-gray-600 line-clamp-3 mb-5 flex-grow leading-relaxed">{{ entry.short_description }}</p>
+                        <a href="{% url 'cultural_entry_detail' entry.slug %}" class="inline-flex items-center text-bharat-saffron font-bold hover:text-orange-600 mt-auto transition text-sm">Read the Story <svg class="w-4 h-4 ml-1.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg></a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Music & Instruments -->
+        {% if music_entries %}
+        <div class="mb-12">
+            <div class="flex items-center justify-between mb-6 pb-2 border-b-2 border-bharat-saffron/40">
+                <h3 class="text-2xl font-serif font-bold text-bharat-navy flex items-center">
+                    <i class="fas fa-music text-bharat-saffron mr-2.5"></i>Music & Instruments
+                </h3>
+                <span class="text-xs font-bold bg-amber-100 text-amber-800 px-3 py-1 rounded-full">{{ music_entries|length }} Traditions</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {% for entry in music_entries %}
+                <div class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1.5 border border-gray-100 flex flex-col h-full overflow-hidden group">
+                    {% if entry.image %}
+                    <div class="h-48 overflow-hidden w-full relative">
+                        <img src="{{ entry.image.url }}" alt="{{ entry.title }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+                        <span class="absolute bottom-3 left-4 text-xs font-bold text-white uppercase tracking-wider px-2.5 py-1 bg-black/40 rounded-full backdrop-blur-sm">{{ entry.category.name }}</span>
+                    </div>
+                    {% else %}
+                    <div class="h-44 bg-gradient-to-br from-indigo-900 via-purple-900 to-bharat-navy flex items-center justify-center p-4 relative overflow-hidden">
+                        <div class="absolute inset-0 opacity-15 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
+                        <div class="text-center relative z-10">
+                            <i class="fas fa-guitar text-white/40 text-3xl mb-2 block"></i>
+                            <span class="text-xs font-bold text-white uppercase tracking-widest border border-white/30 px-3 py-1 rounded-full backdrop-blur-sm">Acoustic Heritage</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h4 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-bharat-navy transition-colors">{{ entry.title }}</h4>
+                        <p class="text-sm text-gray-600 line-clamp-3 mb-5 flex-grow leading-relaxed">{{ entry.short_description }}</p>
+                        <a href="{% url 'cultural_entry_detail' entry.slug %}" class="inline-flex items-center text-bharat-saffron font-bold hover:text-orange-600 mt-auto transition text-sm">Listen to the Story <svg class="w-4 h-4 ml-1.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Crafts & Textiles -->
+        {% if craft_entries %}
+        <div class="mb-12">
+            <div class="flex items-center justify-between mb-6 pb-2 border-b-2 border-bharat-saffron/40">
+                <h3 class="text-2xl font-serif font-bold text-bharat-navy flex items-center">
+                    <i class="fas fa-palette text-bharat-saffron mr-2.5"></i>Crafts & Textiles
+                </h3>
+                <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full">{{ craft_entries|length }} Crafts</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {% for entry in craft_entries %}
+                <div class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1.5 border border-gray-100 flex flex-col h-full overflow-hidden group">
+                    {% if entry.image %}
+                    <div class="h-48 overflow-hidden w-full relative">
+                        <img src="{{ entry.image.url }}" alt="{{ entry.title }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+                        <span class="absolute bottom-3 left-4 text-xs font-bold text-white uppercase tracking-wider px-2.5 py-1 bg-black/40 rounded-full backdrop-blur-sm">{{ entry.category.name }}</span>
+                    </div>
+                    {% else %}
+                    <div class="h-44 bg-gradient-to-br from-teal-900 via-emerald-800 to-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
+                        <div class="absolute inset-0 opacity-15 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
+                        <div class="text-center relative z-10">
+                            <i class="fas fa-brush text-white/40 text-3xl mb-2 block"></i>
+                            <span class="text-xs font-bold text-white uppercase tracking-widest border border-white/30 px-3 py-1 rounded-full backdrop-blur-sm">Artisanal Guild</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h4 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-bharat-navy transition-colors">{{ entry.title }}</h4>
+                        <p class="text-sm text-gray-600 line-clamp-3 mb-5 flex-grow leading-relaxed">{{ entry.short_description }}</p>
+                        <a href="{% url 'cultural_entry_detail' entry.slug %}" class="inline-flex items-center text-bharat-saffron font-bold hover:text-orange-600 mt-auto transition text-sm">Discover the Craft <svg class="w-4 h-4 ml-1.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg></a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Stories & Oral Traditions -->
+        {% if story_entries %}
+        <div class="mb-12">
+            <div class="flex items-center justify-between mb-6 pb-2 border-b-2 border-bharat-saffron/40">
+                <h3 class="text-2xl font-serif font-bold text-bharat-navy flex items-center">
+                    <i class="fas fa-book-open text-bharat-saffron mr-2.5"></i>Stories & Oral Traditions
+                </h3>
+                <span class="text-xs font-bold bg-purple-100 text-purple-800 px-3 py-1 rounded-full">{{ story_entries|length }} Legends</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {% for entry in story_entries %}
+                <div class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1.5 border border-gray-100 flex flex-col h-full overflow-hidden group">
+                    {% if entry.image %}
+                    <div class="h-48 overflow-hidden w-full relative">
+                        <img src="{{ entry.image.url }}" alt="{{ entry.title }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+                        <span class="absolute bottom-3 left-4 text-xs font-bold text-white uppercase tracking-wider px-2.5 py-1 bg-black/40 rounded-full backdrop-blur-sm">{{ entry.category.name }}</span>
+                    </div>
+                    {% else %}
+                    <div class="h-44 bg-gradient-to-br from-purple-950 via-indigo-950 to-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
+                        <div class="absolute inset-0 opacity-15 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
+                        <div class="text-center relative z-10">
+                            <i class="fas fa-feather-alt text-white/40 text-3xl mb-2 block"></i>
+                            <span class="text-xs font-bold text-white uppercase tracking-widest border border-white/30 px-3 py-1 rounded-full backdrop-blur-sm">Oral Folklore</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h4 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-bharat-navy transition-colors">{{ entry.title }}</h4>
+                        <p class="text-sm text-gray-600 line-clamp-3 mb-5 flex-grow leading-relaxed">{{ entry.short_description }}</p>
+                        <a href="{% url 'cultural_entry_detail' entry.slug %}" class="inline-flex items-center text-bharat-saffron font-bold hover:text-orange-600 mt-auto transition text-sm">Read the Story <svg class="w-4 h-4 ml-1.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg></a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Festivals & Living Traditions -->
+        {% if festivals %}
+        <div class="mb-12">
+            <div class="flex items-center justify-between mb-6 pb-2 border-b-2 border-bharat-saffron/40">
+                <h3 class="text-2xl font-serif font-bold text-bharat-navy flex items-center">
+                    <i class="fas fa-fire-alt text-bharat-saffron mr-2.5"></i>Festivals & Living Traditions
+                </h3>
+                <span class="text-xs font-bold bg-rose-100 text-rose-800 px-3 py-1 rounded-full">{{ festivals|length }} Celebrations</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {% for festival in festivals %}
+                <div class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1.5 border border-gray-100 flex flex-col h-full overflow-hidden group">
+                    {% if festival.image %}
+                    <div class="h-40 overflow-hidden w-full relative">
+                        <img src="{{ festival.image.url }}" alt="{{ festival.name }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+                        <span class="absolute bottom-3 left-4 text-xs font-bold text-white uppercase tracking-wider px-3 py-1 bg-bharat-saffron/90 rounded-full backdrop-blur-sm">{{ festival.month }}</span>
+                    </div>
+                    {% else %}
+                    <div class="h-36 bg-gradient-to-br from-amber-500 via-orange-500 to-rose-600 flex flex-col items-center justify-center relative p-4 text-center">
+                        <div class="absolute top-0 right-0 w-16 h-16 bg-white/10 rounded-bl-full"></div>
+                        <div class="absolute bottom-0 left-0 w-12 h-12 bg-white/10 rounded-tr-full"></div>
+                        <i class="fas fa-sun text-white/50 text-2xl mb-1"></i>
+                        <span class="text-xs font-bold text-white uppercase tracking-widest bg-black/20 px-3 py-0.5 rounded-full backdrop-blur-sm">{{ festival.month }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="p-5 flex-grow flex flex-col">
+                        <h4 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-bharat-navy transition-colors">{{ festival.name }}</h4>
+                        <p class="text-sm text-gray-600 flex-grow leading-relaxed">{{ festival.description }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Culinary Delights -->
+        {% if cuisines %}
+        <div class="mb-12">
+            <div class="flex items-center justify-between mb-6 pb-2 border-b-2 border-bharat-saffron/40">
+                <h3 class="text-2xl font-serif font-bold text-bharat-navy flex items-center">
+                    <i class="fas fa-utensils text-bharat-saffron mr-2.5"></i>Culinary Delights
+                </h3>
+                <span class="text-xs font-bold bg-amber-100 text-amber-800 px-3 py-1 rounded-full">{{ cuisines|length }} Signature Dishes</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {% for cuisine in cuisines %}
+                <div class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1.5 border border-gray-100 flex flex-col h-full overflow-hidden group">
+                    {% if cuisine.image %}
+                    <div class="h-48 overflow-hidden w-full relative">
+                        <img src="{{ cuisine.image.url }}" alt="{{ cuisine.name }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+                        <span class="absolute bottom-3 left-4 text-xs font-bold text-white uppercase tracking-wider px-2.5 py-1 bg-black/40 rounded-full backdrop-blur-sm">Cuisine</span>
+                    </div>
+                    {% else %}
+                    <div class="h-44 bg-gradient-to-br from-amber-600 via-orange-600 to-red-700 flex items-center justify-center p-4 relative overflow-hidden">
+                        <div class="absolute inset-0 opacity-15 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
+                        <div class="text-center relative z-10">
+                            <i class="fas fa-concierge-bell text-white/40 text-3xl mb-2 block"></i>
+                            <span class="text-xs font-bold text-white uppercase tracking-widest border border-white/30 px-3 py-1 rounded-full backdrop-blur-sm">Heritage Recipe</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h4 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-bharat-navy transition-colors">{{ cuisine.name }}</h4>
+                        <p class="text-sm text-gray-600 line-clamp-3 mb-5 flex-grow leading-relaxed">{{ cuisine.description }}</p>
+                        <div class="mt-auto pt-4 border-t border-gray-100">
+                            <span class="text-xs font-bold text-gray-700 block mb-1">Key Ingredients:</span>
+                            <span class="text-xs text-gray-600 leading-relaxed">{{ cuisine.ingredients }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if community_stories %}
+        <div class="mb-12">
+            <h3 class="text-2xl font-serif font-bold text-bharat-navy mb-6 border-b-2 border-bharat-saffron/40 inline-block pb-2">Community Submissions</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {% for story in community_stories %}
+                <div class="bg-gradient-to-br from-indigo-50 to-white rounded-2xl shadow-sm hover:shadow-md transition-shadow p-6 border border-indigo-100 relative overflow-hidden group">
+                    <div class="absolute -right-4 -top-4 w-24 h-24 bg-indigo-100 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-700"></div>
+                    <span class="relative z-10 text-xs font-bold text-indigo-500 uppercase tracking-wider block mb-2"><i class="fas fa-users mr-1"></i> Community {{ story.category.name }}</span>
+                    <h4 class="relative z-10 text-xl font-bold text-bharat-navy mb-3">{{ story.title }}</h4>
+                    <p class="relative z-10 text-sm text-gray-600 line-clamp-3 mb-5 leading-relaxed">{{ story.content }}</p>
+                    <div class="relative z-10 flex items-center mt-auto border-t border-indigo-50 pt-4">
+                        <div class="w-8 h-8 rounded-full bg-indigo-200 flex items-center justify-center text-indigo-700 font-bold text-sm mr-3">
+                            {{ story.author.username|make_list|first|upper }}
+                        </div>
+                        <div class="text-sm text-gray-500">
+                            By <span class="font-bold text-indigo-700">{{ story.author.username }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if not dance_entries and not music_entries and not craft_entries and not story_entries and not festivals and not cuisines %}
+        <div class="text-center py-16">
+            <h3 class="text-2xl font-serif text-gray-400 mb-2">We're still adding stories from this region.</h3>
+            <p class="text-gray-500">Check back later or become a contributor!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

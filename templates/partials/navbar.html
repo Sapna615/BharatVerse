@@ -1,0 +1,39 @@
+<nav class="bg-bharat-navy text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+            <div class="flex">
+                <a href="/" class="flex-shrink-0 flex items-center gap-2">
+                    <span class="text-2xl font-serif text-bharat-saffron font-bold">BharatVerse</span>
+                </a>
+                <div class="hidden sm:ml-6 sm:flex sm:space-x-6 items-center">
+                    <a href="{% url 'explore_india' %}" class="border-transparent text-gray-300 hover:text-white hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Explore India</a>
+                    <a href="{% url 'digital_library' %}" class="border-transparent text-gray-300 hover:text-white hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Cultural Library</a>
+                    <a href="{% url 'cultural_map' %}" class="border-transparent text-gray-300 hover:text-white hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Cultural Map</a>
+                    <a href="{% url 'games_hub' %}" class="border-transparent text-gray-300 hover:text-white hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Games Hub</a>
+                    <a href="{% url 'museum' %}" class="border-transparent text-gray-300 hover:text-white hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Virtual Museum</a>
+                    <a href="#" onclick="toggleChat(); return false;" class="border-transparent text-gray-300 hover:text-white hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">BharatVerse AI</a>
+                    {% if user.is_authenticated and user.role in 'contributor,curator' or user.is_superuser %}
+                    <a href="{% url 'contribute' %}" class="border-transparent text-gray-300 hover:text-white hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Contribute Heritage</a>
+                    {% endif %}
+                    {% if user.is_authenticated and user.role == 'curator' or user.is_superuser %}
+                    <a href="{% url 'curator_dashboard' %}" class="border-transparent text-bharat-saffron hover:text-orange-400 hover:border-bharat-saffron inline-flex items-center px-1 pt-1 border-b-2 text-sm font-bold">Curator Dashboard</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
+                {% if user.is_authenticated %}
+                    {% if user.role in 'contributor,curator' or user.is_superuser %}
+                    <a href="{% url 'my_submissions' %}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">My Dashboard</a>
+                    {% endif %}
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="text-bharat-saffron hover:text-white px-3 py-2 rounded-md text-sm font-medium">Logout</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Sign in</a>
+                    <a href="{% url 'register' %}" class="bg-bharat-amber text-bharat-navy hover:bg-yellow-500 px-4 py-2 rounded-md text-sm font-bold shadow-md transition">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,418 @@
+{% extends 'base.html' %}
+{% block title %}{{ entry.title }} - BharatVerse{% endblock %}
+{% block content %}
+<div class="bg-bharat-navy py-16">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+        <span class="text-bharat-amber font-bold tracking-widest uppercase text-sm mb-4 block">{{ entry.state.name }} &middot; {{ entry.category.name }}</span>
+        <h1 class="text-5xl font-serif font-bold text-white mb-6">{{ entry.title }}</h1>
+        <p class="text-xl text-gray-300 font-light mb-8 max-w-3xl mx-auto">{{ entry.short_description }}</p>
+        
+        <div class="flex flex-wrap justify-center gap-4">
+            <form action="{% url 'toggle_favorite' entry.slug %}" method="POST" class="inline">
+                {% csrf_token %}
+                <button type="submit" class="bg-white text-bharat-navy font-bold py-3 px-6 rounded-full shadow hover:bg-gray-100 transition flex items-center gap-2">
+                    {% if is_favorite %}❤️ Saved{% else %}🤍 Save{% endif %}
+                </button>
+            </form>
+            <button onclick="document.getElementById('journey-modal').classList.remove('hidden')" class="bg-bharat-saffron text-white font-bold py-3 px-6 rounded-full shadow hover:bg-orange-600 transition flex items-center gap-2">
+                ➕ Add to Journey
+            </button>
+            <a href="{% url 'cultural_connections' entry.slug %}" class="bg-transparent border-2 border-bharat-amber text-bharat-amber hover:bg-bharat-amber hover:text-bharat-navy font-bold py-3 px-6 rounded-full transition flex items-center gap-2">
+                🎯 Explore Connections
+            </a>
+            <button class="bg-gray-800 text-gray-300 border border-gray-600 font-bold py-3 px-6 rounded-full hover:bg-gray-700 transition flex items-center gap-2">
+                🤖 Ask AI (Demo)
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="max-w-4xl mx-auto px-4 py-16">
+    <!-- Image Gallery -->
+    {% if images or entry.image %}
+    <div class="mb-12">
+        <!-- Main Image -->
+        <div class="rounded-2xl overflow-hidden shadow-2xl mb-4">
+            {% if images %}
+                <img src="{% if images.0.file and images.0.file.name %}{{ images.0.file.url }}{% else %}{{ images.0.external_url }}{% endif %}" alt="{{ images.0.title }}" class="w-full h-96 object-cover hover:scale-105 transition duration-700">
+                {% if images.0.attribution %}
+                <div class="text-sm text-gray-500 mt-2 text-right italic">&copy; {{ images.0.attribution }}</div>
+                {% endif %}
+            {% elif entry.image and entry.image.name %}
+                <img src="{{ entry.image.url }}" alt="{{ entry.title }}" class="w-full h-96 object-cover hover:scale-105 transition duration-700">
+            {% endif %}
+        </div>
+        
+        <!-- Thumbnails -->
+        {% if images.count > 1 %}
+        <div class="grid grid-cols-4 gap-4 mt-4">
+            {% for img in images %}
+                {% if forloop.counter0 > 0 %}
+                <div class="rounded-xl overflow-hidden shadow-md">
+                    <img src="{% if img.file and img.file.name %}{{ img.file.url }}{% else %}{{ img.external_url }}{% endif %}" alt="{{ img.title }}" class="w-full h-24 object-cover hover:opacity-75 transition">
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    {% else %}
+    <div class="mb-12 rounded-2xl overflow-hidden shadow-2xl">
+        <!-- Beautiful Fallback Cultural Image -->
+        <img src="https://images.unsplash.com/photo-1599839619722-39751411ea63?q=80&w=2940&auto=format&fit=crop" class="w-full h-96 object-cover hover:scale-105 transition duration-700">
+    </div>
+    {% endif %}
+
+    <div class="max-w-4xl mx-auto">
+        <!-- The Story -->
+        <div class="mb-12 bg-white rounded-2xl p-6 md:p-10 border border-gray-100 shadow-sm">
+            <div class="flex items-center gap-3 border-b border-gray-100 pb-4 mb-6">
+                <span class="w-10 h-10 rounded-full bg-orange-100 text-bharat-saffron flex items-center justify-center font-bold text-lg">
+                    <i class="fas fa-book-open"></i>
+                </span>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-serif font-bold text-bharat-navy m-0">The Story</h2>
+                    <span class="text-xs text-gray-500 font-medium">Historical genesis, legends & royal heritage</span>
+                </div>
+            </div>
+            <div class="text-gray-700 text-base md:text-lg leading-relaxed space-y-4">
+                {{ entry.detailed_story|linebreaks }}
+            </div>
+        </div>
+        
+        <!-- Why It Matters -->
+        <div class="mb-12 bg-gradient-to-br from-orange-50/50 via-amber-50/30 to-white rounded-2xl p-6 md:p-10 border border-amber-100/80 shadow-sm">
+            <div class="flex items-center gap-3 border-b border-amber-200/50 pb-4 mb-6">
+                <span class="w-10 h-10 rounded-full bg-bharat-amber/20 text-amber-700 flex items-center justify-center font-bold text-lg">
+                    <i class="fas fa-shield-alt"></i>
+                </span>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-serif font-bold text-bharat-navy m-0">Why It Matters</h2>
+                    <span class="text-xs text-gray-500 font-medium">Cultural significance, GI protection & community resilience</span>
+                </div>
+            </div>
+            <div class="text-gray-700 text-base md:text-lg leading-relaxed space-y-4">
+                {{ entry.cultural_significance|linebreaks }}
+            </div>
+        </div>
+        
+        <!-- How It Is Practiced -->
+        <div class="mb-12 bg-white rounded-2xl p-6 md:p-10 border border-gray-100 shadow-sm">
+            <div class="flex items-center gap-3 border-b border-gray-100 pb-4 mb-6">
+                <span class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-lg">
+                    <i class="fas fa-hammer"></i>
+                </span>
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-serif font-bold text-bharat-navy m-0">How It Is Practiced</h2>
+                    <span class="text-xs text-gray-500 font-medium">Traditional techniques, indigenous materials & generational rites</span>
+                </div>
+            </div>
+            <div class="text-gray-700 text-base md:text-lg leading-relaxed space-y-4">
+                {{ entry.practice_description|linebreaks }}
+            </div>
+        </div>
+
+        <!-- Experience It: Comprehensive Immersive Suite -->
+        <div class="mb-14">
+            <div class="flex items-center gap-3 border-b-2 border-bharat-saffron/40 pb-4 mb-8">
+                <span class="w-12 h-12 rounded-2xl bg-bharat-saffron text-white flex items-center justify-center text-xl shadow-md">
+                    <i class="fas fa-compass"></i>
+                </span>
+                <div>
+                    <h2 class="text-3xl md:text-4xl font-serif font-bold text-bharat-navy m-0">Experience It</h2>
+                    <span class="text-sm text-gray-500">Live aesthetic signatures, workshop stages, travel guide & curator insights</span>
+                </div>
+            </div>
+
+            <!-- 1. Sensory Signatures -->
+            {% if experience_guide.sensory_signatures %}
+            <div class="mb-10">
+                <h3 class="text-xl font-serif font-bold text-bharat-navy mb-4 flex items-center gap-2">
+                    <i class="fas fa-eye text-bharat-saffron"></i> Sensory & Aesthetic Signatures
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                    {% for sig in experience_guide.sensory_signatures %}
+                    <div class="bg-gradient-to-br from-amber-50/80 to-orange-50/40 rounded-xl p-4 border border-amber-100 shadow-sm hover:shadow-md transition">
+                        <div class="w-9 h-9 rounded-lg bg-bharat-saffron/15 text-bharat-saffron flex items-center justify-center mb-2.5">
+                            <i class="{{ sig.icon }} text-base"></i>
+                        </div>
+                        <h4 class="font-bold text-bharat-navy text-sm mb-1">{{ sig.title }}</h4>
+                        <p class="text-xs text-gray-600 leading-relaxed">{{ sig.detail }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- 2. Master Workshop / Tradition in Action -->
+            {% if experience_guide.workshop_stages %}
+            <div class="mb-10 bg-white rounded-2xl p-6 md:p-8 border border-gray-100 shadow-md">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-serif font-bold text-bharat-navy flex items-center gap-2">
+                        <i class="fas fa-layer-group text-bharat-saffron"></i> Tradition in Action & Master Stages
+                    </h3>
+                    <span class="text-xs font-bold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Step-by-Step Alchemy</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    {% for stage in experience_guide.workshop_stages %}
+                    <div class="flex items-start gap-4 p-4 rounded-xl bg-gray-50/70 border border-gray-100 hover:bg-white hover:shadow-md transition">
+                        <span class="flex-shrink-0 w-10 h-10 rounded-full bg-bharat-navy text-bharat-amber font-mono font-bold flex items-center justify-center text-sm shadow-sm">{{ stage.step }}</span>
+                        <div>
+                            <h4 class="font-bold text-gray-900 text-sm mb-1">{{ stage.title }}</h4>
+                            <p class="text-xs text-gray-600 leading-relaxed">{{ stage.desc }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- 3. Where to Experience It Firsthand -->
+            {% if experience_guide.where_to_experience %}
+            <div class="mb-10">
+                <h3 class="text-xl font-serif font-bold text-bharat-navy mb-4 flex items-center gap-2">
+                    <i class="fas fa-map-marked-alt text-bharat-saffron"></i> Where to Experience It Firsthand
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {% for loc in experience_guide.where_to_experience %}
+                    <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+                        <div>
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-bharat-saffron bg-orange-50 px-2.5 py-0.5 rounded-full inline-block mb-2">{{ loc.city }}</span>
+                            <h4 class="font-bold text-bharat-navy text-base mb-1.5">{{ loc.place }}</h4>
+                            <p class="text-xs text-gray-600 leading-relaxed">{{ loc.desc }}</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-gray-100 flex items-center text-xs font-semibold text-bharat-navy">
+                            <i class="fas fa-location-arrow text-bharat-saffron mr-1.5"></i> Authentic Location
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- 4. Curator's Field Notes & Did You Know? -->
+            {% if experience_guide.curator_facts %}
+            <div class="mb-10 bg-gradient-to-br from-indigo-950 via-bharat-navy to-slate-900 rounded-2xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 w-44 h-44 bg-bharat-saffron/15 rounded-full blur-2xl"></div>
+                <div class="relative z-10">
+                    <h3 class="text-xl font-serif font-bold text-bharat-amber mb-4 flex items-center gap-2">
+                        <i class="fas fa-lightbulb text-bharat-amber"></i> Curator's Field Notes & Did You Know?
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        {% for fact in experience_guide.curator_facts %}
+                        <div class="bg-white/10 rounded-xl p-4 backdrop-blur-sm border border-white/10">
+                            <h4 class="font-bold text-sm text-white mb-2 flex items-center gap-2">
+                                <i class="fas fa-star text-bharat-amber text-xs"></i> {{ fact.title }}
+                            </h4>
+                            <p class="text-xs text-gray-300 leading-relaxed">{{ fact.fact }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- 5. Interactive Micro-Quiz Widget -->
+            {% if experience_guide.quiz %}
+            <div class="mb-10 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-6 md:p-8 border border-amber-200/80 shadow-sm">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-xl font-serif font-bold text-bharat-navy flex items-center gap-2">
+                        <i class="fas fa-question-circle text-bharat-saffron"></i> Test Your Heritage Knowledge
+                    </h3>
+                    <span class="text-xs font-bold bg-bharat-saffron text-white px-3 py-1 rounded-full uppercase tracking-wider">Quick Quiz</span>
+                </div>
+                <p class="text-sm font-semibold text-gray-800 mb-4" id="quiz-question">{{ experience_guide.quiz.question }}</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4" id="quiz-options">
+                    {% for opt in experience_guide.quiz.options %}
+                    <button type="button" onclick="checkQuizAnswer({{ forloop.counter0 }}, {{ experience_guide.quiz.correct_index }}, '{{ experience_guide.quiz.explanation|escapejs }}')" class="quiz-btn text-left p-3.5 rounded-xl bg-white border border-gray-200 text-sm font-medium text-gray-800 hover:border-bharat-saffron hover:bg-orange-50/50 transition shadow-sm flex items-center justify-between">
+                        <span>{{ opt }}</span>
+                        <i class="far fa-circle text-gray-300 text-xs option-icon"></i>
+                    </button>
+                    {% endfor %}
+                </div>
+                <div id="quiz-feedback" class="hidden p-4 rounded-xl text-xs font-medium leading-relaxed transition-all"></div>
+            </div>
+
+            <script>
+            function checkQuizAnswer(selectedIndex, correctIndex, explanation) {
+                const buttons = document.querySelectorAll('.quiz-btn');
+                const feedback = document.getElementById('quiz-feedback');
+                
+                buttons.forEach((btn, idx) => {
+                    btn.disabled = true;
+                    btn.classList.remove('hover:border-bharat-saffron', 'hover:bg-orange-50/50');
+                    const icon = btn.querySelector('.option-icon');
+                    
+                    if (idx === correctIndex) {
+                        btn.classList.add('bg-green-50', 'border-green-500', 'text-green-800');
+                        icon.className = 'fas fa-check-circle text-green-600 text-xs option-icon';
+                    } else if (idx === selectedIndex) {
+                        btn.classList.add('bg-red-50', 'border-red-400', 'text-red-700');
+                        icon.className = 'fas fa-times-circle text-red-500 text-xs option-icon';
+                    }
+                });
+
+                feedback.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'border-green-300', 'bg-red-100', 'text-red-800', 'border-red-300');
+                if (selectedIndex === correctIndex) {
+                    feedback.classList.add('bg-green-100', 'text-green-800', 'border', 'border-green-200');
+                    feedback.innerHTML = '<strong>🎉 Excellent! That is correct.</strong> ' + explanation;
+                } else {
+                    feedback.classList.add('bg-orange-100', 'text-orange-900', 'border', 'border-orange-200');
+                    feedback.innerHTML = '<strong>Not quite!</strong> The correct answer was option ' + (correctIndex + 1) + '. ' + explanation;
+                }
+            }
+            </script>
+            {% endif %}
+
+            <!-- 6. Video & Audio Masterclass Screening -->
+            {% if audios %}
+            <div class="mb-10">
+                <h3 class="text-xl font-serif font-bold text-bharat-navy mb-4 flex items-center gap-2">
+                    <i class="fas fa-headphones text-bharat-saffron"></i> Traditional Audio Archive
+                </h3>
+                <div class="space-y-4">
+                    {% for audio in audios %}
+                    <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
+                        <h4 class="font-bold text-bharat-navy mb-1.5">{{ audio.title }}</h4>
+                        {% if audio.description %}
+                        <p class="text-xs text-gray-600 mb-3">{{ audio.description }}</p>
+                        {% endif %}
+                        <audio controls class="w-full">
+                            <source src="{% if audio.file and audio.file.name %}{{ audio.file.url }}{% else %}{{ audio.external_url }}{% endif %}">
+                            Your browser does not support audio playback.
+                        </audio>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- 6. Video Masterclass & Demonstration Section -->
+            <div class="mb-10">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-serif font-bold text-bharat-navy flex items-center gap-2">
+                        <i class="fas fa-film text-bharat-saffron"></i> Visual Masterclass & Living Demonstration
+                    </h3>
+                    <span class="text-xs font-bold text-gray-500 bg-gray-100 px-3 py-1 rounded-full flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span> Video Showcase
+                    </span>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                    {% if entry.video_url %}
+                    <!-- Responsive Video Frame -->
+                    <div class="relative w-full aspect-video bg-black">
+                        <iframe 
+                            src="{{ entry.video_url }}" 
+                            title="{{ entry.title }} - Cultural Video Showcase" 
+                            class="w-full h-full border-0 absolute inset-0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                    {% else %}
+                    <!-- Local Ambient Video Showcase -->
+                    <div class="relative w-full aspect-video bg-black">
+                        <video controls class="w-full h-full object-cover">
+                            <source src="/static/videos/video1.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    {% endif %}
+
+                    <!-- Video Controls / Fallback Toolbar -->
+                    <div class="p-4 bg-gray-50 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                        <div class="flex items-center gap-2 text-gray-600 font-medium">
+                            <i class="fas fa-info-circle text-bharat-saffron"></i>
+                            <span>Featuring authentic performing and artisanal traditions of <strong>{{ entry.state.name }}</strong></span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            {% if entry.video_url %}
+                            <a href="{{ entry.video_url }}" target="_blank" rel="noopener noreferrer" class="font-bold text-bharat-navy hover:text-bharat-saffron transition flex items-center gap-1">
+                                <span>Open in New Tab</span>
+                                <i class="fas fa-external-link-alt text-[10px]"></i>
+                            </a>
+                            {% endif %}
+                            <button onclick="toggleCinemaMode()" class="px-3 py-1.5 rounded-lg bg-white border border-gray-200 text-gray-700 font-bold hover:bg-orange-50 hover:border-bharat-saffron transition flex items-center gap-1.5">
+                                <i class="fas fa-expand text-[10px] text-bharat-saffron"></i> Full View
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+            function toggleCinemaMode() {
+                const videoEl = document.querySelector('.aspect-video iframe') || document.querySelector('.aspect-video video');
+                if (videoEl) {
+                    if (videoEl.requestFullscreen) {
+                        videoEl.requestFullscreen();
+                    } else if (videoEl.webkitRequestFullscreen) {
+                        videoEl.webkitRequestFullscreen();
+                    } else if (videoEl.msRequestFullscreen) {
+                        videoEl.msRequestFullscreen();
+                    }
+                }
+            }
+            </script>
+        </div>
+    </div>
+    
+    {% if connections %}
+    <div class="mt-16 bg-gray-50 rounded-2xl p-8 border border-gray-200">
+        <h3 class="text-2xl font-serif font-bold text-bharat-navy mb-6">How It Connects</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            {% for conn in connections %}
+                <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm text-center">
+                    <span class="text-xs text-gray-500 uppercase">{{ conn.relationship_type }}</span>
+                    <h4 class="font-bold text-bharat-navy mt-1">{% if conn.source_entry == entry %}{{ conn.target_entry.title }}{% else %}{{ conn.source_entry.title }}{% endif %}</h4>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="text-center flex flex-wrap items-center justify-center gap-4 mt-4">
+            <a href="{% url 'cultural_connections' entry.slug %}" class="text-bharat-saffron font-bold hover:underline flex items-center gap-1.5"><i class="fas fa-link text-xs"></i> Explore Connected Traditions &rarr;</a>
+            <span class="text-gray-300 hidden sm:inline">•</span>
+            <a href="{% url 'state_knowledge_graph' entry.state.slug %}" class="text-bharat-navy font-bold hover:text-bharat-saffron transition flex items-center gap-1.5"><i class="fas fa-project-diagram text-bharat-saffron text-xs"></i> View in {{ entry.state.name }} Knowledge Graph &rarr;</a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Journey Modal -->
+<div id="journey-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden flex justify-center items-center z-50">
+    <div class="bg-white rounded-xl shadow-xl p-8 max-w-md w-full m-4">
+        <h3 class="text-2xl font-serif font-bold text-bharat-navy mb-4">Add to Journey</h3>
+        {% if not user.is_authenticated %}
+            <p class="text-gray-600 mb-6">Please log in to add this to your cultural journey.</p>
+            <div class="flex justify-end gap-4">
+                <button onclick="document.getElementById('journey-modal').classList.add('hidden')" class="text-gray-500 hover:text-gray-700">Cancel</button>
+                <a href="{% url 'login' %}" class="bg-bharat-saffron text-white px-4 py-2 rounded-md font-bold shadow">Log in</a>
+            </div>
+        {% else %}
+            {% if user_journeys %}
+            <form action="{% url 'add_to_journey' entry.slug %}" method="POST">
+                {% csrf_token %}
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Select Journey</label>
+                    <select name="journey_id" class="w-full border border-gray-300 rounded-md p-2 focus:ring-bharat-saffron focus:border-bharat-saffron">
+                        {% for j in user_journeys %}
+                        <option value="{{ j.id }}">{{ j.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="flex justify-end gap-4">
+                    <button type="button" onclick="document.getElementById('journey-modal').classList.add('hidden')" class="text-gray-500 hover:text-gray-700">Cancel</button>
+                    <button type="submit" class="bg-bharat-saffron text-white px-4 py-2 rounded-md font-bold shadow hover:bg-orange-600">Add</button>
+                </div>
+            </form>
+            {% else %}
+                <p class="text-gray-600 mb-6">You don't have any active journeys. Please create one in your dashboard first.</p>
+                <div class="flex justify-end">
+                    <button type="button" onclick="document.getElementById('journey-modal').classList.add('hidden')" class="text-gray-500 hover:text-gray-700">Close</button>
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

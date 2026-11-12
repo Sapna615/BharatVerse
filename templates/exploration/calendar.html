@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Cultural Calendar - BharatVerse{% endblock %}
+{% block content %}
+<div class="bg-bharat-navy py-12 text-center">
+    <h1 class="text-4xl font-serif font-bold text-white mb-2">India's Cultural Calendar</h1>
+    <p class="text-gray-300 font-light">Festivals, traditions, celebrations, and cultural moments across India.</p>
+</div>
+
+<div class="max-w-6xl mx-auto px-4 py-16">
+    <div class="flex justify-between items-center mb-8">
+        <h2 class="text-2xl font-bold text-bharat-navy">Coming Up</h2>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+        {% for e in events|slice:":3" %}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col hover:shadow-md transition">
+            <span class="text-xs font-bold text-bharat-saffron uppercase mb-1">{{ e.month }}</span>
+            <h3 class="text-lg font-bold text-bharat-navy mb-2">{{ e.name }}</h3>
+            <p class="text-sm text-gray-600 mb-4 flex-grow">{{ e.description|truncatewords:20 }}</p>
+            <a href="#" class="text-sm font-bold text-bharat-amber hover:text-yellow-600">Explore Culture &rarr;</a>
+        </div>
+        {% empty %}
+        <div class="col-span-3 text-center text-gray-500 py-12">No upcoming events scheduled.</div>
+        {% endfor %}
+    </div>
+    
+    <h2 class="text-2xl font-bold text-bharat-navy mb-8">Full Calendar</h2>
+    <div class="bg-white rounded-xl shadow border border-gray-200 overflow-hidden">
+        <table class="w-full text-left text-sm">
+            <thead class="bg-gray-50 border-b border-gray-200 text-gray-700">
+                <tr>
+                    <th class="p-4">Event</th>
+                    <th class="p-4">Month/Date</th>
+                    <th class="p-4">State</th>
+                    <th class="p-4">Category</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for e in events %}
+                <tr class="hover:bg-gray-50 transition">
+                    <td class="p-4 font-bold text-bharat-navy">{{ e.name }}</td>
+                    <td class="p-4">{{ e.month }} {% if e.date %}{{ e.date|date:"d" }}{% endif %}</td>
+                    <td class="p-4">{{ e.state.name|default:"Pan-India" }}</td>
+                    <td class="p-4"><span class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs">{{ e.category.name|default:"General" }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Play Find the Festivals</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bharat: {
+                            navy: '#1A2942',
+                            amber: '#D4AF37',
+                            saffron: '#FF9933',
+                            cream: '#FDFBF7',
+                            charcoal: '#333333'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Merriweather', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Merriweather:wght@400;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #FDFBF7; color: #333333; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Merriweather', serif; }
+        .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+    <nav class="bg-bharat-navy text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+            <div class="flex">
+                <a href="/" class="flex-shrink-0 flex items-center gap-2">
+                    <span class="text-2xl font-serif text-bharat-saffron font-bold">BharatVerse</span>
+                </a>
+                <div class="hidden sm:ml-6 sm:flex sm:space-x-8 items-center">
+                    <a href="/explore/" class="border-transparent text-gray-300 hover:text-white hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Explore India</a>
+                    <a href="/explore/map/" class="border-transparent text-gray-300 hover:text-white hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Cultural Map</a>
+                    <a href="/games/" class="border-transparent text-gray-300 hover:text-white hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Games Hub</a>
+                    <a href="#" onclick="toggleChat(); return false;" class="border-transparent text-gray-300 hover:text-white hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">BharatVerse AI</a>
+                    
+                    
+                </div>
+            </div>
+            <div class="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
+                
+                    <a href="/accounts/login/" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Sign in</a>
+                    <a href="/accounts/register/" class="bg-bharat-amber text-bharat-navy hover:bg-yellow-500 px-4 py-2 rounded-md text-sm font-bold shadow-md transition">Register</a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+
+    
+    <main class="flex-grow">
+        
+        
+        
+<div class="max-w-6xl mx-auto px-4 py-12">
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold text-bharat-navy mb-2">Find the Festivals</h1>
+        <p class="text-gray-500 text-lg">Search for hidden festival vocabulary.</p>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-8 flex justify-between items-center max-w-4xl mx-auto">
+        <div class="text-lg font-bold text-gray-700">Difficulty: <span class="text-bharat-saffron capitalize">easy</span></div>
+        <div class="text-lg font-bold text-gray-700">Words Found: <span id="word-count" class="text-bharat-navy">0</span> / 9</div>
+        <div class="text-lg font-bold text-gray-700">Time: <span id="timer" class="text-bharat-navy">00:00</span></div>
+    </div>
+
+    <div class="flex flex-col md:flex-row gap-8 items-start max-w-5xl mx-auto">
+        
+        <!-- Game Area -->
+        <div class="w-full md:w-2/3 relative select-none">
+            
+            <!-- Success Overlay -->
+            <div id="success-overlay" class="absolute inset-0 bg-green-900/90 z-20 rounded-2xl flex flex-col items-center justify-center text-white p-8 text-center hidden backdrop-blur-md transition-opacity duration-500">
+                <div class="text-6xl mb-4">🏆</div>
+                <h2 class="text-4xl font-bold mb-2 text-yellow-400">Puzzle Solved!</h2>
+                <p class="text-xl mb-6">You found all words in <span id="final-time" class="font-bold"></span>.</p>
+                <div class="flex gap-4">
+                    <a href="/games/" class="bg-white text-green-900 px-6 py-3 rounded-xl font-bold hover:bg-gray-100 transition shadow-lg">Back to Hub</a>
+                    <button id="btn-learn-more" class="bg-bharat-saffron text-white px-6 py-3 rounded-xl font-bold hover:bg-orange-600 transition shadow-lg">Discover the Culture</button>
+                </div>
+            </div>
+
+            <!-- The Grid -->
+            <div id="word-grid" class="w-full aspect-square bg-white border border-gray-200 shadow-md p-2 rounded-2xl relative">
+                <!-- Cells generated via JS -->
+            </div>
+            
+            <!-- Highlight canvas overlaid on grid -->
+            <canvas id="highlight-canvas" class="absolute inset-0 pointer-events-none z-10 m-2"></canvas>
+        </div>
+
+        <!-- Right Panel: Word List & Controls -->
+        <div class="w-full md:w-1/3 flex flex-col gap-6">
+            
+            <!-- Controls -->
+            <div class="flex justify-between items-center gap-2">
+                <button id="btn-reset" class="flex-1 bg-yellow-400 text-gray-900 font-bold py-3 px-4 rounded-xl hover:bg-yellow-500 transition shadow-sm">Reset</button>
+                <button id="btn-hint" class="flex-1 bg-bharat-navy text-white font-bold py-3 px-4 rounded-xl hover:bg-blue-900 transition shadow-sm">Hint</button>
+            </div>
+
+            <!-- Word List -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h3 class="text-xl font-bold text-bharat-navy mb-4 border-b border-gray-100 pb-2">Find these words</h3>
+                <ul id="word-list" class="flex flex-wrap gap-2">
+                    
+                    <li class="word-item px-3 py-1 bg-gray-100 text-gray-700 font-bold rounded-lg transition duration-300" data-word="DIWALI">DIWALI</li>
+                    
+                    <li class="word-item px-3 py-1 bg-gray-100 text-gray-700 font-bold rounded-lg transition duration-300" data-word="HOLI">HOLI</li>
+                    
+                    <li class="word-item px-3 py-1 bg-gray-100 text-gray-700 font-bold rounded-lg transition duration-300" data-word="DUSSEHRA">DUSSEHRA</li>
+                    
+                    <li class="word-item px-3 py-1 bg-gray-100 text-gray-700 font-bold rounded-lg transition duration-300" data-word="NAVRATRI">NAVRATRI</li>
+                    
+                    <li class="word-item px-3 py-1 bg-gray-100 text-gray-700 font-bold rounded-lg transition duration-300" data-word="EID">EID</li>
+                    
+                    <li class="word-item px-3 py-1 bg-gray-100 text-gray-700 font-bold rounded-lg transition duration-300" data-word="CHRISTMAS">CHRISTMAS</li>
+                    
+                    <li class="word-item px-3 py-1 bg-gray-100 text-gray-700 font-bold rounded-lg transition duration-300" data-word="PONGAL">PONGAL</li>
+                    
+                    <li class="word-item px-3 py-1 bg-gray-100 text-gray-700 font-bold rounded-lg transition duration-300" data-word="ONAM">ONAM</li>
+                    
+                    <li class="word-item px-3 py-1 bg-gray-100 text-gray-700 font-bold rounded-lg transition duration-300" data-word="BAISAKHI">BAISAKHI</li>
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    try {
+        const gridEl = document.getElementById('word-grid');
+        const canvas = document.getElementById('highlight-canvas');
+        const ctx = canvas.getContext('2d');
+        const wordListEl = document.getElementById('word-list');
+        const timerEl = document.getElementById('timer');
+        const wordCountEl = document.getElementById('word-count');
+        const btnReset = document.getElementById('btn-reset');
+        const btnHint = document.getElementById('btn-hint');
+        const successOverlay = document.getElementById('success-overlay');
+        const finalTimeEl = document.getElementById('final-time');
+
+        const gridSize = 10;
+        const words = ["DIWALI", "HOLI", "DUSSEHRA", "NAVRATRI", "EID", "CHRISTMAS", "PONGAL", "ONAM", "BAISAKHI"];
+        
+        let letters = [];
+        let placedWordsInfo = []; 
+        let foundWords = new Set();
+        
+        let seconds = 0;
+        let timerInterval = null;
+        let isPlaying = true;
+        
+        let isSelecting = false;
+        let startCell = null;
+        let endCell = null;
+        
+        // Canvas sizing setup
+        function resizeCanvas() {
+            canvas.width = gridEl.clientWidth - 16; // minus padding
+            canvas.height = gridEl.clientHeight - 16;
+            drawAllHighlights();
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+    function initGame() {
+        try {
+            letters = Array(gridSize).fill(null).map(() => Array(gridSize).fill(''));
+            placedWordsInfo = [];
+            foundWords.clear();
+            seconds = 0;
+            isPlaying = true;
+            wordCountEl.textContent = '0';
+            timerEl.textContent = '00:00';
+            
+            document.querySelectorAll('.word-item').forEach(el => {
+                el.classList.remove('bg-green-500', 'text-white', 'line-through');
+                el.classList.add('bg-gray-100', 'text-gray-700');
+            });
+            
+            successOverlay.classList.add('hidden');
+            
+            placeWords();
+            fillEmptyCells();
+            renderGrid();
+            
+            clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimer, 1000);
+            
+            setTimeout(resizeCanvas, 100);
+        } catch (error) {
+            gridEl.innerHTML = `<div class="p-8 text-red-500 font-bold text-xl">JS Error: ${error.message}<br/>${error.stack}</div>`;
+        }
+    }
+
+    function updateTimer() {
+        if(!isPlaying) return;
+        seconds++;
+        const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+        const s = (seconds % 60).toString().padStart(2, '0');
+        timerEl.textContent = `${m}:${s}`;
+    }
+
+    function placeWords() {
+        const directions = [
+            [0, 1], [1, 0], [1, 1], [-1, 1],
+            [0, -1], [-1, 0], [-1, -1], [1, -1]
+        ];
+        
+        words.forEach(word => {
+            let placed = false;
+            let attempts = 0;
+            
+            while (!placed && attempts < 100) {
+                attempts++;
+                const dir = directions[Math.floor(Math.random() * directions.length)];
+                const r = Math.floor(Math.random() * gridSize);
+                const c = Math.floor(Math.random() * gridSize);
+                
+                if (canPlaceWord(word, r, c, dir)) {
+                    for (let i = 0; i < word.length; i++) {
+                        letters[r + i * dir[0]][c + i * dir[1]] = word[i];
+                    }
+                    placedWordsInfo.push({
+                        word: word,
+                        startR: r,
+                        startC: c,
+                        endR: r + (word.length - 1) * dir[0],
+                        endC: c + (word.length - 1) * dir[1]
+                    });
+                    placed = true;
+                }
+            }
+            if(!placed) console.warn("Could not place word: " + word);
+        });
+    }
+
+    function canPlaceWord(word, r, c, dir) {
+        if (r + (word.length - 1) * dir[0] < 0 || r + (word.length - 1) * dir[0] >= gridSize) return false;
+        if (c + (word.length - 1) * dir[1] < 0 || c + (word.length - 1) * dir[1] >= gridSize) return false;
+        
+        for (let i = 0; i < word.length; i++) {
+            const currentLetter = letters[r + i * dir[0]][c + i * dir[1]];
+            if (currentLetter !== '' && currentLetter !== word[i]) return false;
+        }
+        return true;
+    }
+
+    function fillEmptyCells() {
+        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        for (let r = 0; r < gridSize; r++) {
+            for (let c = 0; c < gridSize; c++) {
+                if (letters[r][c] === '') {
+                    letters[r][c] = alphabet[Math.floor(Math.random() * alphabet.length)];
+                }
+            }
+        }
+    }
+
+    function renderGrid() {
+        gridEl.innerHTML = '';
+        gridEl.style.display = 'grid';
+        gridEl.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
+        gridEl.style.gridTemplateRows = `repeat(${gridSize}, 1fr)`;
+        
+        for (let r = 0; r < gridSize; r++) {
+            for (let c = 0; c < gridSize; c++) {
+                const cell = document.createElement('div');
+                cell.className = 'flex items-center justify-center font-bold cursor-pointer';
+                cell.style.color = '#1f2937'; // fallback for text-gray-800
+                cell.style.fontSize = '1.5rem'; // fallback font size
+                cell.style.userSelect = 'none'; // prevent text selection
+                
+                const letter = letters[r][c];
+                cell.textContent = letter ? letter : '?';
+                cell.dataset.r = r;
+                cell.dataset.c = c;
+                
+                // Touch/Mouse events
+                cell.addEventListener('mousedown', (e) => startSelection(r, c, e));
+                cell.addEventListener('mouseenter', (e) => updateSelection(r, c));
+                
+                cell.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    startSelection(r, c, e);
+                }, {passive: false});
+                cell.addEventListener('touchmove', (e) => {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    const target = document.elementFromPoint(touch.clientX, touch.clientY);
+                    if (target && target.dataset && target.dataset.r) {
+                        updateSelection(parseInt(target.dataset.r), parseInt(target.dataset.c));
+                    }
+                }, {passive: false});
+                
+                gridEl.appendChild(cell);
+            }
+        }
+        
+        // Ensure mouseup is only added once
+        if (!window.hasMouseUpEvent) {
+            document.addEventListener('mouseup', () => { if(isSelecting) endSelection(); });
+            document.addEventListener('touchend', () => { if(isSelecting) endSelection(); });
+            window.hasMouseUpEvent = true;
+        }
+    }
+
+    function startSelection(r, c, e) {
+        if(!isPlaying) return;
+        isSelecting = true;
+        startCell = {r, c};
+        endCell = {r, c};
+        drawAllHighlights();
+    }
+
+    function updateSelection(r, c) {
+        if (!isSelecting) return;
+        
+        // Snap to valid 8 directions
+        const dr = r - startCell.r;
+        const dc = c - startCell.c;
+        
+        if (dr === 0 || dc === 0 || Math.abs(dr) === Math.abs(dc)) {
+            endCell = {r, c};
+        } else {
+            // Pick dominant direction
+            if (Math.abs(dr) > Math.abs(dc)) {
+                endCell = {r, startCell.c};
+            } else {
+                endCell = {startCell.r, c};
+            }
+        }
+        drawAllHighlights();
+    }
+
+    function endSelection() {
+        if(!isSelecting) return;
+        isSelecting = false;
+        
+        // Check if selected word matches
+        const selectedWord = getWordFromSelection(startCell, endCell);
+        const reversedWord = selectedWord.split('').reverse().join('');
+        
+        let foundWordInfo = placedWordsInfo.find(p => p.word === selectedWord || p.word === reversedWord);
+        
+        if (foundWordInfo && !foundWords.has(foundWordInfo.word)) {
+            foundWords.add(foundWordInfo.word);
+            markWordFound(foundWordInfo.word);
+        }
+        
+        startCell = null;
+        endCell = null;
+        drawAllHighlights();
+        checkWin();
+    }
+
+    function getWordFromSelection(start, end) {
+        const dr = Math.sign(end.r - start.r);
+        const dc = Math.sign(end.c - start.c);
+        const len = Math.max(Math.abs(end.r - start.r), Math.abs(end.c - start.c)) + 1;
+        
+        let word = '';
+        for (let i = 0; i < len; i++) {
+            word += letters[start.r + i * dr][start.c + i * dc];
+        }
+        return word;
+    }
+
+    function drawAllHighlights() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw found words
+        placedWordsInfo.forEach(info => {
+            if (foundWords.has(info.word)) {
+                drawHighlight(info.startR, info.startC, info.endR, info.endC, 'rgba(34, 197, 94, 0.4)'); // Green
+            }
+        });
+        
+        // Draw active selection
+        if (isSelecting && startCell && endCell) {
+            drawHighlight(startCell.r, startCell.c, endCell.r, endCell.c, 'rgba(249, 115, 22, 0.5)'); // Saffron
+        }
+    }
+
+    function drawHighlight(r1, c1, r2, c2, color) {
+        const cellW = canvas.width / gridSize;
+        const cellH = canvas.height / gridSize;
+        
+        const x1 = c1 * cellW + cellW/2;
+        const y1 = r1 * cellH + cellH/2;
+        const x2 = c2 * cellW + cellW/2;
+        const y2 = r2 * cellH + cellH/2;
+        
+        ctx.beginPath();
+        ctx.lineCap = 'round';
+        ctx.lineWidth = Math.min(cellW, cellH) * 0.8;
+        ctx.strokeStyle = color;
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+    }
+
+    function markWordFound(word) {
+        wordCountEl.textContent = foundWords.size;
+        const el = document.querySelector(`.word-item[data-word="${word}"]`);
+        if (el) {
+            el.classList.remove('bg-gray-100', 'text-gray-700');
+            el.classList.add('bg-green-500', 'text-white', 'line-through');
+        }
+    }
+
+    function checkWin() {
+        if (foundWords.size === words.length && isPlaying) {
+            isPlaying = false;
+            clearInterval(timerInterval);
+            finalTimeEl.textContent = timerEl.textContent;
+            successOverlay.classList.remove('hidden');
+        }
+    }
+
+        btnReset.addEventListener('click', initGame);
+        
+        btnHint.addEventListener('click', () => {
+            if(!isPlaying) return;
+            // Find a word not yet found
+            const missing = placedWordsInfo.find(info => !foundWords.has(info.word));
+            if (missing) {
+                // Briefly highlight it
+                drawHighlight(missing.startR, missing.startC, missing.endR, missing.endC, 'rgba(234, 179, 8, 0.6)'); // Yellow pulse
+                setTimeout(drawAllHighlights, 1000);
+            }
+        });
+
+        initGame();
+        
+    } catch (e) {
+        document.getElementById('word-grid').innerHTML = `<div class="p-8 text-red-500 font-bold text-xl">Top Level JS Error: ${e.message}<br/>${e.stack}</div>`;
+    }
+})();
+</script>
+
+    </main>
+
+    <footer class="bg-bharat-navy text-gray-300 mt-12 py-8 border-t border-gray-700">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+            <div class="mb-4 md:mb-0">
+                <span class="text-xl font-serif text-bharat-saffron font-bold block">BharatVerse</span>
+                <span class="text-sm">Discover India. Experience Culture. Preserve Heritage.</span>
+            </div>
+            <div class="flex space-x-6 text-sm">
+                <a href="#" class="hover:text-white transition">About</a>
+                <a href="#" class="hover:text-white transition">Terms</a>
+                <a href="#" class="hover:text-white transition">Privacy</a>
+            </div>
+        </div>
+        <div class="mt-8 text-center text-xs text-gray-500">
+            &copy; 2026 BharatVerse - SIH26197. All rights reserved.
+        </div>
+    </div>
+</footer>
+
+
+    <!-- Floating AI Assistant -->
+    <button id="ai-chat-btn" onclick="toggleChat()" class="fixed bottom-6 right-6 bg-bharat-navy text-white rounded-full p-4 shadow-xl hover:bg-gray-800 hover:scale-105 transition-transform z-50 flex items-center justify-center border-2 border-bharat-amber">
+        🤖 <span class="ml-2 font-bold hidden sm:inline">Ask AI</span>
+    </button>
+
+    <div id="ai-chat-panel" class="fixed bottom-24 right-6 w-80 sm:w-96 h-[500px] bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 flex flex-col hidden overflow-hidden">
+        <!-- Header -->
+        <div class="bg-bharat-navy p-4 text-white flex justify-between items-center">
+            <div>
+                <h3 class="font-serif font-bold text-lg">BharatVerse AI</h3>
+                <p class="text-xs text-bharat-amber flex items-center"><span class="w-2 h-2 rounded-full bg-green-400 mr-1"></span> Ready to explore (Demo)</p>
+            </div>
+            <button onclick="toggleChat()" class="text-gray-400 hover:text-white">&times;</button>
+        </div>
+        
+        <!-- Messages -->
+        <div id="ai-messages" class="flex-grow p-4 overflow-y-auto space-y-4 bg-gray-50">
+            <div class="bg-white p-3 rounded-lg rounded-tl-none shadow-sm border border-gray-100 max-w-[85%] text-sm text-gray-700">
+                Namaste! I am your cultural guide. What would you like to explore in India today?
+            </div>
+            <div class="space-y-2">
+                <button onclick="sendMsg('Tell me about a traditional art form from Rajasthan.')" class="text-xs bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-full px-3 py-1 hover:bg-indigo-100 block text-left">Tell me about art from Rajasthan</button>
+                <button onclick="sendMsg('Explain Diwali simply.')" class="text-xs bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-full px-3 py-1 hover:bg-indigo-100 block text-left">Explain Diwali simply</button>
+            </div>
+        </div>
+        
+        <!-- Input -->
+        <div class="p-4 bg-white border-t border-gray-100">
+            <div class="flex">
+                <input type="text" id="ai-input" placeholder="Ask a cultural question..." class="flex-grow border-gray-300 rounded-l-lg text-sm focus:ring-bharat-saffron focus:border-bharat-saffron" onkeypress="if(event.key === 'Enter') sendInput()">
+                <button onclick="sendInput()" class="bg-bharat-saffron text-white px-4 rounded-r-lg hover:bg-orange-600">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleChat() {
+            const panel = document.getElementById('ai-chat-panel');
+            panel.classList.toggle('hidden');
+        }
+        
+        function appendMsg(text, isUser=false) {
+            const msgs = document.getElementById('ai-messages');
+            const div = document.createElement('div');
+            div.className = isUser 
+                ? "bg-bharat-saffron text-white p-3 rounded-lg rounded-tr-none shadow-sm max-w-[85%] text-sm self-end ml-auto"
+                : "bg-white p-3 rounded-lg rounded-tl-none shadow-sm border border-gray-100 max-w-[85%] text-sm text-gray-700";
+            
+            // Format line breaks for AI response
+            if (!isUser) {
+                div.innerHTML = text.replace(/\n/g, '<br>');
+            } else {
+                div.innerText = text;
+            }
+            
+            msgs.appendChild(div);
+            msgs.scrollTop = msgs.scrollHeight;
+        }
+
+        async function sendMsg(text) {
+            appendMsg(text, true);
+            const msgs = document.getElementById('ai-messages');
+            
+            // Loading
+            const loading = document.createElement('div');
+            loading.className = "text-xs text-gray-400 italic";
+            loading.id = "ai-loading";
+            loading.innerText = "Thinking...";
+            msgs.appendChild(loading);
+            
+            try {
+                const response = await fetch('/api/ai/chat/', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({message: text})
+                });
+                const data = await response.json();
+                document.getElementById('ai-loading').remove();
+                
+                if (data.success) {
+                    appendMsg(data.message, false);
+                } else {
+                    appendMsg("Sorry, an error occurred.", false);
+                }
+            } catch (e) {
+                document.getElementById('ai-loading').remove();
+                appendMsg("Sorry, connection failed.", false);
+            }
+        }
+        
+        function sendInput() {
+            const input = document.getElementById('ai-input');
+            if (input.value.trim() !== '') {
+                sendMsg(input.value);
+                input.value = '';
+            }
+        }
+    </script>
+
+</body>
+</html>
