@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}BharatVerse - Discover India's Timeless Heritage{% endblock %}</title>
+    <title>{% block title %}BharatVerse - Discover India's Vibrant Living Heritage{% endblock %}</title>
     
-    <!-- Google Fonts: Cinzel (Royal Indian Display) & Plus Jakarta Sans (Modern Body) -->
+    <!-- Google Fonts: Samarkan / Outfit (Playful, energetic) & Rozha One & Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Rozha+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Rozha+One&family=Yatra+One&display=swap" rel="stylesheet">
     
     <!-- FontAwesome 6 Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -20,42 +20,26 @@
             theme: {
                 extend: {
                     colors: {
-                        royal: {
-                            950: '#060A13',
-                            900: '#0A1124',
-                            850: '#0E1730',
-                            800: '#142244',
-                            700: '#1C2F5E',
-                            600: '#2A4384'
-                        },
-                        gold: {
-                            300: '#FDE68A',
-                            400: '#FCD34D',
-                            500: '#F59E0B',
-                            600: '#D97706',
-                            700: '#B45309'
-                        },
-                        saffron: {
-                            400: '#FB923C',
-                            500: '#F97316',
-                            600: '#EA580C'
-                        },
                         bharat: {
-                            navy: '#0A1124',
-                            amber: '#F59E0B',
-                            saffron: '#FF7A00',
-                            cream: '#0E1730',
-                            charcoal: '#E2E8F0'
+                            saffron: '#FF6F00',     // Vibrant Kesariya
+                            marigold: '#FFA000',    // Bright festive marigold
+                            turmeric: '#FFC107',    // Vibrant yellow
+                            peacock: '#0284C7',     // Indian peacock blue
+                            deepindigo: '#0F172A',  // Deep indigo slate
+                            gulal: '#E11D48',       // Festive gulal pink/red
+                            emerald: '#059669',     // Mehendi green
+                            warmbg: '#FFFDF9'       // Warm festive milk/cream
                         }
                     },
                     fontFamily: {
-                        royal: ['Cinzel', 'serif'],
-                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-                        devanagari: ['"Rozha One"', 'serif']
+                        display: ['Outfit', 'sans-serif'],
+                        yatra: ['"Yatra One"', 'cursive'],
+                        devanagari: ['"Rozha One"', 'serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif']
                     },
-                    backgroundImage: {
-                        'gold-radial': 'radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, rgba(10, 17, 36, 0) 70%)',
-                        'royal-gradient': 'linear-gradient(135deg, #0A1124 0%, #142244 50%, #060A13 100%)'
+                    boxShadow: {
+                        'festive': '0 10px 25px -5px rgba(255, 111, 0, 0.25)',
+                        'festive-hover': '0 20px 35px -10px rgba(255, 111, 0, 0.4)'
                     }
                 }
             }
@@ -64,66 +48,50 @@
     <style>
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #060A13; 
-            color: #E2E8F0; 
+            background-color: #FFFDF9; 
+            color: #1E293B; 
             overflow-x: hidden;
         }
-        h1, h2, h3, h4, .font-royal { 
-            font-family: 'Cinzel', serif; 
-            letter-spacing: 0.02em;
+        h1, h2, h3, h4, .font-display { 
+            font-family: 'Outfit', sans-serif; 
         }
-        .gold-gradient-text {
-            background: linear-gradient(135deg, #FFFBEB 0%, #FDE68A 25%, #F59E0B 70%, #D97706 100%);
+        .festive-gradient-text {
+            background: linear-gradient(135deg, #FF6F00 0%, #E11D48 50%, #7C3AED 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         .saffron-gradient-text {
-            background: linear-gradient(135deg, #FED7AA 0%, #FB923C 50%, #EA580C 100%);
+            background: linear-gradient(135deg, #FF6F00 0%, #FFA000 60%, #E11D48 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .glass-panel { 
-            background: rgba(14, 23, 48, 0.7); 
-            backdrop-filter: blur(16px); 
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(245, 158, 11, 0.18); 
-        }
-        .glass-panel-hover {
+        .festive-card {
+            background: #FFFFFF;
+            border: 1px solid #FED7AA;
+            box-shadow: 0 4px 20px -2px rgba(255, 111, 0, 0.08);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .glass-panel-hover:hover {
-            background: rgba(20, 34, 68, 0.85);
-            border-color: rgba(245, 158, 11, 0.45);
-            box-shadow: 0 10px 30px -10px rgba(245, 158, 11, 0.25);
-            transform: translateY(-3px);
+        .festive-card:hover {
+            border-color: #FF6F00;
+            box-shadow: 0 15px 30px -5px rgba(255, 111, 0, 0.2);
+            transform: translateY(-4px);
         }
-        .gold-glow {
-            box-shadow: 0 0 25px rgba(245, 158, 11, 0.25);
-        }
-        .gold-glow-hover:hover {
-            box-shadow: 0 0 35px rgba(245, 158, 11, 0.45);
+        .festive-nav {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 2px solid #FFEDD5;
         }
         /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #060A13;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #1C2F5E;
-            border-radius: 4px;
-            border: 1px solid rgba(245, 158, 11, 0.2);
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #F59E0B;
-        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #FFFDF9; }
+        ::-webkit-scrollbar-thumb { background: #FDBA74; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #FF6F00; }
     </style>
 </head>
-<body class="flex flex-col min-h-screen bg-royal-950 text-slate-200 antialiased selection:bg-gold-500 selection:text-royal-950">
-    
-    <!-- Top Ambient Glow -->
-    <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-gold-radial pointer-events-none z-0"></div>
+<body class="flex flex-col min-h-screen bg-[#FFFDF9] text-slate-800 antialiased selection:bg-orange-500 selection:text-white">
+
+    <!-- Festive Background Rangoli Pattern Ambience -->
+    <div class="fixed top-0 left-0 right-0 h-96 bg-gradient-to-b from-orange-100/60 via-amber-50/40 to-transparent pointer-events-none -z-10"></div>
 
     <!-- Main Navigation Bar -->
     {% include 'partials/navbar.html' %}
@@ -133,9 +101,9 @@
         {% if messages %}
         <div class="max-w-7xl mx-auto px-4 mt-4">
             {% for message in messages %}
-            <div class="p-4 mb-4 text-sm rounded-xl flex items-center gap-3 {% if message.tags == 'error' %}bg-red-950/80 border border-red-500/30 text-red-300{% else %}bg-amber-950/80 border border-gold-500/30 text-gold-300{% endif %}" role="alert">
-                <i class="fa-solid {% if message.tags == 'error' %}fa-circle-exclamation text-red-400{% else %}fa-circle-check text-gold-400{% endif %}"></i>
-                <span>{{ message }}</span>
+            <div class="p-4 mb-4 text-sm rounded-2xl flex items-center gap-3 {% if message.tags == 'error' %}bg-rose-50 border border-rose-200 text-rose-700{% else %}bg-amber-50 border border-orange-200 text-orange-800{% endif %}" role="alert">
+                <i class="fa-solid {% if message.tags == 'error' %}fa-circle-exclamation text-rose-500{% else %}fa-circle-check text-orange-500{% endif %}"></i>
+                <span class="font-medium">{{ message }}</span>
             </div>
             {% endfor %}
         </div>
@@ -147,75 +115,75 @@
     <!-- Global Cultural Footer -->
     {% include 'partials/footer.html' %}
 
-    <!-- Floating Royal AI Assistant Button -->
+    <!-- Floating Vibrant AI Assistant Button -->
     <button id="ai-chat-btn" onclick="toggleChat()" 
-        class="fixed bottom-6 right-6 bg-gradient-to-r from-royal-900 to-royal-800 text-white rounded-full p-4 shadow-2xl hover:scale-105 transition-all duration-300 z-50 flex items-center justify-center border-2 border-gold-500/60 gold-glow hover:border-gold-400 group">
-        <div class="w-10 h-10 rounded-full bg-gold-500/10 flex items-center justify-center border border-gold-500/30 mr-2 group-hover:rotate-12 transition-transform">
-            <i class="fa-solid fa-sparkles text-gold-400 text-lg"></i>
+        class="fixed bottom-6 right-6 bg-gradient-to-r from-orange-500 via-rose-500 to-amber-500 text-white rounded-full p-4 shadow-2xl hover:scale-105 transition-all duration-300 z-50 flex items-center justify-center border-2 border-white shadow-festive hover:shadow-festive-hover group">
+        <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center mr-2 group-hover:rotate-12 transition-transform">
+            <i class="fa-solid fa-sparkles text-white text-lg"></i>
         </div>
-        <span class="font-royal font-bold text-sm text-gold-300 pr-1 hidden sm:inline tracking-wider">BharatVerse AI</span>
-        <span class="absolute -top-1 -right-1 flex h-3 w-3">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-3 w-3 bg-gold-500"></span>
+        <span class="font-display font-bold text-sm text-white pr-2 hidden sm:inline tracking-wide">Ask Bharat AI</span>
+        <span class="absolute -top-1 -right-1 flex h-3.5 w-3.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-300 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-yellow-400 border-2 border-white"></span>
         </span>
     </button>
 
-    <!-- Royal AI Chat Panel -->
+    <!-- Vibrant AI Chat Panel -->
     <div id="ai-chat-panel" 
-        class="fixed bottom-24 right-6 w-84 sm:w-96 h-[530px] bg-royal-900/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-gold-500/30 z-50 flex flex-col hidden overflow-hidden transition-all duration-300">
+        class="fixed bottom-24 right-6 w-84 sm:w-96 h-[530px] bg-white rounded-3xl shadow-2xl border-2 border-orange-200 z-50 flex flex-col hidden overflow-hidden transition-all duration-300">
         
         <!-- Header -->
-        <div class="bg-gradient-to-r from-royal-950 via-royal-900 to-royal-950 p-4 border-b border-gold-500/20 flex justify-between items-center">
+        <div class="bg-gradient-to-r from-orange-500 via-rose-500 to-amber-500 p-4 text-white flex justify-between items-center shadow-sm">
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-gold-500/10 border border-gold-500/40 flex items-center justify-center">
-                    <i class="fa-solid fa-om text-gold-400 text-sm"></i>
+                <div class="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center backdrop-blur-md">
+                    <i class="fa-solid fa-hands-praying text-lg"></i>
                 </div>
                 <div>
-                    <h3 class="font-royal font-bold text-sm text-gold-300 tracking-wider">BharatVerse AI</h3>
-                    <p class="text-[11px] text-gray-400 flex items-center gap-1.5">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Cultural Scholar (Demo)
+                    <h3 class="font-display font-extrabold text-base tracking-wide">BharatVerse AI</h3>
+                    <p class="text-xs text-orange-100 flex items-center gap-1.5 font-medium">
+                        <span class="w-2 h-2 rounded-full bg-emerald-300 animate-pulse"></span> Cultural Companion
                     </p>
                 </div>
             </div>
-            <button onclick="toggleChat()" class="text-gray-400 hover:text-gold-300 p-1.5 transition-colors">
+            <button onclick="toggleChat()" class="text-white/80 hover:text-white p-1.5 transition-colors">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
         </div>
         
         <!-- Messages Area -->
-        <div id="ai-messages" class="flex-grow p-4 overflow-y-auto space-y-3.5 bg-royal-950/70">
-            <div class="bg-royal-850 p-3.5 rounded-2xl rounded-tl-sm border border-gold-500/15 max-w-[90%] text-sm text-gray-200 leading-relaxed">
-                <p class="text-xs text-gold-400 font-semibold mb-1 flex items-center gap-1">
-                    <i class="fa-solid fa-hands-praying"></i> Namaste!
+        <div id="ai-messages" class="flex-grow p-4 overflow-y-auto space-y-3.5 bg-orange-50/40">
+            <div class="bg-white p-3.5 rounded-2xl rounded-tl-sm border border-orange-100 shadow-sm max-w-[90%] text-sm text-slate-700 leading-relaxed">
+                <p class="text-xs text-orange-600 font-bold mb-1 flex items-center gap-1">
+                    <i class="fa-solid fa-sun text-amber-500"></i> Namaste!
                 </p>
-                I am your cultural companion. Explore India's 5,000-year living heritage, monuments, sacred dances, crafts, or ancient literature with me.
+                Discover India's living festivals, classical dances, tasty cuisines, ancient folk tales, and cultural traditions with me!
             </div>
             <div class="space-y-1.5 pt-1">
-                <p class="text-[11px] text-gray-400 uppercase tracking-widest font-semibold px-1">Suggested Inquiries:</p>
+                <p class="text-[11px] text-orange-700 uppercase tracking-widest font-bold px-1">Quick Questions:</p>
                 <button onclick="sendMsg('Tell me about a traditional art form from Rajasthan.')" 
-                    class="text-xs w-full bg-royal-800/60 hover:bg-royal-750 text-gold-300/90 border border-gold-500/20 rounded-xl px-3 py-2 transition-all hover:border-gold-500/40 text-left flex items-center gap-2">
-                    <i class="fa-solid fa-palette text-gold-400 text-[10px]"></i> Traditional art form of Rajasthan
+                    class="text-xs w-full bg-white hover:bg-orange-50 text-slate-700 border border-orange-200 rounded-xl px-3 py-2 transition-all font-medium text-left flex items-center gap-2 shadow-xs">
+                    <i class="fa-solid fa-palette text-orange-500 text-xs"></i> Traditional folk art of Rajasthan
                 </button>
-                <button onclick="sendMsg('Explain the cultural significance of Diwali.')" 
-                    class="text-xs w-full bg-royal-800/60 hover:bg-royal-750 text-gold-300/90 border border-gold-500/20 rounded-xl px-3 py-2 transition-all hover:border-gold-500/40 text-left flex items-center gap-2">
-                    <i class="fa-solid fa-dharmachakra text-gold-400 text-[10px]"></i> Cultural significance of Diwali
+                <button onclick="sendMsg('Explain the celebration of Onam and Pongal.')" 
+                    class="text-xs w-full bg-white hover:bg-orange-50 text-slate-700 border border-orange-200 rounded-xl px-3 py-2 transition-all font-medium text-left flex items-center gap-2 shadow-xs">
+                    <i class="fa-solid fa-wheat-awn text-amber-500 text-xs"></i> Celebration of Onam and Pongal
                 </button>
-                <button onclick="sendMsg('What are the ancient folk martial arts of Kerala?')" 
-                    class="text-xs w-full bg-royal-800/60 hover:bg-royal-750 text-gold-300/90 border border-gold-500/20 rounded-xl px-3 py-2 transition-all hover:border-gold-500/40 text-left flex items-center gap-2">
-                    <i class="fa-solid fa-shield-halved text-gold-400 text-[10px]"></i> Kalaripayattu martial art of Kerala
+                <button onclick="sendMsg('What are the classical dance forms of India?')" 
+                    class="text-xs w-full bg-white hover:bg-orange-50 text-slate-700 border border-orange-200 rounded-xl px-3 py-2 transition-all font-medium text-left flex items-center gap-2 shadow-xs">
+                    <i class="fa-solid fa-music text-rose-500 text-xs"></i> 8 Classical Dance forms of India
                 </button>
             </div>
         </div>
         
         <!-- Input Area -->
-        <div class="p-3 bg-royal-900 border-t border-gold-500/20">
-            <div class="flex items-center gap-2 bg-royal-950 rounded-xl p-1 border border-gold-500/25 focus-within:border-gold-400 transition-colors">
+        <div class="p-3 bg-white border-t border-orange-100">
+            <div class="flex items-center gap-2 bg-orange-50/70 rounded-2xl p-1.5 border border-orange-200 focus-within:border-orange-500 focus-within:bg-white transition-all">
                 <input type="text" id="ai-input" placeholder="Ask about India's culture..." 
-                    class="flex-grow bg-transparent px-3 py-1.5 text-sm text-white placeholder-gray-500 focus:outline-none" 
+                    class="flex-grow bg-transparent px-3 py-1.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none" 
                     onkeypress="if(event.key === 'Enter') sendInput()">
                 <button onclick="sendInput()" 
-                    class="bg-gradient-to-r from-gold-500 to-amber-600 text-royal-950 font-bold px-4 py-2 rounded-lg hover:from-gold-400 hover:to-amber-500 transition-all text-xs flex items-center gap-1.5">
-                    <span>Send</span>
+                    class="bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold px-4 py-2 rounded-xl hover:opacity-95 transition-all text-xs flex items-center gap-1.5 shadow-sm">
+                    <span>Ask</span>
                     <i class="fa-solid fa-paper-plane text-[10px]"></i>
                 </button>
             </div>
@@ -232,8 +200,8 @@
             const msgs = document.getElementById('ai-messages');
             const div = document.createElement('div');
             div.className = isUser 
-                ? "bg-gradient-to-r from-amber-600 to-amber-700 text-white p-3 rounded-2xl rounded-tr-sm shadow-md max-w-[85%] text-sm self-end ml-auto"
-                : "bg-royal-850 p-3.5 rounded-2xl rounded-tl-sm border border-gold-500/20 max-w-[90%] text-sm text-gray-200 leading-relaxed";
+                ? "bg-gradient-to-r from-orange-500 to-rose-500 text-white p-3 rounded-2xl rounded-tr-sm shadow-md max-w-[85%] text-sm self-end ml-auto"
+                : "bg-white p-3.5 rounded-2xl rounded-tl-sm border border-orange-100 shadow-sm max-w-[90%] text-sm text-slate-700 leading-relaxed";
             div.innerHTML = text;
             msgs.appendChild(div);
             msgs.scrollTop = msgs.scrollHeight;
@@ -257,9 +225,9 @@
         function callAiApi(message) {
             const msgs = document.getElementById('ai-messages');
             const loadingDiv = document.createElement('div');
-            loadingDiv.className = "bg-royal-850 p-3 rounded-2xl border border-gold-500/20 text-xs text-gold-400 italic max-w-[85%] flex items-center gap-2";
+            loadingDiv.className = "bg-white p-3 rounded-2xl border border-orange-200 text-xs text-orange-600 italic max-w-[85%] flex items-center gap-2 shadow-xs";
             loadingDiv.id = "ai-loading";
-            loadingDiv.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Consulting the archives of Bharat...';
+            loadingDiv.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-orange-500"></i> Exploring India\'s folklore...';
             msgs.appendChild(loadingDiv);
             msgs.scrollTop = msgs.scrollHeight;
 

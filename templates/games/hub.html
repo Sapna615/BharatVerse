@@ -1,62 +1,58 @@
 {% extends 'base.html' %}
-{% block title %}BharatVerse - Cultural Game Arena &amp; Folk Play{% endblock %}
+{% block title %}Cultural Game Arena &amp; Folk Play - BharatVerse{% endblock %}
 
 {% block content %}
-<!-- Royal Header -->
-<div class="relative py-20 text-center overflow-hidden bg-gradient-to-b from-royal-950 via-royal-900 to-royal-950 border-b border-gold-500/20">
-    <!-- Ambient Radial Glow -->
-    <div class="absolute inset-0 bg-gold-radial pointer-events-none opacity-50"></div>
-    
+<!-- Vibrant Festive Header -->
+<div class="relative py-16 text-center overflow-hidden bg-gradient-to-r from-orange-500 via-rose-500 to-amber-500 text-white shadow-festive">
     <div class="relative z-10 max-w-4xl mx-auto px-4">
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-royal-900/80 border border-gold-500/30 mb-6 backdrop-blur-md gold-glow">
-            <i class="fa-solid fa-dice-d20 text-gold-400 text-xs"></i>
-            <span class="text-xs uppercase tracking-[0.25em] font-semibold text-gold-300">Play, Learn &amp; Earn Heritage XP</span>
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-md mb-4 border border-white/30 text-xs font-bold uppercase tracking-widest text-amber-200">
+            <i class="fa-solid fa-gamepad"></i> Play, Learn &amp; Earn Heritage XP
         </div>
-        <h1 class="text-4xl sm:text-6xl font-royal font-bold text-white mb-6">
-            Cultural <span class="gold-gradient-text">Game Arena</span>
+        <h1 class="text-4xl sm:text-6xl font-display font-black text-white mb-4 tracking-tight">
+            Cultural Game Arena
         </h1>
-        <p class="text-base sm:text-lg text-slate-300 font-light max-w-2xl mx-auto leading-relaxed">
-            Experience India's ancient intellect through Vedic crosswords, sacred dance word hunts, regional pattern puzzles, and mythological quests.
+        <p class="text-base sm:text-lg text-orange-100 font-normal max-w-2xl mx-auto">
+            Test your knowledge through Vedic crosswords, classical dance word hunts, and regional pattern puzzles.
         </p>
     </div>
 </div>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
-    <!-- Featured Categories Grid -->
-    <div class="mb-14">
-        <div class="flex items-center justify-between mb-6">
-            <h2 class="text-xl font-royal font-bold text-white flex items-center gap-2">
-                <i class="fa-solid fa-shapes text-gold-400 text-sm"></i>
-                <span>Explore by Cultural Domain</span>
+    <!-- Categories Grid -->
+    <div class="mb-12">
+        <div class="flex items-center justify-between mb-5">
+            <h2 class="text-xl font-display font-bold text-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-shapes text-orange-500"></i>
+                <span>Explore by Domain</span>
             </h2>
-            <a href="{% url 'games_hub' %}" class="text-xs text-gold-400 hover:text-gold-300">Reset Categories</a>
+            <a href="{% url 'games_hub' %}" class="text-xs font-bold text-orange-600 hover:text-orange-700">Clear Category</a>
         </div>
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3.5">
             {% for cat in categories|slice:":10" %}
             <a href="?category={{ cat.id }}" 
-               class="glass-panel glass-panel-hover rounded-xl p-4 text-center transition-all flex flex-col items-center justify-center h-28 border border-gold-500/20 group">
-                <span class="text-2xl mb-1.5 group-hover:scale-125 transition-transform">{{ cat.icon|default:'🪷' }}</span>
-                <span class="font-royal font-bold text-slate-200 text-xs group-hover:text-gold-300 transition-colors line-clamp-1">{{ cat.name }}</span>
+               class="bg-white rounded-2xl p-4 text-center border-2 border-orange-100 hover:border-orange-500 hover:shadow-festive transition-all flex flex-col items-center justify-center h-28 group">
+                <span class="text-3xl mb-1.5 group-hover:scale-125 transition-transform">{{ cat.icon|default:'🪷' }}</span>
+                <span class="font-display font-bold text-slate-700 text-xs group-hover:text-orange-600 line-clamp-1">{{ cat.name }}</span>
             </a>
             {% endfor %}
         </div>
     </div>
 
     <!-- Filters Bar -->
-    <form method="GET" class="glass-panel rounded-2xl p-6 border border-gold-500/25 mb-12 shadow-xl">
+    <form method="GET" class="bg-white rounded-3xl p-6 border-2 border-orange-100 mb-12 shadow-sm">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
             <div class="lg:col-span-2">
-                <label class="block text-xs font-royal font-bold uppercase tracking-wider text-gold-400 mb-2">Search Games</label>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Search Games</label>
                 <div class="relative">
                     <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-xs text-slate-400"></i>
-                    <input type="text" name="q" value="{{ search_query|default:'' }}" placeholder="Search by title, state, or theme..." 
-                        class="w-full bg-royal-950 border border-gold-500/30 rounded-xl pl-9 pr-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-gold-400 transition-colors">
+                    <input type="text" name="q" value="{{ search_query|default:'' }}" placeholder="Search by game name, puzzle, or state..." 
+                        class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-orange-500 focus:bg-white transition-colors">
                 </div>
             </div>
             <div>
-                <label class="block text-xs font-royal font-bold uppercase tracking-wider text-gold-400 mb-2">Game Type</label>
-                <select name="type" class="w-full bg-royal-950 border border-gold-500/30 rounded-xl px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-gold-400 transition-colors">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Game Type</label>
+                <select name="type" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-orange-500 focus:bg-white transition-colors">
                     <option value="">All Formats</option>
                     {% for code, name in game_types %}
                     <option value="{{ code }}" {% if selected_type == code %}selected{% endif %}>{{ name }}</option>
@@ -64,8 +60,8 @@
                 </select>
             </div>
             <div>
-                <label class="block text-xs font-royal font-bold uppercase tracking-wider text-gold-400 mb-2">State / Region</label>
-                <select name="state" class="w-full bg-royal-950 border border-gold-500/30 rounded-xl px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-gold-400 transition-colors">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">State / Region</label>
+                <select name="state" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-orange-500 focus:bg-white transition-colors">
                     <option value="">All States</option>
                     {% for st in states %}
                     <option value="{{ st.id }}" {% if selected_state == st.id|stringformat:"s" %}selected{% endif %}>{{ st.name }}</option>
@@ -73,7 +69,7 @@
                 </select>
             </div>
             <div>
-                <button type="submit" class="w-full bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-400 hover:to-amber-500 text-royal-950 font-royal font-bold py-2.5 px-6 rounded-xl transition-all shadow-md text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 h-[42px]">
+                <button type="submit" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:opacity-95 text-white font-display font-bold py-2.5 px-6 rounded-xl transition-all shadow-festive text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 h-[42px]">
                     <i class="fa-solid fa-filter text-xs"></i>
                     <span>Apply Filters</span>
                 </button>
@@ -84,33 +80,33 @@
     <!-- Games Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {% for game in games %}
-        <div class="glass-panel glass-panel-hover rounded-2xl overflow-hidden border border-gold-500/20 flex flex-col h-full group">
+        <div class="festive-card rounded-3xl overflow-hidden flex flex-col h-full group">
             
             <!-- Game Thumbnail Visual -->
-            <div class="relative h-44 bg-royal-900 overflow-hidden">
+            <div class="relative h-44 bg-slate-100 overflow-hidden">
                 {% if game.thumbnail %}
                     <img src="{{ game.thumbnail.url }}" alt="{{ game.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                 {% else %}
-                    <div class="w-full h-full bg-gradient-to-br from-royal-800 to-royal-950 flex items-center justify-center">
-                        <span class="text-gold-500/30 text-5xl group-hover:scale-110 transition-transform">🧩</span>
+                    <div class="w-full h-full bg-gradient-to-tr from-orange-400 via-rose-400 to-amber-400 flex items-center justify-center">
+                        <span class="text-white text-5xl">🧩</span>
                     </div>
                 {% endif %}
-                <div class="absolute inset-0 bg-gradient-to-t from-royal-950 via-transparent to-transparent"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                 
                 <!-- Format Badge -->
                 <div class="absolute top-3 left-3">
-                    <span class="text-[10px] font-bold uppercase tracking-wider bg-royal-950/85 text-gold-300 border border-gold-500/40 px-2.5 py-1 rounded-full backdrop-blur-md">
+                    <span class="text-[10px] font-extrabold uppercase tracking-wider bg-white/90 text-orange-700 px-2.5 py-1 rounded-full shadow-sm backdrop-blur-md">
                         {{ game.get_game_type_display }}
                     </span>
                 </div>
 
-                <!-- Difficulty Badge if Quiz -->
+                <!-- Difficulty Badge -->
                 {% if game.quiz and game.quiz.difficulty %}
                 <div class="absolute top-3 right-3">
-                    <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full text-white backdrop-blur-md
-                        {% if game.quiz.difficulty == 'easy' %}bg-emerald-600/90
-                        {% elif game.quiz.difficulty == 'medium' %}bg-amber-600/90
-                        {% else %}bg-rose-600/90{% endif %}">
+                    <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full text-white shadow-sm
+                        {% if game.quiz.difficulty == 'easy' %}bg-emerald-500
+                        {% elif game.quiz.difficulty == 'medium' %}bg-amber-500
+                        {% else %}bg-rose-500{% endif %}">
                         {{ game.quiz.get_difficulty_display }}
                     </span>
                 </div>
@@ -120,22 +116,22 @@
             <!-- Card Content -->
             <div class="p-5 flex flex-col flex-grow justify-between">
                 <div>
-                    <h3 class="font-royal text-lg font-bold text-white mb-2 group-hover:text-gold-300 transition-colors line-clamp-1">
+                    <h3 class="font-display text-lg font-bold text-slate-800 mb-2 group-hover:text-orange-600 transition-colors line-clamp-1">
                         {{ game.title }}
                     </h3>
-                    <p class="text-xs text-slate-400 mb-4 line-clamp-2 leading-relaxed font-light">
+                    <p class="text-xs text-slate-500 mb-4 line-clamp-2 leading-relaxed">
                         {{ game.description }}
                     </p>
 
                     <!-- Tags -->
                     <div class="flex flex-wrap gap-1.5 mb-5">
                         {% if game.state %}
-                            <span class="text-[10px] text-gold-400 bg-gold-500/10 border border-gold-500/20 px-2 py-0.5 rounded-md flex items-center gap-1">
+                            <span class="text-[10px] font-bold text-orange-600 bg-orange-50 border border-orange-200 px-2 py-0.5 rounded-md flex items-center gap-1">
                                 <i class="fa-solid fa-location-dot text-[8px]"></i> {{ game.state.name }}
                             </span>
                         {% endif %}
                         {% if game.category %}
-                            <span class="text-[10px] text-slate-300 bg-royal-800/80 border border-slate-700 px-2 py-0.5 rounded-md">
+                            <span class="text-[10px] font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">
                                 {{ game.category.name }}
                             </span>
                         {% endif %}
@@ -144,18 +140,18 @@
 
                 <!-- Play Button -->
                 <a href="{% url 'game_detail' game.slug %}" 
-                   class="w-full text-center bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-400 hover:to-amber-500 text-royal-950 font-royal font-bold py-2.5 px-4 rounded-xl shadow-md transition-all text-xs uppercase tracking-wider flex items-center justify-center gap-2">
-                    <span>Play Challenge</span>
+                   class="w-full text-center bg-gradient-to-r from-orange-500 via-rose-500 to-amber-500 hover:opacity-95 text-white font-display font-bold py-2.5 px-4 rounded-xl shadow-festive transition-all text-xs uppercase tracking-wider flex items-center justify-center gap-2">
+                    <span>Play Now</span>
                     <i class="fa-solid fa-play text-[9px]"></i>
                 </a>
             </div>
         </div>
         {% empty %}
-        <div class="col-span-full text-center py-20 glass-panel rounded-2xl border border-gold-500/20">
-            <div class="text-5xl mb-4 text-gold-500/40">🧭</div>
-            <h3 class="text-xl font-royal text-white mb-2">No Challenges Found</h3>
-            <p class="text-slate-400 text-xs mb-4">Try clearing or adjusting your search filters.</p>
-            <a href="{% url 'games_hub' %}" class="inline-flex items-center gap-1 text-gold-400 hover:text-gold-300 text-xs font-semibold">
+        <div class="col-span-full text-center py-20 festive-card rounded-3xl">
+            <div class="text-5xl mb-3">🧭</div>
+            <h3 class="text-xl font-display font-bold text-slate-700 mb-2">No Challenges Found</h3>
+            <p class="text-slate-500 text-xs mb-4">Try clearing or adjusting your search filters.</p>
+            <a href="{% url 'games_hub' %}" class="inline-flex items-center gap-1 text-orange-600 hover:text-orange-700 text-xs font-bold">
                 <i class="fa-solid fa-rotate-left"></i> Reset All Filters
             </a>
         </div>

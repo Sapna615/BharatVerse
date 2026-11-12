@@ -1,55 +1,57 @@
-<nav class="sticky top-0 z-50 backdrop-blur-xl bg-royal-950/85 border-b border-gold-500/20 shadow-2xl transition-all duration-300">
+<nav class="sticky top-0 z-50 festive-nav shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-20">
             
             <!-- Brand Logo -->
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-3">
                 <a href="/" class="flex items-center gap-3 group">
-                    <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-gold-500/20 via-royal-800 to-royal-950 border border-gold-500/40 flex items-center justify-center group-hover:border-gold-400 group-hover:shadow-[0_0_20px_rgba(245,158,11,0.3)] transition-all">
-                        <i class="fa-solid fa-om text-gold-400 text-xl group-hover:scale-110 transition-transform"></i>
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-orange-500 via-rose-500 to-amber-400 p-0.5 shadow-festive group-hover:scale-105 transition-transform">
+                        <div class="w-full h-full bg-white rounded-[14px] flex items-center justify-center">
+                            <span class="text-2xl">🪷</span>
+                        </div>
                     </div>
                     <div>
-                        <span class="text-2xl font-royal font-bold tracking-wider gold-gradient-text block leading-none">BharatVerse</span>
-                        <span class="text-[9px] uppercase tracking-[0.25em] text-gold-400/70 font-semibold block mt-0.5">Living Heritage</span>
+                        <span class="text-2xl font-display font-extrabold tracking-tight festive-gradient-text block leading-none">BharatVerse</span>
+                        <span class="text-[10px] uppercase tracking-[0.2em] text-orange-600 font-bold block mt-1">Discover Incredible India</span>
                     </div>
                 </a>
 
                 <!-- Desktop Navigation Links -->
-                <div class="hidden lg:flex items-center space-x-1 ml-6 pl-6 border-l border-gold-500/15">
-                    <a href="{% url 'explore_india' %}" class="px-3.5 py-2 text-sm font-medium text-slate-300 hover:text-gold-300 rounded-lg hover:bg-gold-500/10 transition-all flex items-center gap-1.5">
-                        <i class="fa-solid fa-compass text-xs text-gold-400/70"></i>
-                        <span>Explore</span>
+                <div class="hidden lg:flex items-center space-x-1 ml-6 pl-6 border-l border-orange-100">
+                    <a href="{% url 'explore_india' %}" class="px-3.5 py-2 text-sm font-semibold text-slate-700 hover:text-orange-600 rounded-xl hover:bg-orange-50 transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-compass text-orange-500"></i>
+                        <span>Explore States</span>
                     </a>
-                    <a href="{% url 'cultural_map' %}" class="px-3.5 py-2 text-sm font-medium text-slate-300 hover:text-gold-300 rounded-lg hover:bg-gold-500/10 transition-all flex items-center gap-1.5">
-                        <i class="fa-solid fa-map-location-dot text-xs text-gold-400/70"></i>
+                    <a href="{% url 'cultural_map' %}" class="px-3.5 py-2 text-sm font-semibold text-slate-700 hover:text-orange-600 rounded-xl hover:bg-orange-50 transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-map-location-dot text-sky-500"></i>
                         <span>Cultural Map</span>
                     </a>
-                    <a href="{% url 'digital_library' %}" class="px-3.5 py-2 text-sm font-medium text-slate-300 hover:text-gold-300 rounded-lg hover:bg-gold-500/10 transition-all flex items-center gap-1.5">
-                        <i class="fa-solid fa-book-bookmark text-xs text-gold-400/70"></i>
+                    <a href="{% url 'digital_library' %}" class="px-3.5 py-2 text-sm font-semibold text-slate-700 hover:text-orange-600 rounded-xl hover:bg-orange-50 transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-book-open-reader text-amber-500"></i>
                         <span>Library</span>
                     </a>
-                    <a href="{% url 'games_hub' %}" class="px-3.5 py-2 text-sm font-medium text-slate-300 hover:text-gold-300 rounded-lg hover:bg-gold-500/10 transition-all flex items-center gap-1.5">
-                        <i class="fa-solid fa-dice-d20 text-xs text-gold-400/70"></i>
+                    <a href="{% url 'games_hub' %}" class="px-3.5 py-2 text-sm font-semibold text-slate-700 hover:text-orange-600 rounded-xl hover:bg-orange-50 transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-gamepad text-emerald-500"></i>
                         <span>Games Hub</span>
                     </a>
-                    <a href="{% url 'museum' %}" class="px-3.5 py-2 text-sm font-medium text-slate-300 hover:text-gold-300 rounded-lg hover:bg-gold-500/10 transition-all flex items-center gap-1.5">
-                        <i class="fa-solid fa-landmark text-xs text-gold-400/70"></i>
-                        <span>Museum</span>
+                    <a href="{% url 'museum' %}" class="px-3.5 py-2 text-sm font-semibold text-slate-700 hover:text-orange-600 rounded-xl hover:bg-orange-50 transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-monument text-purple-500"></i>
+                        <span>Virtual Museum</span>
                     </a>
-                    <a href="#" onclick="toggleChat(); return false;" class="px-3.5 py-2 text-sm font-medium text-gold-400 hover:text-gold-300 rounded-lg hover:bg-gold-500/15 transition-all flex items-center gap-1.5 border border-gold-500/25">
-                        <i class="fa-solid fa-sparkles text-xs"></i>
-                        <span>AI Guide</span>
+                    <a href="#" onclick="toggleChat(); return false;" class="px-3.5 py-1.5 text-xs font-bold text-orange-600 bg-orange-100/80 hover:bg-orange-200/80 rounded-full transition-all flex items-center gap-1.5 border border-orange-200">
+                        <i class="fa-solid fa-sparkles text-amber-500 animate-spin"></i>
+                        <span>Bharat AI</span>
                     </a>
 
                     {% if user.is_authenticated and user.role in 'contributor,curator' or user.is_superuser %}
-                    <a href="{% url 'contribute' %}" class="px-3.5 py-2 text-sm font-medium text-amber-300 hover:text-amber-200 rounded-lg hover:bg-amber-500/10 transition-all">
-                        <i class="fa-solid fa-feather-pointed text-xs mr-1"></i> Contribute
+                    <a href="{% url 'contribute' %}" class="px-3.5 py-2 text-sm font-semibold text-rose-600 hover:bg-rose-50 rounded-xl transition-all">
+                        <i class="fa-solid fa-feather mr-1"></i> Contribute
                     </a>
                     {% endif %}
                     
                     {% if user.is_authenticated and user.role == 'curator' or user.is_superuser %}
-                    <a href="{% url 'curator_dashboard' %}" class="px-3.5 py-1.5 text-xs font-royal font-bold text-royal-950 bg-gradient-to-r from-gold-400 to-amber-500 rounded-lg shadow-md hover:from-gold-300 hover:to-amber-400 transition-all flex items-center gap-1">
-                        <i class="fa-solid fa-shield-halved"></i> Curator
+                    <a href="{% url 'curator_dashboard' %}" class="px-3.5 py-1.5 text-xs font-bold text-white bg-gradient-to-r from-orange-500 to-rose-500 rounded-xl shadow-sm hover:opacity-95 transition-all flex items-center gap-1">
+                        <i class="fa-solid fa-crown"></i> Curator
                     </a>
                     {% endif %}
                 </div>
@@ -59,27 +61,27 @@
             <div class="hidden sm:flex items-center space-x-3">
                 {% if user.is_authenticated %}
                     {% if user.role in 'contributor,curator' or user.is_superuser %}
-                    <a href="{% url 'my_submissions' %}" class="px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white border border-slate-700 hover:border-gold-500/40 rounded-xl transition-all">
-                        <i class="fa-solid fa-user-circle mr-1"></i> My Submissions
+                    <a href="{% url 'my_submissions' %}" class="px-4 py-2 text-xs font-bold text-slate-700 hover:text-orange-600 border border-slate-200 hover:border-orange-300 rounded-xl transition-all">
+                        My Submissions
                     </a>
                     {% endif %}
                     <div class="flex items-center gap-3 pl-2">
-                        <span class="text-xs text-gold-400 font-semibold px-2.5 py-1 bg-royal-900 border border-gold-500/30 rounded-lg">
-                            <i class="fa-solid fa-trophy mr-1 text-gold-500"></i>{{ user.xp }} XP
+                        <span class="text-xs font-bold text-orange-700 px-3 py-1.5 bg-orange-100 rounded-xl flex items-center gap-1.5">
+                            <i class="fa-solid fa-trophy text-amber-500"></i>{{ user.xp }} XP
                         </span>
                         <form method="post" action="{% url 'logout' %}" class="inline">
                             {% csrf_token %}
-                            <button type="submit" class="px-3 py-2 text-xs text-rose-400 hover:text-rose-300 transition-colors">
-                                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                            <button type="submit" class="px-3 py-2 text-xs font-semibold text-slate-500 hover:text-rose-600 transition-colors">
+                                Logout
                             </button>
                         </form>
                     </div>
                 {% else %}
-                    <a href="{% url 'login' %}" class="px-4 py-2 text-sm font-medium text-slate-300 hover:text-gold-300 transition-colors">
+                    <a href="{% url 'login' %}" class="px-4 py-2 text-sm font-bold text-slate-700 hover:text-orange-600 transition-colors">
                         Sign In
                     </a>
-                    <a href="{% url 'register' %}" class="px-5 py-2.5 text-sm font-semibold text-royal-950 bg-gradient-to-r from-gold-400 via-amber-400 to-gold-500 hover:from-gold-300 hover:to-amber-300 rounded-xl shadow-[0_0_20px_rgba(245,158,11,0.25)] hover:shadow-[0_0_30px_rgba(245,158,11,0.45)] transition-all font-royal tracking-wide flex items-center gap-1.5">
-                        <span>Begin Journey</span>
+                    <a href="{% url 'register' %}" class="px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-orange-500 via-rose-500 to-amber-500 hover:opacity-95 rounded-xl shadow-festive hover:shadow-festive-hover transition-all flex items-center gap-1.5">
+                        <span>Get Started</span>
                         <i class="fa-solid fa-arrow-right text-xs"></i>
                     </a>
                 {% endif %}
@@ -88,7 +90,7 @@
             <!-- Mobile Hamburger Button -->
             <div class="flex lg:hidden items-center gap-2">
                 <button type="button" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" 
-                    class="p-2.5 rounded-xl bg-royal-900 border border-gold-500/20 text-gold-400 hover:text-white focus:outline-none">
+                    class="p-2.5 rounded-xl bg-orange-50 text-orange-600 hover:bg-orange-100 focus:outline-none">
                     <i class="fa-solid fa-bars-staggered text-lg"></i>
                 </button>
             </div>
@@ -96,34 +98,34 @@
     </div>
 
     <!-- Mobile Dropdown Menu -->
-    <div id="mobile-menu" class="hidden lg:hidden bg-royal-950/95 border-b border-gold-500/20 px-4 pt-3 pb-6 space-y-2 backdrop-blur-2xl">
-        <a href="{% url 'explore_india' %}" class="block px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-gold-500/10 hover:text-gold-300">
-            <i class="fa-solid fa-compass text-gold-400 w-6"></i> Explore India
+    <div id="mobile-menu" class="hidden lg:hidden bg-white border-b border-orange-100 px-4 pt-3 pb-6 space-y-2">
+        <a href="{% url 'explore_india' %}" class="block px-3 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:bg-orange-50 hover:text-orange-600">
+            <i class="fa-solid fa-compass text-orange-500 w-6"></i> Explore States
         </a>
-        <a href="{% url 'cultural_map' %}" class="block px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-gold-500/10 hover:text-gold-300">
-            <i class="fa-solid fa-map-location-dot text-gold-400 w-6"></i> Cultural Map
+        <a href="{% url 'cultural_map' %}" class="block px-3 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:bg-orange-50 hover:text-orange-600">
+            <i class="fa-solid fa-map-location-dot text-sky-500 w-6"></i> Cultural Map
         </a>
-        <a href="{% url 'digital_library' %}" class="block px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-gold-500/10 hover:text-gold-300">
-            <i class="fa-solid fa-book-bookmark text-gold-400 w-6"></i> Cultural Library
+        <a href="{% url 'digital_library' %}" class="block px-3 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:bg-orange-50 hover:text-orange-600">
+            <i class="fa-solid fa-book-open-reader text-amber-500 w-6"></i> Cultural Library
         </a>
-        <a href="{% url 'games_hub' %}" class="block px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-gold-500/10 hover:text-gold-300">
-            <i class="fa-solid fa-dice-d20 text-gold-400 w-6"></i> Games Hub
+        <a href="{% url 'games_hub' %}" class="block px-3 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:bg-orange-50 hover:text-orange-600">
+            <i class="fa-solid fa-gamepad text-emerald-500 w-6"></i> Games Hub
         </a>
-        <a href="{% url 'museum' %}" class="block px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-gold-500/10 hover:text-gold-300">
-            <i class="fa-solid fa-landmark text-gold-400 w-6"></i> Virtual Museum
+        <a href="{% url 'museum' %}" class="block px-3 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:bg-orange-50 hover:text-orange-600">
+            <i class="fa-solid fa-monument text-purple-500 w-6"></i> Virtual Museum
         </a>
-        <a href="#" onclick="toggleChat(); return false;" class="block px-3 py-2 rounded-lg text-sm text-gold-300 hover:bg-gold-500/15">
-            <i class="fa-solid fa-sparkles text-gold-400 w-6"></i> BharatVerse AI
+        <a href="#" onclick="toggleChat(); return false;" class="block px-3 py-2 rounded-xl text-sm font-bold text-orange-600 hover:bg-orange-50">
+            <i class="fa-solid fa-sparkles text-amber-500 w-6"></i> Bharat AI Guide
         </a>
-        <div class="pt-4 border-t border-gold-500/15 flex flex-col gap-2">
+        <div class="pt-4 border-t border-orange-100 flex flex-col gap-2">
             {% if user.is_authenticated %}
                 <form method="post" action="{% url 'logout' %}">
                     {% csrf_token %}
-                    <button type="submit" class="w-full text-left px-3 py-2 text-sm text-rose-400">Logout</button>
+                    <button type="submit" class="w-full text-left px-3 py-2 text-sm font-semibold text-rose-600">Logout</button>
                 </form>
             {% else %}
-                <a href="{% url 'login' %}" class="block text-center px-4 py-2 text-sm text-slate-300 border border-slate-700 rounded-xl">Sign In</a>
-                <a href="{% url 'register' %}" class="block text-center px-4 py-2 text-sm font-bold text-royal-950 bg-gold-400 rounded-xl font-royal">Begin Journey</a>
+                <a href="{% url 'login' %}" class="block text-center px-4 py-2 text-sm font-bold text-slate-700 border border-slate-200 rounded-xl">Sign In</a>
+                <a href="{% url 'register' %}" class="block text-center px-4 py-2 text-sm font-bold text-white bg-gradient-to-r from-orange-500 to-amber-500 rounded-xl shadow-sm">Get Started</a>
             {% endif %}
         </div>
     </div>

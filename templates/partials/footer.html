@@ -1,123 +1,107 @@
-<footer class="relative bg-gradient-to-b from-royal-950 via-royal-900 to-[#04070D] text-slate-400 pt-20 pb-12 border-t border-gold-500/20 overflow-hidden">
-    <!-- Subtle Ambient Glow -->
-    <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[700px] h-[250px] bg-gold-radial pointer-events-none opacity-40"></div>
-
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+<footer class="bg-slate-900 text-slate-300 pt-16 pb-12 border-t-4 border-orange-500">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
         <!-- Top Sanskrit Quote Banner -->
-        <div class="pb-12 mb-12 border-b border-gold-500/15 text-center">
-            <p class="font-devanagari text-xl sm:text-2xl text-gold-300 tracking-wide mb-2">
-                "एकं सद् विप्रा बहुधा वदन्ति"
+        <div class="pb-10 mb-10 border-b border-slate-800 text-center">
+            <p class="font-devanagari text-2xl text-amber-400 tracking-wide mb-1">
+                "वसुधैव कुटुम्बकम्"
             </p>
-            <p class="text-xs uppercase tracking-[0.2em] text-slate-400">
-                Truth is One, the Wise Call It by Many Names &bull; Rigveda
+            <p class="text-xs uppercase tracking-widest text-slate-400">
+                The World is One Family &bull; Maha Upanishad
             </p>
         </div>
 
         <!-- 4-Column Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-16">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-14">
             
-            <!-- Col 1: About & Emblem -->
+            <!-- Col 1: Brand Info -->
             <div class="space-y-4">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gold-500/10 border border-gold-500/30 flex items-center justify-center">
-                        <i class="fa-solid fa-om text-gold-400 text-lg"></i>
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-orange-500 to-rose-500 flex items-center justify-center text-white text-xl shadow-md">
+                        🪷
                     </div>
-                    <span class="text-2xl font-royal font-bold gold-gradient-text">BharatVerse</span>
+                    <span class="text-2xl font-display font-extrabold text-white">BharatVerse</span>
                 </div>
-                <p class="text-sm text-slate-300 leading-relaxed font-light">
-                    India’s digital heritage sanctuary. Unifying 5,000+ years of art, living traditions, music, sacred geometry, and folk games into an interactive digital odyssey.
+                <p class="text-xs text-slate-400 leading-relaxed font-normal">
+                    Discover India. Experience Culture. Preserve Heritage. An interactive digital ecosystem connecting 5,000+ years of living Indian traditions.
                 </p>
                 <div class="pt-2">
-                    <span class="inline-flex items-center gap-2 text-xs bg-royal-800/80 border border-gold-500/25 px-3 py-1.5 rounded-full text-gold-300">
-                        <i class="fa-solid fa-award text-gold-400"></i> Smart India Hackathon &bull; SIH26197
+                    <span class="inline-flex items-center gap-1.5 text-xs bg-orange-950/80 border border-orange-500/40 px-3 py-1.5 rounded-full text-orange-300">
+                        <i class="fa-solid fa-trophy text-amber-400"></i> Smart India Hackathon &bull; SIH26197
                     </span>
                 </div>
             </div>
 
             <!-- Col 2: Cultural Exploration -->
             <div>
-                <h4 class="font-royal text-sm font-bold uppercase tracking-wider text-gold-400 mb-5 flex items-center gap-2">
-                    <i class="fa-solid fa-compass text-xs"></i> Exploration
+                <h4 class="font-display text-sm font-bold uppercase tracking-wider text-amber-400 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-compass text-orange-400"></i> Exploration
                 </h4>
-                <ul class="space-y-2.5 text-sm">
-                    <li><a href="{% url 'explore_india' %}" class="hover:text-gold-300 transition-colors flex items-center gap-2">
-                        <i class="fa-solid fa-angle-right text-[10px] text-gold-500/50"></i> All 36 States & UTs
+                <ul class="space-y-2.5 text-xs">
+                    <li><a href="{% url 'explore_india' %}" class="hover:text-orange-400 transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-angle-right text-[10px] text-orange-500"></i> All 36 States &amp; UTs
                     </a></li>
-                    <li><a href="{% url 'cultural_map' %}" class="hover:text-gold-300 transition-colors flex items-center gap-2">
-                        <i class="fa-solid fa-angle-right text-[10px] text-gold-500/50"></i> Interactive 2D/3D Map
+                    <li><a href="{% url 'cultural_map' %}" class="hover:text-orange-400 transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-angle-right text-[10px] text-orange-500"></i> Interactive 2D/3D Map
                     </a></li>
-                    <li><a href="{% url 'digital_library' %}" class="hover:text-gold-300 transition-colors flex items-center gap-2">
-                        <i class="fa-solid fa-angle-right text-[10px] text-gold-500/50"></i> Ancient Manuscripts & Books
+                    <li><a href="{% url 'digital_library' %}" class="hover:text-orange-400 transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-angle-right text-[10px] text-orange-500"></i> Cultural Library &amp; Manuscripts
                     </a></li>
-                    <li><a href="{% url 'museum' %}" class="hover:text-gold-300 transition-colors flex items-center gap-2">
-                        <i class="fa-solid fa-angle-right text-[10px] text-gold-500/50"></i> Virtual Living Museum
+                    <li><a href="{% url 'museum' %}" class="hover:text-orange-400 transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-angle-right text-[10px] text-orange-500"></i> Virtual Living Museum
                     </a></li>
-                    <li><a href="{% url 'my_journey' %}" class="hover:text-gold-300 transition-colors flex items-center gap-2">
-                        <i class="fa-solid fa-angle-right text-[10px] text-gold-500/50"></i> Curated Cultural Itineraries
+                    <li><a href="{% url 'my_journey' %}" class="hover:text-orange-400 transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-angle-right text-[10px] text-orange-500"></i> Personalized Itineraries
                     </a></li>
                 </ul>
             </div>
 
-            <!-- Col 3: Folk Games & Quizzes -->
+            <!-- Col 3: Folk Games & Play -->
             <div>
-                <h4 class="font-royal text-sm font-bold uppercase tracking-wider text-gold-400 mb-5 flex items-center gap-2">
-                    <i class="fa-solid fa-chess text-xs"></i> Folk Play & Lore
+                <h4 class="font-display text-sm font-bold uppercase tracking-wider text-amber-400 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-gamepad text-emerald-400"></i> Folk Games &amp; Lore
                 </h4>
-                <ul class="space-y-2.5 text-sm">
-                    <li><a href="{% url 'games_hub' %}" class="hover:text-gold-300 transition-colors flex items-center gap-2">
-                        <i class="fa-solid fa-angle-right text-[10px] text-gold-500/50"></i> Heritage Games Hub
+                <ul class="space-y-2.5 text-xs">
+                    <li><a href="{% url 'games_hub' %}" class="hover:text-orange-400 transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-angle-right text-[10px] text-orange-500"></i> Games Arena Hub
                     </a></li>
-                    <li><a href="/games/ancient-india-crossword/" class="hover:text-gold-300 transition-colors flex items-center gap-2">
-                        <i class="fa-solid fa-angle-right text-[10px] text-gold-500/50"></i> Vedic & Heritage Crosswords
+                    <li><a href="/games/ancient-india-crossword/" class="hover:text-orange-400 transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-angle-right text-[10px] text-orange-500"></i> Ancient India Crosswords
                     </a></li>
-                    <li><a href="/games/word-search-dance/" class="hover:text-gold-300 transition-colors flex items-center gap-2">
-                        <i class="fa-solid fa-angle-right text-[10px] text-gold-500/50"></i> Classical Dance Word Hunts
+                    <li><a href="/games/word-search-dance/" class="hover:text-orange-400 transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-angle-right text-[10px] text-orange-500"></i> Classical Dance Word Hunts
                     </a></li>
-                    <li><a href="{% url 'quiz_list' %}" class="hover:text-gold-300 transition-colors flex items-center gap-2">
-                        <i class="fa-solid fa-angle-right text-[10px] text-gold-500/50"></i> Cultural Trivia Quizzes
+                    <li><a href="{% url 'quiz_list' %}" class="hover:text-orange-400 transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-angle-right text-[10px] text-orange-500"></i> Cultural Trivia Quizzes
                     </a></li>
-                    <li><a href="#" onclick="toggleChat(); return false;" class="hover:text-gold-300 transition-colors flex items-center gap-2 text-gold-400/90 font-medium">
-                        <i class="fa-solid fa-sparkles text-[10px]"></i> Consult BharatVerse AI
+                    <li><a href="#" onclick="toggleChat(); return false;" class="hover:text-orange-400 transition-colors flex items-center gap-2 text-amber-400 font-semibold">
+                        <i class="fa-solid fa-sparkles text-[10px]"></i> Consult Bharat AI Guide
                     </a></li>
                 </ul>
             </div>
 
-            <!-- Col 4: Preservation & Custodianship -->
+            <!-- Col 4: Preservation -->
             <div>
-                <h4 class="font-royal text-sm font-bold uppercase tracking-wider text-gold-400 mb-5 flex items-center gap-2">
-                    <i class="fa-solid fa-monument text-xs"></i> Preservation
+                <h4 class="font-display text-sm font-bold uppercase tracking-wider text-amber-400 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-feather text-rose-400"></i> Preservation
                 </h4>
-                <p class="text-xs text-slate-300 mb-4 leading-relaxed">
-                    Know a dying oral tradition, indigenous art form, or regional festival? Submit it to the national cultural repository.
+                <p class="text-xs text-slate-400 mb-4 leading-relaxed">
+                    Preserve oral folklore, regional dance traditions, and ancient crafts by contributing to the national archive.
                 </p>
                 <a href="{% url 'contribute' %}" 
-                    class="inline-flex items-center gap-2 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl transition-all shadow-md">
-                    <i class="fa-solid fa-feather-pointed"></i> Submit a Tradition
+                    class="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-rose-500 hover:opacity-95 text-white font-bold text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl transition-all shadow-md">
+                    <i class="fa-solid fa-feather"></i> Submit a Tradition
                 </a>
-                <div class="mt-6 flex items-center space-x-3 text-slate-400">
-                    <a href="#" class="w-8 h-8 rounded-lg bg-royal-800 border border-gold-500/20 flex items-center justify-center hover:text-gold-400 hover:border-gold-400 transition-colors">
-                        <i class="fa-brands fa-x-twitter text-xs"></i>
-                    </a>
-                    <a href="#" class="w-8 h-8 rounded-lg bg-royal-800 border border-gold-500/20 flex items-center justify-center hover:text-gold-400 hover:border-gold-400 transition-colors">
-                        <i class="fa-brands fa-github text-xs"></i>
-                    </a>
-                    <a href="#" class="w-8 h-8 rounded-lg bg-royal-800 border border-gold-500/20 flex items-center justify-center hover:text-gold-400 hover:border-gold-400 transition-colors">
-                        <i class="fa-brands fa-instagram text-xs"></i>
-                    </a>
-                    <a href="#" class="w-8 h-8 rounded-lg bg-royal-800 border border-gold-500/20 flex items-center justify-center hover:text-gold-400 hover:border-gold-400 transition-colors">
-                        <i class="fa-brands fa-youtube text-xs"></i>
-                    </a>
-                </div>
             </div>
         </div>
 
         <!-- Bottom Copyright -->
-        <div class="pt-8 border-t border-gold-500/10 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500 gap-4">
-            <p>&copy; 2026 BharatVerse. Dedicated to celebrating and preserving India's cultural tapestry.</p>
+        <div class="pt-8 border-t border-slate-800 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500 gap-4">
+            <p>&copy; 2026 BharatVerse - Celebrating the cultural diversity and timeless traditions of India.</p>
             <div class="flex space-x-6">
-                <a href="#" class="hover:text-gold-400 transition-colors">Privacy Protocol</a>
-                <a href="#" class="hover:text-gold-400 transition-colors">Terms of Heritage</a>
-                <a href="#" class="hover:text-gold-400 transition-colors">AI Ethics</a>
+                <a href="#" class="hover:text-orange-400 transition-colors">Privacy</a>
+                <a href="#" class="hover:text-orange-400 transition-colors">Terms</a>
+                <a href="#" class="hover:text-orange-400 transition-colors">AI Guidelines</a>
             </div>
         </div>
     </div>
