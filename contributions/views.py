@@ -12,7 +12,7 @@ def is_curator(user):
 def is_contributor_or_curator(user):
     return user.is_authenticated and user.role in ['contributor', 'curator']
 
-@user_passes_test(is_contributor_or_curator, login_url='/accounts/login/')
+@login_required(login_url='/accounts/login/')
 def contribute(request):
     states = State.objects.all().order_by('name')
     if request.method == 'POST':
@@ -46,7 +46,7 @@ def contribute(request):
         
     return render(request, 'contributions/contribute.html', {'states': states})
 
-@user_passes_test(is_contributor_or_curator, login_url='/accounts/login/')
+@login_required(login_url='/accounts/login/')
 def submission_success(request, sub_id):
     sub = get_object_or_404(Submission, id=sub_id, contributor=request.user)
     return render(request, 'contributions/success.html', {'sub': sub})
