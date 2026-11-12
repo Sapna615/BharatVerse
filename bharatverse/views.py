@@ -34,3 +34,12 @@ def global_search(request):
         
     return render(request, 'search.html', {'query': query, 'results': results})
 
+def privacy_policy(request):
+    return render(request, 'legal/privacy.html')
+
+def terms_of_service(request):
+    return render(request, 'legal/terms.html')
+
+def ai_guidelines(request):
+    return render(request, 'legal/ai_guidelines.html')
+
