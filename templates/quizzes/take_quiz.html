@@ -13,9 +13,13 @@
             <div class="mb-6 rounded-lg overflow-hidden border border-gray-200">
                 <img src="{{ q.image.url }}" alt="Question Image" class="w-full max-h-96 object-cover">
             </div>
+            {% elif q.media_url and q.question_type == 'image' %}
+            <div class="mb-6 rounded-lg overflow-hidden border border-gray-200">
+                <img src="{{ q.media_url }}" alt="Question Image" class="w-full max-h-96 object-contain bg-slate-50">
+            </div>
             {% endif %}
             
-            {% if q.media_url %}
+            {% if q.media_url and q.question_type != 'image' %}
             <div class="mb-6">
                 {% if q.question_type == 'audio' %}
                 <audio controls class="w-full">
