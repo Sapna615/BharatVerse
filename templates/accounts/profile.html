@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+{% block title %}My Profile - BharatVerse{% endblock %}
+
+{% block content %}
+<!-- Profile Header Banner -->
+<div class="relative py-14 overflow-hidden bg-gradient-to-r from-orange-500 via-rose-500 to-amber-500 text-white shadow-festive">
+    <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center gap-6">
+        <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-white text-orange-600 border-4 border-white/60 shadow-xl flex items-center justify-center font-display font-black text-3xl sm:text-4xl uppercase overflow-hidden">
+            {% if profile_user.avatar %}
+                <img src="{{ profile_user.avatar.url }}" alt="{{ profile_user.username }}" class="w-full h-full object-cover">
+            {% else %}
+                {{ profile_user.username|slice:":2" }}
+            {% endif %}
+        </div>
+        <div class="text-center md:text-left flex-1">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md mb-2 border border-white/30 text-xs font-bold uppercase tracking-wider text-amber-200">
+                <i class="fa-solid fa-id-badge"></i> {{ profile_user.get_role_display|default:profile_user.role|title }}
+            </div>
+            <h1 class="text-3xl sm:text-4xl font-display font-black text-white tracking-tight">
+                {{ profile_user.username }}
+            </h1>
+            <p class="text-orange-100 text-sm mt-1 max-w-xl">
+                {{ profile_user.bio|default:"Passionate explorer of India's diverse traditions, art forms, and heritage." }}
+            </p>
+        </div>
+        <div class="flex items-center gap-3">
+            <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 text-center">
+                <div class="text-2xl sm:text-3xl font-black text-amber-300 flex items-center justify-center gap-1">
+                    <i class="fa-solid fa-trophy text-amber-300 text-xl"></i> {{ profile_user.xp }}
+                </div>
+                <div class="text-[11px] font-bold uppercase tracking-wider text-orange-100 mt-1">Cultural XP</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="max-w-5xl mx-auto px-4 sm:px-6 py-10">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <!-- Left: Profile Summary & Edit Form -->
+        <div class="space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-orange-100 p-6">
+                <h3 class="font-display font-bold text-slate-800 border-b border-slate-100 pb-3 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-user-pen text-orange-500"></i> Account Details
+                </h3>
+                
+                <form method="POST" enctype="multipart/form-data" class="space-y-4">
+                    {% csrf_token %}
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Username</label>
+                        <input type="text" value="{{ profile_user.username }}" disabled class="w-full text-xs font-semibold px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-500 cursor-not-allowed">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Email</label>
+                        <input type="email" value="{{ profile_user.email|default:'Not specified' }}" disabled class="w-full text-xs font-semibold px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-500 cursor-not-allowed">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Region / State</label>
+                        <input type="text" name="region" value="{{ profile_user.region }}" placeholder="e.g. Maharashtra, Punjab..." class="w-full text-xs font-semibold px-3 py-2 border border-slate-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Bio / About Me</label>
+                        <textarea name="bio" rows="3" placeholder="Tell us about your cultural interests..." class="w-full text-xs font-semibold px-3 py-2 border border-slate-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 rounded-xl">{{ profile_user.bio }}</textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Profile Photo</label>
+                        <input type="file" name="avatar" accept="image/*" class="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-orange-50 file:text-orange-600 hover:file:bg-orange-100">
+                    </div>
+                    <button type="submit" class="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-orange-500 to-rose-500 hover:opacity-95 shadow-sm transition-all">
+                        Save Changes
+                    </button>
+                </form>
+            </div>
+
+            <!-- Role Badge Information -->
+            <div class="bg-amber-50/70 rounded-2xl border border-amber-200/80 p-5">
+                <div class="flex items-center gap-2 text-xs font-bold text-amber-800 uppercase tracking-wider mb-2">
+                    <i class="fa-solid fa-award text-amber-600"></i> Heritage Membership
+                </div>
+                <p class="text-xs text-slate-700 leading-relaxed">
+                    You are registered as a <strong>{{ profile_user.get_role_display|default:profile_user.role|title }}</strong>. 
+                    {% if profile_user.role == 'curator' or profile_user.is_superuser %}
+                        You hold full curation privileges to moderate community submissions and create games.
+                    {% elif profile_user.role == 'contributor' %}
+                        You can submit indigenous stories, festivals, and folk traditions for curation.
+                    {% else %}
+                        You have full access to explore the cultural knowledge graph, test your skills in the games hub, and build custom travel journeys.
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        <!-- Right: Activity, XP Progression, and Quizzes -->
+        <div class="md:col-span-2 space-y-6">
+            
+            <!-- Stats Counters -->
+            <div class="grid grid-cols-3 gap-4">
+                <div class="bg-white rounded-2xl border border-orange-100 p-4 text-center shadow-sm">
+                    <div class="text-2xl font-black text-orange-600 font-display">{{ profile_user.xp }}</div>
+                    <div class="text-[11px] font-bold text-slate-500 uppercase mt-0.5">Total XP</div>
+                </div>
+                <div class="bg-white rounded-2xl border border-orange-100 p-4 text-center shadow-sm">
+                    <div class="text-2xl font-black text-emerald-600 font-display">{{ total_quizzes }}</div>
+                    <div class="text-[11px] font-bold text-slate-500 uppercase mt-0.5">Quizzes Taken</div>
+                </div>
+                <div class="bg-white rounded-2xl border border-orange-100 p-4 text-center shadow-sm">
+                    <div class="text-2xl font-black text-purple-600 font-display">{{ total_journeys }}</div>
+                    <div class="text-[11px] font-bold text-slate-500 uppercase mt-0.5">Journeys Made</div>
+                </div>
+            </div>
+
+            <!-- Recent Quiz Attempts -->
+            <div class="bg-white rounded-2xl shadow-sm border border-orange-100 p-6">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+                    <h3 class="font-display font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-gamepad text-emerald-500"></i> Recent Quiz Attempts
+                    </h3>
+                    <a href="{% url 'quiz_list' %}" class="text-xs font-bold text-orange-600 hover:text-orange-700">Browse Quizzes →</a>
+                </div>
+
+                {% if quiz_attempts %}
+                <div class="divide-y divide-slate-100">
+                    {% for attempt in quiz_attempts %}
+                    <div class="py-3 flex items-center justify-between">
+                        <div>
+                            <div class="text-xs font-bold text-slate-800">{{ attempt.quiz.title }}</div>
+                            <div class="text-[11px] text-slate-500">{{ attempt.completed_at|date:"M d, Y - h:i A" }}</div>
+                        </div>
+                        <div class="text-right">
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold {% if attempt.percentage >= 70 %}bg-emerald-100 text-emerald-700{% else %}bg-amber-100 text-amber-700{% endif %}">
+                                {{ attempt.score }}/{{ attempt.total_questions }} ({{ attempt.percentage|floatformat:0 }}%)
+                            </span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="py-6 text-center text-slate-400 text-xs">
+                    <i class="fa-solid fa-circle-question text-3xl mb-2 text-slate-300 block"></i>
+                    No quiz attempts yet. Jump into the <a href="{% url 'quiz_list' %}" class="text-orange-600 font-bold underline">Quizzes Arena</a> to earn your first XP!
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Custom Journeys -->
+            <div class="bg-white rounded-2xl shadow-sm border border-orange-100 p-6">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+                    <h3 class="font-display font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-map-location-dot text-rose-500"></i> My Cultural Journeys
+                    </h3>
+                    <a href="{% url 'my_journey' %}" class="text-xs font-bold text-orange-600 hover:text-orange-700">Open Journey Planner →</a>
+                </div>
+
+                {% if journeys %}
+                <div class="space-y-3">
+                    {% for j in journeys %}
+                    <div class="p-3 rounded-xl border border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                        <div>
+                            <div class="text-xs font-bold text-slate-800">{{ j.title }}</div>
+                            <div class="text-[11px] text-slate-500">{{ j.items.count }} Stops Mapped • {{ j.progress }}% Progress</div>
+                        </div>
+                        <a href="{% url 'my_journey' %}" class="px-3 py-1 text-[11px] font-bold text-orange-600 bg-orange-50 border border-orange-200 rounded-lg hover:bg-orange-100 transition-all">
+                            View
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="py-6 text-center text-slate-400 text-xs">
+                    <i class="fa-solid fa-route text-3xl mb-2 text-slate-300 block"></i>
+                    No journeys created yet. Start mapping your custom trail in <a href="{% url 'my_journey' %}" class="text-orange-600 font-bold underline">My Cultural Journey</a>!
+                </div>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
