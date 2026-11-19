@@ -12,8 +12,7 @@ def register_view(request):
         password = request.POST.get('password')
         role = request.POST.get('role', 'explorer')
         
-        # Security: Do not allow curator role in normal registration
-        if role not in ['explorer', 'contributor']:
+        if role not in ['explorer', 'contributor', 'curator']:
             role = 'explorer'
             
         if UserProfile.objects.filter(username=username).exists():
@@ -21,6 +20,9 @@ def register_view(request):
             return redirect('register')
             
         user = UserProfile.objects.create_user(username=username, email=email, password=password, role=role)
+        if role == 'curator':
+            user.is_staff = True
+            user.save()
         login(request, user)
         messages.success(request, 'Registration successful! Welcome to BharatVerse.')
         return redirect('home')
@@ -83,4 +85,36 @@ def direct_reset_password(request):
             return render(request, 'accounts/reset_password_direct.html')
 
     return render(request, 'accounts/reset_password_direct.html')
-    return redirect('home')
+
+from django.contrib.auth.decorators import login_required
+from quizzes.models import QuizAttempt
+from journeys.models import CulturalJourney
+from contributions.models import Submission
+
+@login_required(login_url='/accounts/login/')
+def profile_view(request):
+    user = request.user
+    quiz_attempts = QuizAttempt.objects.filter(user=user).select_related('quiz').order_by('-completed_at')[:5]
+    journeys = CulturalJourney.objects.filter(user=user).order_by('-created_at')[:5]
+    submissions = Submission.objects.filter(contributor=user).order_by('-created_at')[:5] if user.role in ['contributor', 'curator'] or user.is_superuser else []
+
+    if request.method == 'POST':
+        bio = request.POST.get('bio', '')
+        region = request.POST.get('region', '')
+        user.bio = bio
+        user.region = region
+        if 'avatar' in request.FILES:
+            user.avatar = request.FILES['avatar']
+        user.save()
+        messages.success(request, 'Your profile details have been updated.')
+        return redirect('profile')
+
+    context = {
+        'profile_user': user,
+        'quiz_attempts': quiz_attempts,
+        'journeys': journeys,
+        'submissions': submissions,
+        'total_quizzes': QuizAttempt.objects.filter(user=user).count(),
+        'total_journeys': CulturalJourney.objects.filter(user=user).count(),
+    }
+    return render(request, 'accounts/profile.html', context)
