@@ -14,6 +14,14 @@
         <p class="text-base sm:text-lg text-orange-100 font-normal max-w-2xl mx-auto">
             Test your knowledge through Vedic crosswords, classical dance word hunts, and regional pattern puzzles.
         </p>
+
+        {% if user.is_authenticated and user.role == 'curator' or user.is_superuser %}
+        <div class="mt-6">
+            <a href="/admin/games/game/add/" target="_blank" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-orange-600 font-bold text-xs uppercase tracking-wider shadow-lg hover:bg-orange-50 transition-all hover:scale-105 border border-orange-200">
+                <i class="fa-solid fa-plus-circle text-orange-500"></i> + Add New Cultural Game (Curator)
+            </a>
+        </div>
+        {% endif %}
     </div>
 </div>
 

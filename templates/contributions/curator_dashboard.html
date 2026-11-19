@@ -12,10 +12,39 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <h3 class="font-bold text-gray-800 border-b border-gray-100 pb-3 mb-3">Moderation Queue</h3>
             <ul class="space-y-2">
-                <li><a href="?status=pending" class="flex justify-between items-center text-sm font-bold {% if status_filter == 'pending' %}text-blue-600{% else %}text-gray-600 hover:text-gray-900{% endif %}">Pending <span class="bg-blue-100 text-blue-700 py-0.5 px-2 rounded">{{ counts.pending }}</span></a></li>
-                <li><a href="?status=approved" class="flex justify-between items-center text-sm font-bold {% if status_filter == 'approved' %}text-green-600{% else %}text-gray-600 hover:text-gray-900{% endif %}">Approved <span class="bg-green-100 text-green-700 py-0.5 px-2 rounded">{{ counts.approved }}</span></a></li>
-                <li><a href="?status=rejected" class="flex justify-between items-center text-sm font-bold {% if status_filter == 'rejected' %}text-red-600{% else %}text-gray-600 hover:text-gray-900{% endif %}">Rejected <span class="bg-red-100 text-red-700 py-0.5 px-2 rounded">{{ counts.rejected }}</span></a></li>
+                <li><a href="?status=pending" class="flex justify-between items-center text-sm font-bold {% if status_filter == 'pending' %}text-orange-600{% else %}text-gray-600 hover:text-gray-900{% endif %}">Pending <span class="bg-orange-100 text-orange-700 py-0.5 px-2 rounded-full">{{ counts.pending }}</span></a></li>
+                <li><a href="?status=approved" class="flex justify-between items-center text-sm font-bold {% if status_filter == 'approved' %}text-emerald-600{% else %}text-gray-600 hover:text-gray-900{% endif %}">Approved <span class="bg-emerald-100 text-emerald-700 py-0.5 px-2 rounded-full">{{ counts.approved }}</span></a></li>
+                <li><a href="?status=rejected" class="flex justify-between items-center text-sm font-bold {% if status_filter == 'rejected' %}text-rose-600{% else %}text-gray-600 hover:text-gray-900{% endif %}">Rejected <span class="bg-rose-100 text-rose-700 py-0.5 px-2 rounded-full">{{ counts.rejected }}</span></a></li>
             </ul>
+        </div>
+
+        <!-- Quick Admin Creation Shortcuts -->
+        <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl shadow-sm border border-orange-200 p-6">
+            <h3 class="font-bold text-slate-800 border-b border-orange-200/60 pb-3 mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-plus-circle text-orange-600"></i> Admin Content Studio
+            </h3>
+            <p class="text-xs text-slate-600 mb-4">Quickly add games, quizzes, and traditions directly to the live platform:</p>
+            <div class="space-y-2">
+                <a href="/admin/games/game/add/" target="_blank" class="w-full flex items-center justify-between px-3 py-2 text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:border-orange-400 hover:text-orange-600 rounded-lg transition-all shadow-sm">
+                    <span class="flex items-center gap-2"><i class="fa-solid fa-gamepad text-emerald-500"></i> Add New Game</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-slate-400 text-[10px]"></i>
+                </a>
+                <a href="/admin/quizzes/quiz/add/" target="_blank" class="w-full flex items-center justify-between px-3 py-2 text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:border-orange-400 hover:text-orange-600 rounded-lg transition-all shadow-sm">
+                    <span class="flex items-center gap-2"><i class="fa-solid fa-question-circle text-amber-500"></i> Add New Quiz</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-slate-400 text-[10px]"></i>
+                </a>
+                <a href="/admin/culture/culturalentry/add/" target="_blank" class="w-full flex items-center justify-between px-3 py-2 text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:border-orange-400 hover:text-orange-600 rounded-lg transition-all shadow-sm">
+                    <span class="flex items-center gap-2"><i class="fa-solid fa-landmark text-purple-500"></i> Add Cultural Tradition</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-slate-400 text-[10px]"></i>
+                </a>
+                <a href="/admin/culture/culturalconnection/add/" target="_blank" class="w-full flex items-center justify-between px-3 py-2 text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:border-orange-400 hover:text-orange-600 rounded-lg transition-all shadow-sm">
+                    <span class="flex items-center gap-2"><i class="fa-solid fa-circle-nodes text-blue-500"></i> Add Knowledge Link</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-slate-400 text-[10px]"></i>
+                </a>
+                <a href="/admin/" target="_blank" class="w-full flex items-center justify-center gap-2 mt-3 px-3 py-2 text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-all shadow-sm">
+                    <i class="fa-solid fa-sliders"></i> Full Django Admin Suite
+                </a>
+            </div>
         </div>
     </div>
     
